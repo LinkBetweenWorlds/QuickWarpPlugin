@@ -1,0 +1,42 @@
+main: co.xenocraft.QuickWarp
+name: QuickWarp
+version: 0.1
+author: Blink9085
+description: QuickWarp Plugin for Xenocraft Server
+api-version: 1.18
+
+commands:
+  god:
+    description: Become God?
+    usage: /<command>
+    permission: quickwarp.god
+    permission-message: You think you can become a God.
+  createWarp:
+    description: Creates a new Warp point under feet. Creates a new command block below the surface. Use range for discovery range. Use secret for different text style.
+    usage: /<command> <name> <range> <secret> (Use underscore for spaces.)
+    permission: quickwarp.createwarp
+    permission-message: You don't have permission to do that.
+  discoverWarp:
+    description: Discover warp points for a player
+    usage: /<command>
+    permission: command
+  warp:
+    description: Opens warp menu.
+    usage: /<command>
+    permission: quickwarp.warp
+
+permissions:
+  quickwarp.warpEditor:
+    description: Gives access so you can create, edit, see, or remove warp points.
+    default: op
+    children:
+      quickwarp.createwarp: true
+  quickwarp.createwarp:
+    description: Allows one to create warp point.
+    default: op
+  quickwarp.warp:
+    description: Allows one to teleport through the dimensions.
+    default: true
+  quickwarp.god:
+    description: Allows one to become God.
+    default: op
