@@ -69,6 +69,7 @@ public class WarpCommand implements TabExecutor {
         colony9Meta.setDisplayName(ChatColor.YELLOW + "Colony 9");
         ArrayList<String> colony9Lore = new ArrayList<>();
         colony9Lore.add(ChatColor.GOLD + "The start of your adventure.");
+        colony9Lore.add(ChatColor.GOLD + "Shops, Gemshop, quests");
         colony9Meta.setLore(colony9Lore);
         colony9.setItemMeta(colony9Meta);
 
