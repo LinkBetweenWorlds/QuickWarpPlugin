@@ -11,6 +11,10 @@ public class ClickEvent implements Listener {
     @EventHandler
     public void InvClickEvent(InventoryClickEvent event){
         Player p = (Player) event.getWhoClicked();
+        /*
+        For the Warp command
+        TODO Fill the warp menu out
+        */
         if (event.getView().getTitle().equalsIgnoreCase(ChatColor.AQUA + "Warp Menu")){
             event.setCancelled(true);
             if (event.getCurrentItem() == null){

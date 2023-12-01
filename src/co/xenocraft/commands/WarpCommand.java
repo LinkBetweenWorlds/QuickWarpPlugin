@@ -39,6 +39,7 @@ public class WarpCommand implements TabExecutor {
             }else{
                 //Difference in milliseconds
                 long timeElapsed = System.currentTimeMillis() - cooldown.get(p.getUniqueId());
+                //Convert to seconds
                 int seconds = (int)((timeElapsed / 1000) % 60);
                 if (seconds >= 10){
                     this.cooldown.put(p.getUniqueId(), System.currentTimeMillis());
@@ -55,7 +56,9 @@ public class WarpCommand implements TabExecutor {
         Player p = (Player) sender;
         p.sendMessage("Opening Warp Menu...");
 
-        Inventory gui = Bukkit.createInventory(p, 9, ChatColor.AQUA + "Warp Menu");
+        //TODO Finish fill out warp gui
+
+        Inventory gui = Bukkit.createInventory(p, (4*9), ChatColor.AQUA + "Warp Menu");
         ItemStack infill = new ItemStack(Material.BLACK_STAINED_GLASS_PANE);
         ItemStack colony9 = new ItemStack(Material.SANDSTONE);
         ItemStack tephraCave = new ItemStack(Material.COBBLESTONE);

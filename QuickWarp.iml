@@ -29,7 +29,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../spigot-api-1.18.2-R0.1-20220605.001135-49-shaded.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../spigot-api-1.18.2-R0.1-20220605.001135-49-shaded.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
