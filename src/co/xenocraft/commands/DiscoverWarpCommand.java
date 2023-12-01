@@ -2,7 +2,6 @@ package co.xenocraft.commands;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.block.CommandBlock;
 import org.bukkit.command.*;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -19,18 +18,24 @@ public class DiscoverWarpCommand implements TabExecutor {
         if (sender instanceof BlockCommandSender){
             BlockCommandSender block = (BlockCommandSender) sender;
             System.out.println(block.getName());
+
+            //Gets the command block location
             Location blockLoc = block.getBlock().getLocation();
             int blockX = blockLoc.getBlockX();
             int blockY = blockLoc.getBlockY();
             int blockZ = blockLoc.getBlockZ();
+
+            //Gets the nearby entites in bbox
             int range = 5;
             BoundingBox bbox = new BoundingBox(blockX - range, blockY - 1, blockZ - range, blockX + range, blockY + 4, blockZ + range);
             Collection<Entity> players = Bukkit.getWorld(blockLoc.getWorld().getUID()).getNearbyEntities(bbox);
             ArrayList<Entity> nearestPLayers = new ArrayList<>((players));
-            for (int i = 0; i < nearestPLayers.size(); i ++){
-                if(nearestPLayers.get(i).getType().equals(EntityType.PLAYER)){
-                    System.out.println(nearestPLayers.get(i));
-                    Player p = (Player) nearestPLayers.get(i);
+
+            //Find the nearest Player in bbox
+            for (Entity nearestPLayer : nearestPLayers) {
+                if (nearestPLayer.getType().equals(EntityType.PLAYER)) {
+                    System.out.println(nearestPLayer);
+                    Player p = (Player) nearestPLayer;
                     System.out.println(p.getDisplayName());
                     System.out.println(p.getLocation());
                     p.sendMessage("You have discovered " + block.getName());

@@ -39,6 +39,7 @@ public class WarpCommand implements TabExecutor {
             }else{
                 //Difference in milliseconds
                 long timeElapsed = System.currentTimeMillis() - cooldown.get(p.getUniqueId());
+
                 //Convert to seconds
                 int seconds = (int)((timeElapsed / 1000) % 60);
                 if (seconds >= 10){

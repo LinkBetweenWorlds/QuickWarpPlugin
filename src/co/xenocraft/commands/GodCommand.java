@@ -19,7 +19,7 @@ public class GodCommand implements CommandExecutor {
             else{
                 p.setInvulnerable(true);
                 p.setGameMode(GameMode.CREATIVE);
-                for (int i = 0; i < 5; i++) p.getWorld().strikeLightningEffect(p.getLocation());
+                for (int i = 0; i < 10; i++) p.getWorld().strikeLightningEffect(p.getLocation());
                 p.sendMessage(ChatColor.GREEN + "You are now God.");
             }
         }
