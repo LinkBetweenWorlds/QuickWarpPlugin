@@ -16,6 +16,9 @@ commands:
     usage: /<command> <name> <range> <secret> (Use underscore for spaces.)
     permission: quickwarp.createwarp
     permission-message: You don't have permission to do that.
+  createWorldName:
+    description: Creates the World for the warp points. This needs to be done before any warp points can be placed.
+    usage: /<command> <name>
   discoverWarp:
     description: Discover warp points for a player
     usage: /<command>
@@ -30,9 +33,13 @@ permissions:
     description: Gives access so you can create, edit, see, or remove warp points.
     default: op
     children:
-      quickwarp.createwarp: true
-  quickwarp.createwarp:
+      quickwarp.createWarp: true
+      quickwarp.createWorldName: true
+  quickwarp.createWarp:
     description: Allows one to create warp point.
+    default: op
+  quickwarp.createWorldName:
+    description: Allows one to create worlds to warp to.
     default: op
   quickwarp.warp:
     description: Allows one to teleport through the dimensions.

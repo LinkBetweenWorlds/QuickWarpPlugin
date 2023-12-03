@@ -11,15 +11,15 @@ import org.bukkit.entity.Player;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CreateWarpCommand implements TabExecutor{
+public class CreateWarpCommand implements TabExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (sender instanceof Player){
+        if (sender instanceof Player) {
             Player p = (Player) sender;
             //Checks for all needed args
-            if (args.length == 0){
+            if (args.length == 0) {
                 p.sendMessage("Please provide arguments. /createwarp <name> <range> <secret>");
-            }else if (args.length == 3){
+            } else if (args.length == 3) {
                 //Pulls name and discover zone from args
                 String locName = args[0];
                 String rangeString = args[1];
@@ -38,7 +38,7 @@ public class CreateWarpCommand implements TabExecutor{
 
                 //Works out the placement of the blocks
                 Location repeatBlockLoc = new Location(p.getWorld(), blockX, blockY - 2, blockZ);
-                Location chainBlockLoc = new Location(p.getWorld(), blockX, blockY -2, blockZ - 1);
+                Location chainBlockLoc = new Location(p.getWorld(), blockX, blockY - 2, blockZ - 1);
                 Location redstoneRepeatLoc = new Location(p.getWorld(), blockX, blockY - 3, blockZ);
 
                 //Generates the command of command block
@@ -57,14 +57,14 @@ public class CreateWarpCommand implements TabExecutor{
                 chainBlockLoc.getBlock().setType(Material.CHAIN_COMMAND_BLOCK);
                 CommandBlock chainBlock = (CommandBlock) chainBlockLoc.getBlock().getState();
                 chainBlock.setCommand(chainCommand);
-                if (secret){
-                    chainBlock.setName("1_"+locName);
-                }else{
-                    chainBlock.setName("0_"+locName);
+                if (secret) {
+                    chainBlock.setName("1_" + locName);
+                } else {
+                    chainBlock.setName("0_" + locName);
                 }
                 chainBlock.update();
                 p.sendMessage("Warp Point successfully created.");
-            }else{
+            } else {
                 p.sendMessage("Please provide arguments. /createwarp <name> <range> <secret>");
             }
 
@@ -75,7 +75,7 @@ public class CreateWarpCommand implements TabExecutor{
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String s, String[] args) {
 
-        if(args.length == 3){
+        if (args.length == 3) {
             List<String> options = new ArrayList<>();
             options.add("true");
             options.add("false");

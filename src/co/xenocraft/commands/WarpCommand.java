@@ -23,43 +23,44 @@ public class WarpCommand implements TabExecutor {
     //long = the epoch time of when they run the command
     private final HashMap<UUID, Long> cooldown;
 
-    public WarpCommand(){
+    public WarpCommand() {
         this.cooldown = new HashMap<>();
     }
+
     @Override
     public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
         boolean result = true;
-        if (sender instanceof Player){
+        if (sender instanceof Player) {
             Player p = (Player) sender;
 
-            if (!this.cooldown.containsKey(p.getUniqueId())){
+            if (!this.cooldown.containsKey(p.getUniqueId())) {
                 this.cooldown.put(p.getUniqueId(), System.currentTimeMillis());
 
                 result = warpMenu(sender, command, s, args);
-            }else{
+            } else {
                 //Difference in milliseconds
                 long timeElapsed = System.currentTimeMillis() - cooldown.get(p.getUniqueId());
 
                 //Convert to seconds
-                int seconds = (int)((timeElapsed / 1000) % 60);
-                if (seconds >= 10){
+                int seconds = (int) ((timeElapsed / 1000) % 60);
+                if (seconds >= 10) {
                     this.cooldown.put(p.getUniqueId(), System.currentTimeMillis());
                     result = warpMenu(sender, command, s, args);
-                }else{
-                    p.sendMessage(ChatColor.YELLOW +  "Please wait " + (10 - seconds) + " seconds before trying to warp again.");
+                } else {
+                    p.sendMessage(ChatColor.YELLOW + "Please wait " + (10 - seconds) + " seconds before trying to warp again.");
                 }
             }
         }
         return result;
     }
 
-    private boolean warpMenu(CommandSender sender, Command command, String s, String[] args){
+    private boolean warpMenu(CommandSender sender, Command command, String s, String[] args) {
         Player p = (Player) sender;
         p.sendMessage("Opening Warp Menu...");
 
         //TODO Finish fill out warp gui
 
-        Inventory gui = Bukkit.createInventory(p, (4*9), ChatColor.AQUA + "Warp Menu");
+        Inventory gui = Bukkit.createInventory(p, (4 * 9), ChatColor.AQUA + "Warp Menu");
         ItemStack infill = new ItemStack(Material.BLACK_STAINED_GLASS_PANE);
         ItemStack colony9 = new ItemStack(Material.SANDSTONE);
         ItemStack tephraCave = new ItemStack(Material.COBBLESTONE);

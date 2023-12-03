@@ -15,7 +15,7 @@ import java.util.List;
 public class DiscoverWarpCommand implements TabExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
-        if (sender instanceof BlockCommandSender){
+        if (sender instanceof BlockCommandSender) {
             BlockCommandSender block = (BlockCommandSender) sender;
             System.out.println(block.getName());
 
@@ -41,11 +41,11 @@ public class DiscoverWarpCommand implements TabExecutor {
                     p.sendMessage("You have discovered " + block.getName());
                 }
             }
-        }else if (sender instanceof Player){
+        } else if (sender instanceof Player) {
             Player p = (Player) sender;
             p.sendMessage("This is a command block command for now.");
-        }else if (sender instanceof ConsoleCommandSender){
-            System.out.println("Test");
+        } else if (sender instanceof ConsoleCommandSender) {
+            System.out.println("This is a command block command for now.");
         }
         return false;
     }

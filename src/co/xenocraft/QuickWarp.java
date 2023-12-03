@@ -1,9 +1,6 @@
 package co.xenocraft;
 
-import co.xenocraft.commands.CreateWarpCommand;
-import co.xenocraft.commands.DiscoverWarpCommand;
-import co.xenocraft.commands.GodCommand;
-import co.xenocraft.commands.WarpCommand;
+import co.xenocraft.commands.*;
 import co.xenocraft.events.ClickEvent;
 import co.xenocraft.listeners.PlayerJoinLeaveListener;
 import org.bukkit.event.Listener;
@@ -22,5 +19,6 @@ public class QuickWarp extends JavaPlugin implements Listener {
         getCommand("createWarp").setExecutor(new CreateWarpCommand());
         getCommand("warp").setExecutor(new WarpCommand());
         getCommand("discoverWarp").setExecutor(new DiscoverWarpCommand());
+        getCommand("createWorldName").setExecutor(new CreateWorldNameCommand());
     }
 }
