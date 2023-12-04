@@ -25,7 +25,7 @@ public class DiscoverWarpCommand implements TabExecutor {
             int blockY = blockLoc.getBlockY();
             int blockZ = blockLoc.getBlockZ();
 
-            //Gets the nearby entites in bbox
+            //Gets the nearby entities in bbox
             int range = 5;
             BoundingBox bbox = new BoundingBox(blockX - range, blockY - 1, blockZ - range, blockX + range, blockY + 4, blockZ + range);
             Collection<Entity> players = Bukkit.getWorld(blockLoc.getWorld().getUID()).getNearbyEntities(bbox);

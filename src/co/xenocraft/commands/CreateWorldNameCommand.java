@@ -46,7 +46,7 @@ public class CreateWorldNameCommand implements TabExecutor {
 
     public HashMap<UUID, String> readUUIDData() {
         HashMap<UUID, String> UUIDData = new HashMap<>();
-        String dataDir = fileDir + "\\UUID.txt";
+        String dataDir = fileDir + "\\UUID.yml";
         BufferedReader br = null;
         try {
             File file = new File(dataDir);
@@ -77,7 +77,7 @@ public class CreateWorldNameCommand implements TabExecutor {
 
     public void writeUUIDData(HashMap data) {
         HashMap<UUID, String> UUIDData = data;
-        File file = new File(fileDir + "\\UUID.txt");
+        File file = new File(fileDir + "\\UUID.yml");
         BufferedWriter bw = null;
         try {
             bw = new BufferedWriter(new FileWriter(file));
@@ -102,6 +102,13 @@ public class CreateWorldNameCommand implements TabExecutor {
         HashMap<String, Location> warpData = new HashMap<>();
 
         return worldData;
+    }
+
+    public void writeWorldData(HashMap data, UUID id) {
+        HashMap<UUID, HashMap> worldData = data;
+        HashMap<String, Location> warpData = worldData.get(id);
+        File file = new File(fileDir + "\\warp.yml");
+
     }
 }
 
