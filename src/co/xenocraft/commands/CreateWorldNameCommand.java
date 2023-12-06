@@ -108,7 +108,23 @@ public class CreateWorldNameCommand implements TabExecutor {
         HashMap<UUID, HashMap> worldData = data;
         HashMap<String, Location> warpData = worldData.get(id);
         File file = new File(fileDir + "\\warp.yml");
-
+        BufferedWriter bw  = null;
+        try{
+            bw = new BufferedWriter(new FileWriter(file));
+            for(Map.Entry<UUID, HashMap> entry : worldData.entrySet()){
+                bw.write(entry.getKey() + ":" + entry.getValue());
+                bw.newLine();
+            }
+            bw.flush();
+        }catch (IOException e){
+            e.printStackTrace();
+        }finally {
+            try{
+                bw.close();
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }
     }
 }
 

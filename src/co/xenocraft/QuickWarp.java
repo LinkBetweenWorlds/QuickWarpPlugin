@@ -11,25 +11,26 @@ import java.io.*;
 public class QuickWarp extends JavaPlugin implements Listener {
     @Override
     public void onEnable() {
+        //Checks for necessary files and directories.
         String currentDir = System.getProperty("user.dir") + "\\plugins\\QuickWarp";
         try {
             File file = new File(currentDir + "\\warp.yml");
             if (!file.exists()) {
                 file.mkdirs();
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        try {
-            File file = new File(currentDir + "\\UUID.yml");
-            if (!file.exists()) {
+            file = new File(currentDir + "\\UUID.yml");
+            if(!file.exists()){
+                file.mkdirs();
+            }
+            file = new File(currentDir + "\\playerData");
+            if(!file.exists()){
                 file.mkdirs();
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        System.out.println("My QuickWarp plugin works somehow?");
 
+        //Sets up commands and listeners
         getServer().getPluginManager().registerEvents(this, this);
         getServer().getPluginManager().registerEvents(new PlayerJoinLeaveListener(), this);
         getServer().getPluginManager().registerEvents(new ClickEvent(), this);
@@ -39,5 +40,8 @@ public class QuickWarp extends JavaPlugin implements Listener {
         getCommand("warp").setExecutor(new WarpCommand());
         getCommand("discoverWarp").setExecutor(new DiscoverWarpCommand());
         getCommand("createWorldName").setExecutor(new CreateWorldNameCommand());
+
+        //Means the plugin work somehow.
+        System.out.println("My QuickWarp plugin works somehow?");
     }
 }
