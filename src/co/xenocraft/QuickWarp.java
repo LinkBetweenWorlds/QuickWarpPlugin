@@ -14,18 +14,11 @@ public class QuickWarp extends JavaPlugin implements Listener {
         //Checks for necessary files and directories.
         String currentDir = System.getProperty("user.dir") + "\\plugins\\QuickWarp";
         try {
-            File file = new File(currentDir + "\\warp.yml");
-            if (!file.exists()) {
-                file.mkdirs();
-            }
-            file = new File(currentDir + "\\UUID.yml");
+            File file = new File(currentDir);
             if(!file.exists()){
                 file.mkdirs();
             }
-            file = new File(currentDir + "\\playerData");
-            if(!file.exists()){
-                file.mkdirs();
-            }
+
         } catch (Exception e) {
             e.printStackTrace();
         }
