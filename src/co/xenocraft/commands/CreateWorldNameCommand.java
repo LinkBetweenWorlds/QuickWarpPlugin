@@ -59,7 +59,6 @@ public class CreateWorldNameCommand implements TabExecutor {
                         String[] nameParts = worldDirList[i].split("=");
                         String UUIDParts = nameParts[1].trim();
                         if (UUIDParts.equals(UUIDString)) {
-
                             p.sendMessage(ChatColor.RED + "The world already has a name.");
                             return false;
                         } else {

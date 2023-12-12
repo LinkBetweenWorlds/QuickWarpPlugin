@@ -1,5 +1,6 @@
 package co.xenocraft.commands;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.CommandBlock;
@@ -9,6 +10,7 @@ import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -67,7 +69,7 @@ public class CreateWarpCommand implements TabExecutor {
                     }
                     chainBlock.update();
 
-                    addWarpPoint(locName, playerLoc);
+                    addWarpPoint(p.getWorld().getUID(), p, locName, playerLoc);
                     p.sendMessage("Warp Point successfully created.");
                 } else {
                     p.sendMessage("Please use /createWorldName command to give the world a name.");
@@ -120,7 +122,51 @@ public class CreateWarpCommand implements TabExecutor {
         return false;
     }
 
-    public void addWarpPoint(String warpName, Location loc){
+    public void addWarpPoint(UUID worldUUID, Player p, String warpName, Location loc) {
         //TODO Add the warp point to the world folder.
+        String UUIDString = worldUUID.toString();
+        String fileDir = System.getProperty("user.dir") + "\\plugins\\QuickWarp\\worldData\\";
+        try {
+            File dirList = new File(fileDir);
+            String[] worldDirList = dirList.list();
+            if (worldDirList.length != 0) {
+                for (String s : worldDirList) {
+                    String[] nameParts = s.split("=");
+                    String UUIDParts = nameParts[1].trim();
+                    if (UUIDParts.equals(UUIDString)) {
+                        File warpDir = new File(s);
+                        String[] warpDirList = warpDir.list();
+                        if (warpDirList.length != 0) {
+                            for (String d : warpDirList) {
+                                if (d.equals(warpName)) {
+                                    p.sendMessage(ChatColor.RED + "This warp point already exists.");
+                                    break;
+                                } else {
+                                    try {
+                                        FileWriter warpFile = new FileWriter(d + warpName + "yml");
+                                        int blockX = loc.getBlockX();
+                                        int blockY = loc.getBlockY();
+                                        int blockZ = loc.getBlockZ();
+                                        float pitch = p.getLocation().getPitch();
+                                        double yaw = p.getLocation().getY();
+                                        String dataString = blockX + "," + blockY + "," + blockZ + "," + pitch + "," + yaw;
+                                        warpFile.write(dataString);
+                                        warpFile.close();
+                                        break;
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            } else {
+                p.sendMessage(ChatColor.RED + "Please give this world a name. /createWorldName");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
