@@ -31,6 +31,8 @@ public class DiscoverWarpCommand implements TabExecutor {
             Collection<Entity> players = Bukkit.getWorld(blockLoc.getWorld().getUID()).getNearbyEntities(bbox);
             ArrayList<Entity> nearestPLayers = new ArrayList<>((players));
 
+            //TODO Change so it updates player file with discovered warp points.
+
             //Find the nearest Player in bbox
             for (Entity nearestPLayer : nearestPLayers) {
                 if (nearestPLayer.getType().equals(EntityType.PLAYER)) {

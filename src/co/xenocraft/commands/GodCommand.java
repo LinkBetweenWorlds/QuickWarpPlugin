@@ -10,13 +10,12 @@ import org.bukkit.entity.Player;
 public class GodCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
-        if (sender instanceof Player){
+        if (sender instanceof Player) {
             Player p = (Player) sender;
-            if (p.isInvulnerable()){
+            if (p.isInvulnerable()) {
                 p.setInvulnerable(false);
                 p.sendMessage(ChatColor.RED + "You have fallen from Grace.");
-            }
-            else{
+            } else {
                 p.setInvulnerable(true);
                 p.setGameMode(GameMode.CREATIVE);
                 for (int i = 0; i < 10; i++) p.getWorld().strikeLightningEffect(p.getLocation());

@@ -8,7 +8,8 @@ public class PlayerJoinLeaveListener implements Listener {
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
+        //TODO Make it so when a player join it creates/checks if they have a data folder.
         System.out.println("A player has joined the server.");
-        event.setJoinMessage("Welcome " + event.getPlayer().getDisplayName() + " to" + "\u00A74 Xenocraft!");
+        event.setJoinMessage("Welcome " + event.getPlayer().getDisplayName() + " to §4Xenocraft!");
     }
 }

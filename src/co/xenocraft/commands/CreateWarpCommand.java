@@ -8,8 +8,10 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class CreateWarpCommand implements TabExecutor {
     @Override
@@ -20,50 +22,57 @@ public class CreateWarpCommand implements TabExecutor {
             if (args.length == 0) {
                 p.sendMessage("Please provide arguments. /createwarp <name> <range> <secret>");
             } else if (args.length == 3) {
-                //Pulls name and discover zone from args
-                String locName = args[0];
-                String rangeString = args[1];
-                int range = Integer.parseInt(rangeString);
-                boolean secret = Boolean.parseBoolean(args[1].toLowerCase());
-                p.sendMessage("Location Name: " + locName);
-                p.sendMessage("Secret: " + secret);
+                if (checkWorldFolder(p.getWorld().getUID())) {
+                    //Pulls name and discover zone from args
+                    String locName = args[0];
+                    String rangeString = args[1];
+                    int range = Integer.parseInt(rangeString);
+                    boolean secret = Boolean.parseBoolean(args[1].toLowerCase());
+                    p.sendMessage("Location Name: " + locName);
+                    p.sendMessage("Secret: " + secret);
 
-                //Gets the current loc of sender
-                Location playerLoc = p.getLocation();
-                int blockX = playerLoc.getBlockX();
-                int blockY = playerLoc.getBlockY();
-                int blockZ = playerLoc.getBlockZ();
-                Location glassLoc = new Location(p.getWorld(), blockX, blockY - 1, blockZ);
-                glassLoc.getBlock().setType(Material.GLASS);
+                    //Gets the current loc of sender
+                    Location playerLoc = p.getLocation();
+                    int blockX = playerLoc.getBlockX();
+                    int blockY = playerLoc.getBlockY();
+                    int blockZ = playerLoc.getBlockZ();
+                    Location glassLoc = new Location(p.getWorld(), blockX, blockY - 1, blockZ);
+                    glassLoc.getBlock().setType(Material.GLASS);
 
-                //Works out the placement of the blocks
-                Location repeatBlockLoc = new Location(p.getWorld(), blockX, blockY - 2, blockZ);
-                Location chainBlockLoc = new Location(p.getWorld(), blockX, blockY - 2, blockZ - 1);
-                Location redstoneRepeatLoc = new Location(p.getWorld(), blockX, blockY - 3, blockZ);
+                    //Works out the placement of the blocks
+                    Location repeatBlockLoc = new Location(p.getWorld(), blockX, blockY - 2, blockZ);
+                    Location chainBlockLoc = new Location(p.getWorld(), blockX, blockY - 2, blockZ - 1);
+                    Location redstoneRepeatLoc = new Location(p.getWorld(), blockX, blockY - 3, blockZ);
 
-                //Generates the command of command block
-                String repeatCommand = "execute if entity @a[x=" + (blockX - (range / 2)) + ", y=" + blockY + ", z=" + (blockZ - (range / 2)) +
-                        ", dx=" + range + ", dy=3, dz=" + range + "]";
-                String chainCommand = "discoverwarp @e[limit=1, sort=nearest]";
-                p.sendMessage("Placing a Warp point at: X: " + repeatBlockLoc.getBlockX() + ", Y: " + repeatBlockLoc.getBlockY() + ", Z: " + repeatBlockLoc.getBlockZ());
+                    //Generates the command of command block
+                    String repeatCommand = "execute if entity @a[x=" + (blockX - (range / 2)) + ", y=" + blockY + ", z=" + (blockZ - (range / 2)) +
+                            ", dx=" + range + ", dy=3, dz=" + range + "]";
+                    String chainCommand = "discoverwarp @e[limit=1, sort=nearest]";
+                    p.sendMessage("Placing a Warp point at: X: " + repeatBlockLoc.getBlockX() + ", Y: " + repeatBlockLoc.getBlockY() + ", Z: " + repeatBlockLoc.getBlockZ());
 
-                //Sets up the command block with name, command, and a redstone block
-                repeatBlockLoc.getBlock().setType(Material.REPEATING_COMMAND_BLOCK);
-                CommandBlock repeatBlock = (CommandBlock) repeatBlockLoc.getBlock().getState();
-                repeatBlock.setCommand(repeatCommand);
-                repeatBlock.update();
-                redstoneRepeatLoc.getBlock().setType(Material.REDSTONE_BLOCK);
+                    //Sets up the command block with name, command, and a redstone block
+                    repeatBlockLoc.getBlock().setType(Material.REPEATING_COMMAND_BLOCK);
+                    CommandBlock repeatBlock = (CommandBlock) repeatBlockLoc.getBlock().getState();
+                    repeatBlock.setCommand(repeatCommand);
+                    repeatBlock.update();
+                    redstoneRepeatLoc.getBlock().setType(Material.REDSTONE_BLOCK);
 
-                chainBlockLoc.getBlock().setType(Material.CHAIN_COMMAND_BLOCK);
-                CommandBlock chainBlock = (CommandBlock) chainBlockLoc.getBlock().getState();
-                chainBlock.setCommand(chainCommand);
-                if (secret) {
-                    chainBlock.setName("1_" + locName);
+                    chainBlockLoc.getBlock().setType(Material.CHAIN_COMMAND_BLOCK);
+                    CommandBlock chainBlock = (CommandBlock) chainBlockLoc.getBlock().getState();
+                    chainBlock.setCommand(chainCommand);
+                    if (secret) {
+                        chainBlock.setName("1_" + locName);
+                    } else {
+                        chainBlock.setName("0_" + locName);
+                    }
+                    chainBlock.update();
+
+                    addWarpPoint(locName, playerLoc);
+                    p.sendMessage("Warp Point successfully created.");
                 } else {
-                    chainBlock.setName("0_" + locName);
+                    p.sendMessage("Please use /createWorldName command to give the world a name.");
                 }
-                chainBlock.update();
-                p.sendMessage("Warp Point successfully created.");
+
             } else {
                 p.sendMessage("Please provide arguments. /createwarp <name> <range> <secret>");
             }
@@ -83,5 +92,35 @@ public class CreateWarpCommand implements TabExecutor {
             return options;
         }
         return null;
+    }
+
+    public boolean checkWorldFolder(UUID worldUUID) {
+        String UUIDString = worldUUID.toString();
+        String fileDir = System.getProperty("user.dir") + "\\plugins\\QuickWarp\\worldData\\";
+        try {
+            File dirList = new File(fileDir);
+            String[] worldDirList = dirList.list();
+            if (worldDirList.length != 0) {
+                for (String s : worldDirList) {
+                    String[] nameParts = s.split("=");
+                    String UUIDParts = nameParts[1].trim();
+                    if (UUIDParts.equals(UUIDString)) {
+                        return true;
+                    } else {
+                        return false;
+                    }
+                }
+            } else {
+                return false;
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public void addWarpPoint(String warpName, Location loc){
+        //TODO Add the warp point to the world folder.
     }
 }

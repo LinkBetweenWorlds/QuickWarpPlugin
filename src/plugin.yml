@@ -14,11 +14,13 @@ commands:
   createWarp:
     description: Creates a new Warp point under feet. Creates a new command block below the surface. Use range for discovery range. Use secret for different text style.
     usage: /<command> <name> <range> <secret> (Use underscore for spaces.)
-    permission: quickwarp.createwarp
+    permission: quickwarp.createWarp
     permission-message: You don't have permission to do that.
   createWorldName:
     description: Creates the World for the warp points. This needs to be done before any warp points can be placed.
     usage: /<command> <name>
+    permission: quickwarp.createWorldName
+    permission-message: You don't have permission to do that.
   discoverWarp:
     description: Discover warp points for a player
     usage: /<command>

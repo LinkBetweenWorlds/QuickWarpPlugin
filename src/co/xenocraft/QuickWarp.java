@@ -6,7 +6,7 @@ import co.xenocraft.listeners.PlayerJoinLeaveListener;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.io.*;
+import java.io.File;
 
 public class QuickWarp extends JavaPlugin implements Listener {
     @Override
@@ -15,7 +15,7 @@ public class QuickWarp extends JavaPlugin implements Listener {
         String currentDir = System.getProperty("user.dir") + "\\plugins\\QuickWarp";
         try {
             File file = new File(currentDir);
-            if(!file.exists()){
+            if (!file.exists()) {
                 file.mkdirs();
             }
 

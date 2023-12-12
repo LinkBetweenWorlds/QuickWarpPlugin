@@ -1,22 +1,20 @@
 package co.xenocraft.commands;
 
 import org.bukkit.ChatColor;
-import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 
-import java.io.*;
-import java.util.HashMap;
+import java.io.File;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 public class CreateWorldNameCommand implements TabExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
-        if (sender instanceof Player p) {
+        if (sender instanceof Player) {
+            Player p = (Player) sender;
             if (args.length >= 1) {
                 UUID worldUUID = p.getWorld().getUID();
                 String worldName = args[0];
@@ -27,14 +25,7 @@ public class CreateWorldNameCommand implements TabExecutor {
                     worldName += args[i];
                 }
 
-                //Checks if the world already has a world given to it.
-                if(!checkWorldExists(worldUUID, worldName)){
-                    p.sendMessage(ChatColor.RED + "This world already has a name or there was at error in the code.");
-                }else{
-                    p.sendMessage(ChatColor.GREEN + worldName + " was created.");
-                }
-
-
+                checkWorldExists(worldUUID, worldName, p);
             } else {
                 p.sendMessage(ChatColor.YELLOW + "Please input the name name of this world.");
                 p.sendMessage("/createWorldName <name>");
@@ -48,34 +39,61 @@ public class CreateWorldNameCommand implements TabExecutor {
         return null;
     }
 
-    String currentDir = System.getProperty("user.dir");
-    String fileDir = currentDir + "\\plugins\\QuickWarp";
 
-    public boolean checkWorldExists(UUID worldUUID, String worldName){
-        //Creates the file directory of the folder.
+    public boolean checkWorldExists(UUID worldUUID, String worldName, Player p) {
+        //Creates the file directory path of the folder.
         String UUIDString = worldUUID.toString();
-        String folderName = worldName + ":" + UUIDString;
+        String folderName = worldName + "=" + UUIDString;
+        String fileDir = System.getProperty("user.dir") + "\\plugins\\QuickWarp\\worldData\\";
         String worldDir = fileDir + folderName;
-        try{
+        p.sendMessage(ChatColor.GREEN + "Trying to create world...");
+        try {
             //Checks the world UUID to check if world exists.
-            //TODO Rewrite using list() to check faster.
-            File file = new File(worldDir);
-            String fileName = file.getName();
-            String[] nameParts = fileName.split(":");
-            String UUIDParts = nameParts[1].trim();
-            if (UUIDParts.equals(UUIDString)) {
-                if(!file.exists()){
-                    return file.mkdirs();
-                }else{
-                    return false;
+            File dirList = new File(fileDir);
+            String[] worldDirList = dirList.list();
+            //Checks if world exsists within the list that was returned.
+            if (worldDirList != null) {
+                if (worldDirList.length != 0) {
+                    for (int i = 0; i < worldDirList.length; i++) {
+                        //Gets and checks the UUID against all world folders.
+                        String[] nameParts = worldDirList[i].split("=");
+                        String UUIDParts = nameParts[1].trim();
+                        if (UUIDParts.equals(UUIDString)) {
+
+                            p.sendMessage(ChatColor.RED + "The world already has a name.");
+                            return false;
+                        } else {
+                            File dir = new File(worldDir);
+                            if (!dir.exists()) {
+                                dir.mkdirs();
+                                p.sendMessage(ChatColor.GREEN + worldName + " has been created.");
+                                return true;
+                            }
+                        }
+                    }
+                } else {
+                    File dir = new File(worldDir);
+                    if (!dir.exists()) {
+
+                        dir.mkdirs();
+                        p.sendMessage(ChatColor.GREEN + worldName + " has been created.");
+                        return true;
+                    }
                 }
-            }else{
-                return false;
+            } else {
+                File dir = new File(worldDir);
+                if (!dir.exists()) {
+                    dir.mkdirs();
+                    p.sendMessage(ChatColor.GREEN + worldName + " has been created.");
+                    return true;
+                }
             }
-        }catch (Exception e){
+
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return false;
     }
+
 }
 
