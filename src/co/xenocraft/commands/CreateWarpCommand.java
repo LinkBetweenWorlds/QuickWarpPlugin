@@ -127,6 +127,7 @@ public class CreateWarpCommand implements TabExecutor {
         String UUIDString = worldUUID.toString();
         String fileDir = System.getProperty("user.dir") + "\\plugins\\QuickWarp\\worldData\\";
         try {
+            System.out.println("Checking for world.");
             File dirList = new File(fileDir);
             String[] worldDirList = dirList.list();
             if (worldDirList.length != 0) {
@@ -134,22 +135,26 @@ public class CreateWarpCommand implements TabExecutor {
                     String[] nameParts = s.split("=");
                     String UUIDParts = nameParts[1].trim();
                     if (UUIDParts.equals(UUIDString)) {
-                        File warpDir = new File(s);
+                        System.out.println("Found World.");
+                        System.out.println(s);
+                        File warpDir = new File(fileDir + s);
                         String[] warpDirList = warpDir.list();
+                        int blockX = loc.getBlockX();
+                        int blockY = loc.getBlockY();
+                        int blockZ = loc.getBlockZ();
+                        //TODO Round the pitch and yaw into nicer numbers.
+                        float pitch = p.getLocation().getPitch();
+                        double yaw = p.getLocation().getY();
+                        FileWriter warpFile = new FileWriter(fileDir + s + "\\" + warpName + ".yml");
+                        String dataString = blockX + "," + blockY + "," + blockZ + "," + pitch + "," + yaw;
                         if (warpDirList.length != 0) {
                             for (String d : warpDirList) {
-                                if (d.equals(warpName)) {
+                                if (d.contains(warpName)) {
                                     p.sendMessage(ChatColor.RED + "This warp point already exists.");
                                     break;
                                 } else {
+                                    System.out.println("Creating warp point");
                                     try {
-                                        FileWriter warpFile = new FileWriter(d + warpName + "yml");
-                                        int blockX = loc.getBlockX();
-                                        int blockY = loc.getBlockY();
-                                        int blockZ = loc.getBlockZ();
-                                        float pitch = p.getLocation().getPitch();
-                                        double yaw = p.getLocation().getY();
-                                        String dataString = blockX + "," + blockY + "," + blockZ + "," + pitch + "," + yaw;
                                         warpFile.write(dataString);
                                         warpFile.close();
                                         break;
@@ -157,6 +162,15 @@ public class CreateWarpCommand implements TabExecutor {
                                         e.printStackTrace();
                                     }
                                 }
+                            }
+                        } else {
+                            System.out.println("Creating warp point");
+                            try {
+                                warpFile.write(dataString);
+                                warpFile.close();
+                                break;
+                            } catch (Exception e) {
+                                e.printStackTrace();
                             }
                         }
                     }

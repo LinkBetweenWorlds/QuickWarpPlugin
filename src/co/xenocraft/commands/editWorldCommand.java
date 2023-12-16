@@ -16,8 +16,7 @@ public class editWorldCommand implements TabExecutor {
     // /<command> <delete>
     @Override
     public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
-        if (sender instanceof Player) {
-            Player p = (Player) sender;
+        if (sender instanceof Player p) {
             if (args[0].equals("edit")) {
                 UUID worldUUID = p.getWorld().getUID();
                 if (checkWorldFolder(worldUUID)) {

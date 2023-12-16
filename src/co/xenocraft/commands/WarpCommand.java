@@ -29,17 +29,13 @@ public class WarpCommand implements TabExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
         boolean result = true;
-        if (sender instanceof Player) {
-            Player p = (Player) sender;
-
+        if (sender instanceof Player p) {
             if (!this.cooldown.containsKey(p.getUniqueId())) {
                 this.cooldown.put(p.getUniqueId(), System.currentTimeMillis());
-
                 result = warpMenu(sender, command, s, args);
             } else {
                 //Difference in milliseconds
                 long timeElapsed = System.currentTimeMillis() - cooldown.get(p.getUniqueId());
-
                 //Convert to seconds
                 int seconds = (int) ((timeElapsed / 1000) % 60);
                 if (seconds >= 10) {
@@ -59,7 +55,7 @@ public class WarpCommand implements TabExecutor {
 
         //TODO Finish fill out warp gui
 
-        Inventory gui = Bukkit.createInventory(p, (4 * 9), ChatColor.AQUA + "Warp Menu");
+        Inventory gui = Bukkit.createInventory(p, (6 * 9), ChatColor.AQUA + "Warp Menu");
         ItemStack infill = new ItemStack(Material.BLACK_STAINED_GLASS_PANE);
         ItemStack colony9 = new ItemStack(Material.SANDSTONE);
         ItemStack tephraCave = new ItemStack(Material.COBBLESTONE);
@@ -73,7 +69,7 @@ public class WarpCommand implements TabExecutor {
         colony9Meta.setDisplayName(ChatColor.YELLOW + "Colony 9");
         ArrayList<String> colony9Lore = new ArrayList<>();
         colony9Lore.add(ChatColor.GOLD + "The start of your adventure.");
-        colony9Lore.add(ChatColor.GOLD + "Shops, Gemshop, quests");
+        colony9Lore.add(ChatColor.GOLD + "Shops, Gemshop");
         colony9Meta.setLore(colony9Lore);
         colony9.setItemMeta(colony9Meta);
 

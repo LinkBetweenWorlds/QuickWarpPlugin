@@ -8,16 +8,16 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.util.BoundingBox;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.io.File;
+import java.io.FileReader;
+import java.util.*;
 
 public class DiscoverWarpCommand implements TabExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
         if (sender instanceof BlockCommandSender) {
             BlockCommandSender block = (BlockCommandSender) sender;
-            System.out.println(block.getName());
+            //System.out.println(block.getName());
 
             //Gets the command block location
             Location blockLoc = block.getBlock().getLocation();
@@ -36,11 +36,27 @@ public class DiscoverWarpCommand implements TabExecutor {
             //Find the nearest Player in bbox
             for (Entity nearestPLayer : nearestPLayers) {
                 if (nearestPLayer.getType().equals(EntityType.PLAYER)) {
-                    System.out.println(nearestPLayer);
                     Player p = (Player) nearestPLayer;
-                    System.out.println(p.getDisplayName());
-                    System.out.println(p.getLocation());
-                    p.sendMessage("You have discovered " + block.getName());
+                    UUID playerID = p.getUniqueId();
+                    try {
+                        String fileDir = System.getProperty("user.dir") + "\\plugins\\QuickWarp\\playerData\\" + playerID.toString() + ".yml";
+                        File file = new File(fileDir);
+                        Scanner fileReader = new Scanner(file).useDelimiter(",");
+                        String data = null;
+                        List<String> warpList = new ArrayList<>();
+                        while (fileReader.hasNext()) {
+                            data = fileReader.next();
+                            warpList.add(data);
+                        }
+                        fileReader.close();
+                        String[] warps = warpList.toArray(new String[0]);
+                        for (String w : warps){
+                            System.out.println(w);
+                        }
+                        //TODO Check the discovered warp points.
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
                 }
             }
         } else if (sender instanceof Player) {

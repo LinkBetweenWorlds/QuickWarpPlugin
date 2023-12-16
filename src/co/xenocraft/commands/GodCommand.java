@@ -10,8 +10,7 @@ import org.bukkit.entity.Player;
 public class GodCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
-        if (sender instanceof Player) {
-            Player p = (Player) sender;
+        if (sender instanceof Player p) {
             if (p.isInvulnerable()) {
                 p.setInvulnerable(false);
                 p.sendMessage(ChatColor.RED + "You have fallen from Grace.");
