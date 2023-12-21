@@ -26,6 +26,8 @@ public class DiscoverWarpCommand implements TabExecutor {
             int blockZ = blockLoc.getBlockZ();
 
             //Gets the nearby entities in bbox
+            //TODO Check if the args from command block get passed thru.
+            // If so change createWarp command to pass range thru and use it in bbox.
             int range = 5;
             BoundingBox bbox = new BoundingBox(blockX - range, blockY - 1, blockZ - range, blockX + range, blockY + 4, blockZ + range);
             Collection<Entity> players = Bukkit.getWorld(blockLoc.getWorld().getUID()).getNearbyEntities(bbox);
@@ -39,6 +41,7 @@ public class DiscoverWarpCommand implements TabExecutor {
                     Player p = (Player) nearestPLayer;
                     UUID playerID = p.getUniqueId();
                     try {
+                        //Gets the player file to check if they have already discovered this warp.
                         String fileDir = System.getProperty("user.dir") + "\\plugins\\QuickWarp\\playerData\\" + playerID.toString() + ".yml";
                         File file = new File(fileDir);
                         Scanner fileReader = new Scanner(file).useDelimiter(",");
@@ -53,7 +56,7 @@ public class DiscoverWarpCommand implements TabExecutor {
                         for (String w : warps){
                             System.out.println(w);
                         }
-                        //TODO Check the discovered warp points.
+                        //TODO After reading the file, Check the discovered warp points.
                     }catch (Exception e){
                         e.printStackTrace();
                     }

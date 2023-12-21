@@ -1,27 +1,45 @@
 package co.xenocraft.commands;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabExecutor;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
-public class GodCommand implements CommandExecutor {
+import java.util.Collection;
+import java.util.List;
+
+public class GodCommand implements TabExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
         if (sender instanceof Player p) {
-            if (p.isInvulnerable()) {
-                p.setInvulnerable(false);
-                p.sendMessage(ChatColor.RED + "You have fallen from Grace.");
-            } else {
-                p.setInvulnerable(true);
-                p.setGameMode(GameMode.CREATIVE);
-                for (int i = 0; i < 10; i++) p.getWorld().strikeLightningEffect(p.getLocation());
-                p.sendMessage(ChatColor.GREEN + "You are now God.");
+            if (args.length >= 1){
+                Player t = Bukkit.getPlayerExact(args[0]);
             }
+            else{
+                if (p.isInvulnerable()) {
+                    p.setInvulnerable(false);
+                    p.setGameMode(GameMode.ADVENTURE);
+                    p.sendMessage(ChatColor.RED + "You have fallen from the light.");
+                } else {
+                    p.setInvulnerable(true);
+                    p.setGameMode(GameMode.CREATIVE);
+                    for (int i = 0; i < 10; i++) p.getWorld().strikeLightningEffect(p.getLocation());
+                    p.sendMessage(ChatColor.GOLD + "You now have the power of a God.");
+                    p.sendMessage(ChatColor.GOLD + "How does it feel?");
+                }
+            }
+
         }
         return true;
     }
 
+    @Override
+    public List<String> onTabComplete(CommandSender sender, Command command, String s, String[] args) {
+        //TODO Allows you to select any player to give the power of a God.
+        return null;
+    }
 }

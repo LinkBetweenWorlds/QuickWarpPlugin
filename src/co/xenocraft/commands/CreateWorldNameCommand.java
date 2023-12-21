@@ -73,7 +73,6 @@ public class CreateWorldNameCommand implements TabExecutor {
                 } else {
                     File dir = new File(worldDir);
                     if (!dir.exists()) {
-
                         dir.mkdirs();
                         p.sendMessage(ChatColor.GREEN + worldName + " has been created.");
                         return true;
@@ -92,6 +91,13 @@ public class CreateWorldNameCommand implements TabExecutor {
             e.printStackTrace();
         }
         return false;
+    }
+
+    public void worldDataFile(String dir){
+        //TODO Add data file that contains the world's info.
+        // Like What block to displa.
+        // The world lore add the order it should appear in.
+        // Add another command that allows you to edit this data file.
     }
 
 }
