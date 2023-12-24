@@ -1,12 +1,14 @@
 package co.xenocraft.commands;
 
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.util.List;
 import java.util.UUID;
 
@@ -65,6 +67,7 @@ public class CreateWorldNameCommand implements TabExecutor {
                             File dir = new File(worldDir);
                             if (!dir.exists()) {
                                 dir.mkdirs();
+                                worldDataFile(worldDir);
                                 p.sendMessage(ChatColor.GREEN + worldName + " has been created.");
                                 return true;
                             }
@@ -74,6 +77,7 @@ public class CreateWorldNameCommand implements TabExecutor {
                     File dir = new File(worldDir);
                     if (!dir.exists()) {
                         dir.mkdirs();
+                        worldDataFile(worldDir);
                         p.sendMessage(ChatColor.GREEN + worldName + " has been created.");
                         return true;
                     }
@@ -82,6 +86,7 @@ public class CreateWorldNameCommand implements TabExecutor {
                 File dir = new File(worldDir);
                 if (!dir.exists()) {
                     dir.mkdirs();
+                    worldDataFile(worldDir);
                     p.sendMessage(ChatColor.GREEN + worldName + " has been created.");
                     return true;
                 }
@@ -95,9 +100,31 @@ public class CreateWorldNameCommand implements TabExecutor {
 
     public void worldDataFile(String dir){
         //TODO Add data file that contains the world's info.
-        // Like What block to displa.
-        // The world lore add the order it should appear in.
+        // Like What block to display.
+        // The world desc and the order it should appear in.
         // Add another command that allows you to edit this data file.
+        try{
+            Material worldBlock = Material.GRASS_BLOCK;
+            String worldDesc = "";
+            int worldOrder = 0;
+            try{
+                String worldDir = System.getProperty("user.dir") + "\\plugins\\QuickWarp\\worldData\\";
+                File[] dirList = new File(worldDir).listFiles();
+                if(dirList != null){
+                    worldOrder = dirList.length;
+                }
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+            FileWriter file = new FileWriter(dir + "worldData.dat");
+            String data = worldBlock.toString() + "," + worldDesc + "," + worldOrder;
+            file.write(data);
+            file.close();
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+
+
     }
 
 }

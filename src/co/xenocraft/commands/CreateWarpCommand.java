@@ -87,7 +87,6 @@ public class CreateWarpCommand implements TabExecutor {
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String s, String[] args) {
-
         if (args.length == 3) {
             List<String> options = new ArrayList<>();
             options.add("true");

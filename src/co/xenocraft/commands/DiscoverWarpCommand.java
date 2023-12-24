@@ -45,11 +45,9 @@ public class DiscoverWarpCommand implements TabExecutor {
                         String fileDir = System.getProperty("user.dir") + "\\plugins\\QuickWarp\\playerData\\" + playerID.toString() + ".yml";
                         File file = new File(fileDir);
                         Scanner fileReader = new Scanner(file).useDelimiter(",");
-                        String data = null;
                         List<String> warpList = new ArrayList<>();
                         while (fileReader.hasNext()) {
-                            data = fileReader.next();
-                            warpList.add(data);
+                            warpList.add(fileReader.next());
                         }
                         fileReader.close();
                         String[] warps = warpList.toArray(new String[0]);
