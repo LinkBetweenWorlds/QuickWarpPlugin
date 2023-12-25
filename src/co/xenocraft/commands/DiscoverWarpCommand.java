@@ -9,7 +9,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.BoundingBox;
 
 import java.io.File;
-import java.io.FileReader;
 import java.util.*;
 
 public class DiscoverWarpCommand implements TabExecutor {
@@ -51,11 +50,11 @@ public class DiscoverWarpCommand implements TabExecutor {
                         }
                         fileReader.close();
                         String[] warps = warpList.toArray(new String[0]);
-                        for (String w : warps){
+                        for (String w : warps) {
                             System.out.println(w);
                         }
                         //TODO After reading the file, Check the discovered warp points.
-                    }catch (Exception e){
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }

@@ -20,7 +20,7 @@ public class QuickWarp extends JavaPlugin implements Listener {
                 dataDir.mkdirs();
             }
             File playerDir = new File(currentDir + "\\playerData");
-            if(!playerDir.exists()){
+            if (!playerDir.exists()) {
                 playerDir.mkdirs();
             }
 
@@ -39,6 +39,9 @@ public class QuickWarp extends JavaPlugin implements Listener {
         //Creation
         getCommand("createWarp").setExecutor(new CreateWarpCommand());
         getCommand("createWorldName").setExecutor(new CreateWorldNameCommand());
+
+        //Editing
+        getCommand("editWorld").setExecutor(new EditWorldCommand());
 
         //Player
         getCommand("warp").setExecutor(new WarpCommand());

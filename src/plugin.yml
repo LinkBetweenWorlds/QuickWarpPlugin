@@ -21,6 +21,11 @@ commands:
     usage: /<command> <name>
     permission: quickwarp.createWorldName
     permission-message: You don't have permission to do that.
+  editWorld:
+    description: Edit the name, desc, order, and block of the current world.
+    usage: /<command> <name/edit/delete/desc/order/block>
+    permission: quickwarp.editWorld
+    permission-message: You don't have permission to do that.
   discoverWarp:
     description: Discover warp points for a player
     usage: /<command>
@@ -37,11 +42,15 @@ permissions:
     children:
       quickwarp.createWarp: true
       quickwarp.createWorldName: true
+      quickwarp.editWorld: true
   quickwarp.createWarp:
     description: Allows one to create warp point.
     default: op
   quickwarp.createWorldName:
     description: Allows one to create worlds to warp to.
+    default: op
+  quickwarp.editWorld:
+    description: Allows you to edit the worlds.
     default: op
   quickwarp.warp:
     description: Allows one to teleport through the dimensions.

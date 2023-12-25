@@ -9,6 +9,7 @@ import org.bukkit.entity.Player;
 
 import java.io.File;
 import java.io.FileWriter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -38,7 +39,8 @@ public class CreateWorldNameCommand implements TabExecutor {
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String s, String[] args) {
-        return null;
+        List<String> options = new ArrayList<>();
+        return options;
     }
 
 
@@ -98,29 +100,29 @@ public class CreateWorldNameCommand implements TabExecutor {
         return false;
     }
 
-    public void worldDataFile(String dir){
+    public void worldDataFile(String dir) {
         //TODO Add data file that contains the world's info.
         // Like What block to display.
         // The world desc and the order it should appear in.
         // Add another command that allows you to edit this data file.
-        try{
+        try {
             Material worldBlock = Material.GRASS_BLOCK;
             String worldDesc = "";
             int worldOrder = 0;
-            try{
+            try {
                 String worldDir = System.getProperty("user.dir") + "\\plugins\\QuickWarp\\worldData\\";
                 File[] dirList = new File(worldDir).listFiles();
-                if(dirList != null){
+                if (dirList != null) {
                     worldOrder = dirList.length;
                 }
-            }catch (Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
             }
-            FileWriter file = new FileWriter(dir + "worldData.dat");
+            FileWriter file = new FileWriter(dir + "\\worldData.dat");
             String data = worldBlock.toString() + "," + worldDesc + "," + worldOrder;
             file.write(data);
             file.close();
-        }catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
 

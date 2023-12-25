@@ -6,20 +6,17 @@ import org.bukkit.GameMode;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
-import java.util.Collection;
 import java.util.List;
 
 public class GodCommand implements TabExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
         if (sender instanceof Player p) {
-            if (args.length >= 1){
+            if (args.length >= 1) {
                 Player t = Bukkit.getPlayerExact(args[0]);
-            }
-            else{
+            } else {
                 if (p.isInvulnerable()) {
                     p.setInvulnerable(false);
                     p.setGameMode(GameMode.ADVENTURE);
