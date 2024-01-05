@@ -11,6 +11,9 @@ import org.bukkit.entity.Player;
 import java.io.File;
 import java.io.FileWriter;
 import java.util.*;
+import java.util.logging.Level;
+
+import static org.bukkit.Bukkit.getLogger;
 
 public class EditWorldCommand implements TabExecutor {
 
@@ -220,7 +223,7 @@ public class EditWorldCommand implements TabExecutor {
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
+            getLogger().log(Level.WARNING, e.toString());
         }
         return false;
     }
@@ -245,7 +248,7 @@ public class EditWorldCommand implements TabExecutor {
             worldOrder = Integer.parseInt(data[2]);
             fileReader.close();
         } catch (Exception e) {
-            e.printStackTrace();
+            getLogger().log(Level.WARNING, e.toString());
         }
 
     }
@@ -257,7 +260,7 @@ public class EditWorldCommand implements TabExecutor {
             file.write(data);
             file.close();
         } catch (Exception e) {
-            e.printStackTrace();
+            getLogger().log(Level.WARNING, e.toString());
         }
     }
 
@@ -268,7 +271,7 @@ public class EditWorldCommand implements TabExecutor {
             file.write(data);
             file.close();
         } catch (Exception e) {
-            e.printStackTrace();
+            getLogger().log(Level.WARNING, e.toString());
         }
     }
 
@@ -297,24 +300,24 @@ public class EditWorldCommand implements TabExecutor {
                                     fw.write(newData);
                                     fw.close();
                                 } catch (Exception e) {
-                                    e.printStackTrace();
+                                    getLogger().log(Level.WARNING, e.toString());
                                 }
                             }
                         } catch (Exception e) {
-                            e.printStackTrace();
+                            getLogger().log(Level.WARNING, e.toString());
                         }
 
                     }
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                getLogger().log(Level.WARNING, e.toString());
             }
             FileWriter file = new FileWriter(worldDir + "\\worldData.dat");
             String data = worldBlock + "," + worldDesc + "," + num;
             file.write(data);
             file.close();
         } catch (Exception e) {
-            e.printStackTrace();
+            getLogger().log(Level.WARNING, e.toString());
         }
     }
 

@@ -12,6 +12,9 @@ import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.logging.Level;
+
+import static org.bukkit.Bukkit.getLogger;
 
 public class CreateWorldNameCommand implements TabExecutor {
     @Override
@@ -95,7 +98,7 @@ public class CreateWorldNameCommand implements TabExecutor {
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
+            getLogger().log(Level.WARNING, e.toString());
         }
         return false;
     }
@@ -116,14 +119,14 @@ public class CreateWorldNameCommand implements TabExecutor {
                     worldOrder = dirList.length;
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                getLogger().log(Level.WARNING, e.toString());
             }
             FileWriter file = new FileWriter(dir + "\\worldData.dat");
             String data = worldBlock.toString() + "," + worldDesc + "," + worldOrder;
             file.write(data);
             file.close();
         } catch (Exception e) {
-            e.printStackTrace();
+            getLogger().log(Level.WARNING, e.toString());
         }
 
 

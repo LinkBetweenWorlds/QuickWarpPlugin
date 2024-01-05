@@ -10,6 +10,9 @@ import org.bukkit.util.BoundingBox;
 
 import java.io.File;
 import java.util.*;
+import java.util.logging.Level;
+
+import static org.bukkit.Bukkit.getLogger;
 
 public class DiscoverWarpCommand implements TabExecutor {
     @Override
@@ -55,7 +58,7 @@ public class DiscoverWarpCommand implements TabExecutor {
                         }
                         //TODO After reading the file, Check the discovered warp points.
                     } catch (Exception e) {
-                        e.printStackTrace();
+                        getLogger().log(Level.WARNING, e.toString());
                     }
                 }
             }

@@ -25,7 +25,7 @@ public class QuickWarp extends JavaPlugin implements Listener {
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
+            getLogger().log(Level.WARNING, e.toString());
         }
 
         //Sets up commands and listeners
@@ -51,6 +51,7 @@ public class QuickWarp extends JavaPlugin implements Listener {
 
 
         //Means the plugin work somehow.
-        getLogger().log(Level.CONFIG, "The QuickWarp Plugin works somehow???");
+        getLogger().log(Level.INFO, "The QuickWarp Plugin works somehow???");
     }
+
 }

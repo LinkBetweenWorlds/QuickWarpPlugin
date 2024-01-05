@@ -14,6 +14,9 @@ import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.logging.Level;
+
+import static org.bukkit.Bukkit.getLogger;
 
 public class CreateWarpCommand implements TabExecutor {
     @Override
@@ -118,7 +121,7 @@ public class CreateWarpCommand implements TabExecutor {
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
+            getLogger().log(Level.WARNING, e.toString());
         }
         return false;
     }
@@ -154,7 +157,7 @@ public class CreateWarpCommand implements TabExecutor {
                                     warpFile.close();
                                     return true;
                                 } catch (Exception e) {
-                                    e.printStackTrace();
+                                    getLogger().log(Level.WARNING, e.toString());
                                 }
                             }
                         }
@@ -164,13 +167,13 @@ public class CreateWarpCommand implements TabExecutor {
                             warpFile.close();
                             return true;
                         } catch (Exception e) {
-                            e.printStackTrace();
+                            getLogger().log(Level.WARNING, e.toString());
                         }
                     }
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            getLogger().log(Level.WARNING, e.toString());
             return false;
         }
         return false;
