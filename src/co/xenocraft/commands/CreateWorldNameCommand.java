@@ -19,19 +19,18 @@ import static org.bukkit.Bukkit.getLogger;
 public class CreateWorldNameCommand implements TabExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
-        if (sender instanceof Player) {
-            Player p = (Player) sender;
+        if (sender instanceof Player p) {
             if (args.length >= 1) {
                 UUID worldUUID = p.getWorld().getUID();
-                String worldName = args[0];
+                StringBuilder worldName = new StringBuilder(args[0]);
 
                 //Change all args into a String
                 for (int i = 1; i < args.length; i++) {
-                    worldName += " ";
-                    worldName += args[i];
+                    worldName.append(" ");
+                    worldName.append(args[i]);
                 }
 
-                checkWorldExists(worldUUID, worldName, p);
+                checkWorldExists(worldUUID, worldName.toString(), p);
             } else {
                 p.sendMessage(ChatColor.YELLOW + "Please input the name name of this world.");
                 p.sendMessage("/createWorldName <name>");
@@ -42,12 +41,11 @@ public class CreateWorldNameCommand implements TabExecutor {
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String s, String[] args) {
-        List<String> options = new ArrayList<>();
-        return options;
+        return new ArrayList<>();
     }
 
 
-    public boolean checkWorldExists(UUID worldUUID, String worldName, Player p) {
+    public void checkWorldExists(UUID worldUUID, String worldName, Player p) {
         //Creates the file directory path of the folder.
         String UUIDString = worldUUID.toString();
         String folderName = worldName + "=" + UUIDString;
@@ -61,20 +59,20 @@ public class CreateWorldNameCommand implements TabExecutor {
             //Checks if world exists within the list that was returned.
             if (worldDirList != null) {
                 if (worldDirList.length != 0) {
-                    for (int i = 0; i < worldDirList.length; i++) {
+                    for (String s : worldDirList) {
                         //Gets and checks the UUID against all world folders.
-                        String[] nameParts = worldDirList[i].split("=");
+                        String[] nameParts = s.split("=");
                         String UUIDParts = nameParts[1].trim();
                         if (UUIDParts.equals(UUIDString)) {
                             p.sendMessage(ChatColor.RED + "The world already has a name.");
-                            return false;
+                            return;
                         } else {
                             File dir = new File(worldDir);
                             if (!dir.exists()) {
                                 dir.mkdirs();
                                 worldDataFile(worldDir);
                                 p.sendMessage(ChatColor.GREEN + worldName + " has been created.");
-                                return true;
+                                return;
                             }
                         }
                     }
@@ -84,7 +82,6 @@ public class CreateWorldNameCommand implements TabExecutor {
                         dir.mkdirs();
                         worldDataFile(worldDir);
                         p.sendMessage(ChatColor.GREEN + worldName + " has been created.");
-                        return true;
                     }
                 }
             } else {
@@ -93,14 +90,12 @@ public class CreateWorldNameCommand implements TabExecutor {
                     dir.mkdirs();
                     worldDataFile(worldDir);
                     p.sendMessage(ChatColor.GREEN + worldName + " has been created.");
-                    return true;
                 }
             }
 
         } catch (Exception e) {
             getLogger().log(Level.WARNING, e.toString());
         }
-        return false;
     }
 
     public void worldDataFile(String dir) {
@@ -122,7 +117,7 @@ public class CreateWorldNameCommand implements TabExecutor {
                 getLogger().log(Level.WARNING, e.toString());
             }
             FileWriter file = new FileWriter(dir + "\\worldData.dat");
-            String data = worldBlock.toString() + "," + worldDesc + "," + worldOrder;
+            String data = worldBlock + "," + worldDesc + "," + worldOrder;
             file.write(data);
             file.close();
         } catch (Exception e) {

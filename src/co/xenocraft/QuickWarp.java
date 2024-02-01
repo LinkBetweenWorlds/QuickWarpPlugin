@@ -7,6 +7,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
+import java.util.Objects;
 import java.util.logging.Level;
 
 public class QuickWarp extends JavaPlugin implements Listener {
@@ -38,20 +39,20 @@ public class QuickWarp extends JavaPlugin implements Listener {
         getServer().getPluginManager().registerEvents(new ClickEvent(), this);
 
         //Misc
-        getCommand("god").setExecutor(new GodCommand());
+        Objects.requireNonNull(getCommand("god")).setExecutor(new GodCommand());
 
         //Creation
-        getCommand("createWarp").setExecutor(new CreateWarpCommand());
-        getCommand("createWorldName").setExecutor(new CreateWorldNameCommand());
+        Objects.requireNonNull(getCommand("createWarp")).setExecutor(new CreateWarpCommand());
+        Objects.requireNonNull(Objects.requireNonNull(getCommand("createWorldName"))).setExecutor(new CreateWorldNameCommand());
 
         //Editing
-        getCommand("editWorld").setExecutor(new EditWorldCommand());
+        Objects.requireNonNull(Objects.requireNonNull(getCommand("editWorld"))).setExecutor(new EditWorldCommand());
 
         //Player
-        getCommand("warp").setExecutor(new WarpCommand());
+        Objects.requireNonNull(getCommand("warp")).setExecutor(new WarpCommand());
 
         //Command Block
-        getCommand("discoverWarp").setExecutor(new DiscoverWarpCommand());
+        Objects.requireNonNull(getCommand("discoverWarp")).setExecutor(new DiscoverWarpCommand());
 
 
         //Means the plugin work somehow.

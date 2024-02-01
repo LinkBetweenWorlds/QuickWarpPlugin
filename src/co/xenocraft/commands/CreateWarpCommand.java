@@ -13,6 +13,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.logging.Level;
 
@@ -21,8 +22,7 @@ import static org.bukkit.Bukkit.getLogger;
 public class CreateWarpCommand implements TabExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (sender instanceof Player) {
-            Player p = (Player) sender;
+        if (sender instanceof Player p) {
             //Checks for all needed args
             if (args.length == 0) {
                 p.sendMessage("Please provide arguments. /createwarp <name> <range> <secret>");
@@ -106,15 +106,11 @@ public class CreateWarpCommand implements TabExecutor {
         try {
             File dirList = new File(fileDir);
             String[] worldDirList = dirList.list();
-            if (worldDirList.length != 0) {
+            if (Objects.requireNonNull(worldDirList).length != 0) {
                 for (String s : worldDirList) {
                     String[] nameParts = s.split("=");
                     String UUIDParts = nameParts[1].trim();
-                    if (UUIDParts.equals(UUIDString)) {
-                        return true;
-                    } else {
-                        return false;
-                    }
+                    return UUIDParts.equals(UUIDString);
                 }
             } else {
                 return false;
@@ -132,7 +128,7 @@ public class CreateWarpCommand implements TabExecutor {
         try {
             File dirList = new File(fileDir);
             String[] worldDirList = dirList.list();
-            for (String s : worldDirList) {
+            for (String s : Objects.requireNonNull(worldDirList)) {
                 String[] nameParts = s.split("=");
                 String UUIDParts = nameParts[1].trim();
                 if (UUIDParts.equals(UUIDString)) {
@@ -145,7 +141,7 @@ public class CreateWarpCommand implements TabExecutor {
                     double yaw = getCardinalDirection(p.getLocation().getYaw());
                     FileWriter warpFile = new FileWriter(fileDir + s + "\\" + warpName + ".yml");
                     String dataString = blockX + "," + blockY + "," + blockZ + "," + pitch + "," + yaw;
-                    if (warpDirList.length != 0) {
+                    if (Objects.requireNonNull(warpDirList).length != 0) {
                         for (String d : warpDirList) {
                             if (d.contains(warpName)) {
                                 p.sendMessage(ChatColor.RED + "There is another warp point in this world that is already using that name.");

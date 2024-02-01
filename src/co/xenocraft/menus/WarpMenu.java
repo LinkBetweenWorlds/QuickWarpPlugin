@@ -79,7 +79,7 @@ public class WarpMenu {
         Inventory gui = Bukkit.createInventory(p, invSize, ChatColor.AQUA + "Warp Menu:");
         ItemStack infill = new ItemStack(Material.GRAY_STAINED_GLASS_PANE);
         ItemMeta infillMeta = infill.getItemMeta();
-        infillMeta.setDisplayName(" ");
+        Objects.requireNonNull(infillMeta).setDisplayName(" ");
         infill.setItemMeta(infillMeta);
 
 
@@ -87,7 +87,7 @@ public class WarpMenu {
             int lowestIndex = getLowestIndex();
             ItemStack item = new ItemStack(warpWorldMaterials.get(lowestIndex));
             ItemMeta itemMeta = item.getItemMeta();
-            itemMeta.setDisplayName(warpWorldNames.get(lowestIndex));
+            Objects.requireNonNull(itemMeta).setDisplayName(warpWorldNames.get(lowestIndex));
             itemMeta.setLore(Collections.singletonList(warpWorldDescs.get(lowestIndex)));
             gui.setItem(currentInvSquare, item);
             warpWorldOrder.remove(lowestIndex);

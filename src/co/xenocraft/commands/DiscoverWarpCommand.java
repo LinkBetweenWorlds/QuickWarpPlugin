@@ -17,9 +17,7 @@ import static org.bukkit.Bukkit.getLogger;
 public class DiscoverWarpCommand implements TabExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
-        if (sender instanceof BlockCommandSender) {
-            BlockCommandSender block = (BlockCommandSender) sender;
-            //System.out.println(block.getName());
+        if (sender instanceof BlockCommandSender block) {
 
             //Gets the command block location
             Location blockLoc = block.getBlock().getLocation();
@@ -32,7 +30,7 @@ public class DiscoverWarpCommand implements TabExecutor {
             // If so change createWarp command to pass range thru and use it in bbox.
             int range = 5;
             BoundingBox bbox = new BoundingBox(blockX - range, blockY - 1, blockZ - range, blockX + range, blockY + 4, blockZ + range);
-            Collection<Entity> players = Bukkit.getWorld(blockLoc.getWorld().getUID()).getNearbyEntities(bbox);
+            Collection<Entity> players = Objects.requireNonNull(Bukkit.getWorld(Objects.requireNonNull(blockLoc.getWorld()).getUID())).getNearbyEntities(bbox);
             ArrayList<Entity> nearestPLayers = new ArrayList<>((players));
 
             //TODO Change so it updates player file with discovered warp points.
@@ -44,7 +42,7 @@ public class DiscoverWarpCommand implements TabExecutor {
                     UUID playerID = p.getUniqueId();
                     try {
                         //Gets the player file to check if they have already discovered this warp.
-                        String fileDir = System.getProperty("user.dir") + "\\plugins\\QuickWarp\\playerData\\" + playerID.toString() + ".yml";
+                        String fileDir = System.getProperty("user.dir") + "\\plugins\\QuickWarp\\playerData\\" + playerID + ".yml";
                         File file = new File(fileDir);
                         Scanner fileReader = new Scanner(file).useDelimiter(",");
                         List<String> warpList = new ArrayList<>();
@@ -62,8 +60,7 @@ public class DiscoverWarpCommand implements TabExecutor {
                     }
                 }
             }
-        } else if (sender instanceof Player) {
-            Player p = (Player) sender;
+        } else if (sender instanceof Player p) {
             p.sendMessage("This is a command block command for now.");
         } else if (sender instanceof ConsoleCommandSender) {
             System.out.println("This is a command block command for now.");
