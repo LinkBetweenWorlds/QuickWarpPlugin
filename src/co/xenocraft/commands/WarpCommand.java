@@ -1,5 +1,7 @@
 package co.xenocraft.commands;
 
+import co.xenocraft.QuickWarp;
+import co.xenocraft.menus.WarpMenu;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -35,7 +37,8 @@ public class WarpCommand implements TabExecutor {
         if (sender instanceof Player p) {
             if (!this.coolDown.containsKey(p.getUniqueId())) {
                 this.coolDown.put(p.getUniqueId(), System.currentTimeMillis());
-                warpMenu(p);
+                WarpMenu.open(p);
+                //warpMenu(p);
             } else {
                 //Difference in milliseconds
                 long timeElapsed = System.currentTimeMillis() - coolDown.get(p.getUniqueId());
@@ -43,7 +46,8 @@ public class WarpCommand implements TabExecutor {
                 int seconds = (int) ((timeElapsed / 1000) % 60);
                 if (seconds >= 10) {
                     this.coolDown.put(p.getUniqueId(), System.currentTimeMillis());
-                    warpMenu(p);
+                    WarpMenu.open(p);
+                    //warpMenu(p);
                 } else {
                     p.sendMessage(ChatColor.YELLOW + "Please wait " + (10 - seconds) + " seconds before trying to warp again.");
                 }
@@ -70,6 +74,11 @@ public class WarpCommand implements TabExecutor {
         try{
             File playerWarpList = new File(playerDir + "\\" + p.getUniqueId() + ".yml");
             Scanner fileReader = new Scanner(playerWarpList);
+            List<String> dataList = new ArrayList<>();
+            while (fileReader.hasNext()) {
+                dataList.add(fileReader.next());
+            }
+            fileReader.close();
 
         }catch(Exception e){
             getLogger().log(Level.WARNING, e.toString());

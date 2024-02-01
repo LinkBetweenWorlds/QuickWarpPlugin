@@ -23,6 +23,10 @@ public class QuickWarp extends JavaPlugin implements Listener {
             if (!playerDir.exists()) {
                 playerDir.mkdirs();
             }
+            File worldDir = new File(currentDir + "\\worldData");
+            if(!worldDir.exists()){
+                worldDir.mkdirs();
+            }
 
         } catch (Exception e) {
             getLogger().log(Level.WARNING, e.toString());

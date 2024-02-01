@@ -58,7 +58,7 @@ public class CreateWorldNameCommand implements TabExecutor {
             //Checks the world UUID to check if world exists.
             File dirList = new File(fileDir);
             String[] worldDirList = dirList.list();
-            //Checks if world exsists within the list that was returned.
+            //Checks if world exists within the list that was returned.
             if (worldDirList != null) {
                 if (worldDirList.length != 0) {
                     for (int i = 0; i < worldDirList.length; i++) {
