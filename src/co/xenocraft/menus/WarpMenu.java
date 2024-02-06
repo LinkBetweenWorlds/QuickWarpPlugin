@@ -94,13 +94,13 @@ public class WarpMenu {
             warpWorldNames.remove(lowestIndex);
             warpWorldDescs.remove(lowestIndex);
             warpWorldMaterials.remove(lowestIndex);
-            currentInvSquare ++;
-            if (currentInvSquare > invSize){
+            currentInvSquare++;
+            if (currentInvSquare > invSize) {
                 break;
             }
         }
-        if (currentInvSquare < invSize){
-            for(int i = currentInvSquare; i < invSize; i ++){
+        if (currentInvSquare < invSize) {
+            for (int i = currentInvSquare; i < invSize; i++) {
                 gui.setItem(currentInvSquare, infill);
             }
         }
@@ -109,6 +109,19 @@ public class WarpMenu {
 
     }
 
+    public static void openSubMenu(Player p, Material material) {
+    }
+
+
+    public static void menuClick(Player p, Material material) {
+        if (material != null) {
+            if (!material.equals(Material.GRAY_STAINED_GLASS_PANE)) {
+
+            } else {
+
+            }
+        }
+    }
 
     public static int getLowestIndex() {
         int lowestValues = warpWorldOrder.get(0);
@@ -121,17 +134,5 @@ public class WarpMenu {
             }
         }
         return lowestIndex;
-    }
-
-
-    public static void menuClick(Material material) {
-        if (material != null) {
-            if (!material.equals(Material.BLACK_STAINED_GLASS_PANE)) {
-
-
-            } else {
-
-            }
-        }
     }
 }
