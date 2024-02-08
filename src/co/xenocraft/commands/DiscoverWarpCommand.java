@@ -1,7 +1,9 @@
 package co.xenocraft.commands;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.Particle;
 import org.bukkit.command.*;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -9,6 +11,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.BoundingBox;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.util.*;
 import java.util.logging.Level;
 
@@ -18,6 +21,8 @@ public class DiscoverWarpCommand implements TabExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
         if (sender instanceof BlockCommandSender block) {
+            //TODO Display discovered warp name on player's screen.
+            // Change colour and effects if secret warp points.
 
             //Gets the command block location
             Location blockLoc = block.getBlock().getLocation();
@@ -29,6 +34,17 @@ public class DiscoverWarpCommand implements TabExecutor {
             //TODO Check if the args from command block get passed thru.
             // If so change createWarp command to pass range thru and use it in bbox.
             int range = 5;
+            boolean secret = false;
+            String blockName = "Warp Point";
+            String blockString = block.getName();
+            String[] blockArgs = blockString.split("=");
+            try {
+                secret = Boolean.parseBoolean(blockArgs[0].trim());
+                blockName = blockArgs[1].trim();
+                range = Integer.parseInt(blockArgs[2].trim());
+            } catch (Exception e) {
+                getLogger().log(Level.WARNING, e.toString());
+            }
             BoundingBox bbox = new BoundingBox(blockX - range, blockY - 1, blockZ - range, blockX + range, blockY + 4, blockZ + range);
             Collection<Entity> players = Objects.requireNonNull(Bukkit.getWorld(Objects.requireNonNull(blockLoc.getWorld()).getUID())).getNearbyEntities(bbox);
             ArrayList<Entity> nearestPLayers = new ArrayList<>((players));
@@ -50,11 +66,36 @@ public class DiscoverWarpCommand implements TabExecutor {
                             warpList.add(fileReader.next());
                         }
                         fileReader.close();
-                        String[] warps = warpList.toArray(new String[0]);
-                        for (String w : warps) {
+                        for (String w : warpList) {
                             System.out.println(w);
                         }
                         //TODO After reading the file, Check the discovered warp points.
+                        if (warpList.contains(blockName)) {
+                            break;
+                        } else {
+                            Location pLoc = p.getLocation();
+                            p.sendMessage(ChatColor.GREEN + "You discovered " + blockName);
+                            if (secret) {
+                                p.sendTitle(ChatColor.YELLOW + blockName, "", 15, 80, 15);
+                                p.spawnParticle(Particle.FIREWORKS_SPARK, pLoc, 10);
+                            } else {
+                                p.sendTitle(ChatColor.GOLD + blockName, "", 10, 100, 15);
+                                p.spawnParticle(Particle.FIREWORKS_SPARK, pLoc, 20);
+                                p.spawnParticle(Particle.ELECTRIC_SPARK, pLoc, 20);
+                            }
+                            StringBuilder dataString = new StringBuilder("blockName");
+                            for (String d : warpList) {
+                                dataString.append(",").append(d);
+                            }
+                            String data = dataString.toString();
+                            try {
+                                FileWriter writer = new FileWriter(file);
+                                writer.write(data);
+                                writer.close();
+                            } catch (Exception e) {
+                                getLogger().log(Level.WARNING, e.toString());
+                            }
+                        }
                     } catch (Exception e) {
                         getLogger().log(Level.WARNING, e.toString());
                     }

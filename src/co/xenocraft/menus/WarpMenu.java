@@ -27,9 +27,11 @@ public class WarpMenu {
 
 
     private static void loadData() {
+        //Loads the data from the world folder.
         try {
             File worldFiles = new File(worldDir);
             String[] worldNames = worldFiles.list();
+            //Loops through the worlds and adds the data to local arrays.
             for (int i = 0; i < Objects.requireNonNull(worldNames).length - 1; i++) {
                 String[] nameParts = worldNames[i].split("=");
                 String name = nameParts[0].trim();
@@ -59,6 +61,9 @@ public class WarpMenu {
     }
 
     public static void open(Player p) {
+        //Opens the main warp menu to the player.
+
+        //Updates the warp points.
         loadData();
 
         try {
@@ -74,6 +79,7 @@ public class WarpMenu {
             getLogger().log(Level.WARNING, e.toString());
         }
 
+        //Initialize the inventory.
         int invSize = 6 * 9;
         int currentInvSquare = 0;
         Inventory gui = Bukkit.createInventory(p, invSize, ChatColor.AQUA + "Warp Menu:");
@@ -82,7 +88,7 @@ public class WarpMenu {
         Objects.requireNonNull(infillMeta).setDisplayName(" ");
         infill.setItemMeta(infillMeta);
 
-
+        //Goes through the arrays starting with the lowest order number.
         for (int i = 0; i < warpWorldOrder.size(); i++) {
             int lowestIndex = getLowestIndex();
             ItemStack item = new ItemStack(warpWorldMaterials.get(lowestIndex));
@@ -110,13 +116,14 @@ public class WarpMenu {
     }
 
     public static void openSubMenu(Player p, Material material) {
-    }
+        //TODO Display the discovered warp points in selected world.
 
+    }
 
     public static void menuClick(Player p, Material material) {
         if (material != null) {
             if (!material.equals(Material.GRAY_STAINED_GLASS_PANE)) {
-
+                //TODO Check if the material matches a world. If so open sub menu.
             } else {
 
             }
@@ -124,6 +131,7 @@ public class WarpMenu {
     }
 
     public static int getLowestIndex() {
+        //Returns the lowest value in an array.
         int lowestValues = warpWorldOrder.get(0);
         int lowestIndex = 0;
         for (int i = 0; i < warpWorldOrder.size(); i++) {

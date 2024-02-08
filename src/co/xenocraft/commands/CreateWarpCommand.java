@@ -29,7 +29,7 @@ public class CreateWarpCommand implements TabExecutor {
             } else if (args.length == 3) {
                 if (checkWorldFolder(p.getWorld().getUID())) {
                     //Pulls name and discover zone from args
-                    String locName = args[0];
+                    String locName = args[0].replace("_", " ");
                     String rangeString = args[1];
                     //Gets the current loc of sender
                     Location playerLoc = p.getLocation();
@@ -68,12 +68,15 @@ public class CreateWarpCommand implements TabExecutor {
                         CommandBlock chainBlock = (CommandBlock) chainBlockLoc.getBlock().getState();
                         chainBlock.setCommand(chainCommand);
                         if (secret) {
-                            chainBlock.setName("1_" + locName + "=" + range);
+                            chainBlock.setName("1=" + locName + "=" + range);
                         } else {
-                            chainBlock.setName("0_" + locName + "=" + range);
+                            chainBlock.setName("0=" + locName + "=" + range);
                         }
                         chainBlock.update();
                         p.sendMessage(ChatColor.GREEN + "Warp Point successfully created.");
+                    }
+                    else{
+                        p.sendMessage(ChatColor.RED + "A warp point in this world already has that name.");
                     }
                 } else {
                     p.sendMessage(ChatColor.RED + "This world does not have a name yet.");
@@ -82,6 +85,7 @@ public class CreateWarpCommand implements TabExecutor {
 
             } else {
                 p.sendMessage("Please provide arguments. /createwarp <name> <range> <secret>");
+                p.sendMessage("Please use _ for spaces in warp point name.");
             }
 
         }
