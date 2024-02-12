@@ -8,6 +8,9 @@ import org.bukkit.entity.Player;
 
 import java.io.File;
 import java.util.*;
+import java.util.logging.Level;
+
+import static org.bukkit.Bukkit.getLogger;
 
 
 public class ViewCommand implements TabExecutor {
@@ -23,21 +26,40 @@ public class ViewCommand implements TabExecutor {
                 // along with each warp points data (secret, location, range)
                 if (args[0].equals("world")) {
                     List<String> worldFileList;
-                    List<String> worldList = new ArrayList<>();
-                    List<UUID> worldUUIDList = new ArrayList<>();
-                    File worldFiles = new File(worldDir);
-                    worldFileList = Arrays.asList(Objects.requireNonNull(worldFiles.list()));
-                    for (String s : worldFileList) {
-                        String[] worldParts = s.split("=");
-                        worldList.add(worldParts[0].trim());
-                        worldUUIDList.add(UUID.fromString(worldParts[1].trim()));
+                    try {
+                        File worldFiles = new File(worldDir);
+                        worldFileList = Arrays.asList(Objects.requireNonNull(worldFiles.list()));
+                        for (String s : worldFileList) {
+                            String[] worldParts = s.split("=");
+                            p.sendMessage("World Name: " + worldParts[0].trim() + " UUID: " + UUID.fromString(worldParts[1].trim()));
+                            File warpLengthFile = new File(worldDir + s);
+                            p.sendMessage("Number of warps: " + warpLengthFile.length());
+                        }
+                    } catch (Exception e) {
+                        getLogger().log(Level.WARNING, e.toString());
                     }
-                    for(int i = 0; i <worldList.size(); i++ ){
-                        p.sendMessage("World Name: " + worldList.get(i) + " UUID: " + worldUUIDList.get(i));
-                    }
-
                 } else if (args[0].equals("warps")) {
                     String worldUUID = p.getWorld().getUID().toString();
+                    List<String> worldFileList;
+                    List<String> warpFileList;
+                    try {
+                        File worldFiles = new File(worldDir);
+                        worldFileList = Arrays.asList(Objects.requireNonNull(worldFiles.list()));
+                        for(String f : worldFileList){
+                            String[] worldParts = f.split("=");
+                            if(worldUUID.equals(worldParts[1].trim())){
+                                File warpFiles = new File(worldDir + f);
+                                warpFileList = Arrays.asList(Objects.requireNonNull(warpFiles.list()));
+                                p.sendMessage("World Name: " + worldParts[0].trim());
+                                p.sendMessage("Warps: ");
+                                for(String s : warpFileList){
+                                    p.sendMessage(s);
+                                }
+                            }
+                        }
+                    } catch (Exception e) {
+                        getLogger().log(Level.WARNING, e.toString());
+                    }
                 } else {
                     argsMessage(p);
                 }
@@ -49,8 +71,7 @@ public class ViewCommand implements TabExecutor {
     }
 
     private void argsMessage(Player p) {
-        p.sendMessage(ChatColor.YELLOW + "Please state weather you want to view the different worlds, " +
-                "or the warps in this world.");
+        p.sendMessage(ChatColor.YELLOW + "Please state weather you want to view the different worlds, " + "or the warps in this world.");
         p.sendMessage(ChatColor.YELLOW + "/view <world/warps>");
     }
 
