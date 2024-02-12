@@ -43,10 +43,11 @@ public class QuickWarp extends JavaPlugin implements Listener {
 
         //Creation
         Objects.requireNonNull(getCommand("createWarp")).setExecutor(new CreateWarpCommand());
-        Objects.requireNonNull(Objects.requireNonNull(getCommand("createWorldName"))).setExecutor(new CreateWorldNameCommand());
+        Objects.requireNonNull(getCommand("createWorldName")).setExecutor(new CreateWorldNameCommand());
+        Objects.requireNonNull(getCommand("view")).setExecutor(new ViewCommand());
 
         //Editing
-        Objects.requireNonNull(Objects.requireNonNull(getCommand("editWorld"))).setExecutor(new EditWorldCommand());
+        Objects.requireNonNull(getCommand("editWorld")).setExecutor(new EditWorldCommand());
 
         //Player
         Objects.requireNonNull(getCommand("warp")).setExecutor(new WarpCommand());

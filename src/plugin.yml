@@ -10,7 +10,7 @@ commands:
     description: Become God?
     usage: /<command>
     permission: quickwarp.god
-    permission-message: You think you can become a God.
+    permission-message: You really think you can become a God.
   createWarp:
     description: Creates a new Warp point under feet. Creates a new command block below the surface. Use range for discovery range. Use secret for different text style.
     usage: /<command> <name> <range> <secret> (Use underscore for spaces.)
@@ -26,10 +26,15 @@ commands:
     usage: /<command> <name/edit/delete/desc/order/block>
     permission: quickwarp.editWorld
     permission-message: You don't have permission to do that.
+  view:
+    description: View all worlds or warp in your current worlds.
+    permission: quickwarp.view
+    permission-message: You don't have permission to do that.
   discoverWarp:
     description: Discover warp points for a player
     usage: /<command>
     permission: command
+    permission-message: This is not a command you can use.
   warp:
     description: Opens warp menu.
     usage: /<command>
@@ -43,6 +48,7 @@ permissions:
       quickwarp.createWarp: true
       quickwarp.createWorldName: true
       quickwarp.editWorld: true
+      quickwarp.view: true
   quickwarp.createWarp:
     description: Allows one to create warp point.
     default: op
@@ -51,6 +57,9 @@ permissions:
     default: op
   quickwarp.editWorld:
     description: Allows you to edit the worlds.
+    default: op
+  quickwarp.view:
+    description: Allows you to see all create worlds or warp points.
     default: op
   quickwarp.warp:
     description: Allows one to teleport through the dimensions.
