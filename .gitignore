@@ -2,7 +2,7 @@
 out/
 !**/src/main/**/out/
 !**/src/test/**/out/
-!**/src/QuickWarp.iml
+!**/QuickWarp.iml
 
 ### Eclipse ###
 .apt_generated
