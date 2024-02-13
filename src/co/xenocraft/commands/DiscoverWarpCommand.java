@@ -1,9 +1,6 @@
 package co.xenocraft.commands;
 
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.Particle;
+import org.bukkit.*;
 import org.bukkit.command.*;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -35,11 +32,13 @@ public class DiscoverWarpCommand implements TabExecutor {
             // If so change createWarp command to pass range thru and use it in bbox.
             int range = 5;
             boolean secret = false;
-            String blockName = "Warp Point";
+            String blockName = "WarpPoint";
             String blockString = block.getName();
             String[] blockArgs = blockString.split("=");
             try {
-                secret = Boolean.parseBoolean(blockArgs[0].trim());
+                if(blockArgs[0].trim().equals("1")){
+                    secret = true;
+                }
                 blockName = blockArgs[1].trim();
                 range = Integer.parseInt(blockArgs[2].trim());
             } catch (Exception e) {
@@ -66,28 +65,27 @@ public class DiscoverWarpCommand implements TabExecutor {
                             warpList.add(fileReader.next());
                         }
                         fileReader.close();
-                        for (String w : warpList) {
-                            System.out.println(w);
-                        }
                         //TODO After reading the file, Check the discovered warp points.
                         if (warpList.contains(blockName)) {
                             break;
                         } else {
                             Location pLoc = p.getLocation();
+                            Location particleLoc = new Location(pLoc.getWorld(), pLoc.getX(), pLoc.getY() + 2, pLoc.getZ());
                             p.sendMessage(ChatColor.GREEN + "You discovered " + blockName);
                             if (secret) {
-                                p.sendTitle(ChatColor.YELLOW + blockName, "", 15, 80, 15);
-                                p.spawnParticle(Particle.FIREWORKS_SPARK, pLoc, 10);
+                                p.sendTitle(ChatColor.GOLD + blockName, ChatColor.GOLD + "has been discovered", 10, 80, 15);
+                                p.spawnParticle(Particle.FIREWORKS_SPARK, particleLoc, 100);
+                                p.spawnParticle(Particle.ELECTRIC_SPARK, particleLoc, 200);
+                                p.playSound(p, Sound.UI_TOAST_CHALLENGE_COMPLETE, SoundCategory.MUSIC, 115, 1);
                             } else {
-                                p.sendTitle(ChatColor.GOLD + blockName, "", 10, 100, 15);
-                                p.spawnParticle(Particle.FIREWORKS_SPARK, pLoc, 20);
-                                p.spawnParticle(Particle.ELECTRIC_SPARK, pLoc, 20);
+                                p.sendTitle(ChatColor.GREEN + blockName, "has been discovered", 10, 80, 15);
+                                p.spawnParticle(Particle.FIREWORKS_SPARK, particleLoc, 200);
+                                p.playSound(p, Sound.UI_TOAST_CHALLENGE_COMPLETE, SoundCategory.MUSIC, 100, 1);
                             }
-                            StringBuilder dataString = new StringBuilder("blockName");
+                            String data = blockName;
                             for (String d : warpList) {
-                                dataString.append(",").append(d);
+                                data += "," + d;
                             }
-                            String data = dataString.toString();
                             try {
                                 FileWriter writer = new FileWriter(file);
                                 writer.write(data);

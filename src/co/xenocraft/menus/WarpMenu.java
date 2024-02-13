@@ -20,10 +20,10 @@ public class WarpMenu {
     private static final String playerDir = currentDir + "\\plugins\\QuickWarp\\playerData\\";
     private static final String worldDir = currentDir + "\\plugins\\QuickWarp\\worldData\\";
 
-    public static List<String> warpWorldNames;
-    public static List<Material> warpWorldMaterials;
-    public static List<String> warpWorldDescs;
-    public static List<Integer> warpWorldOrder;
+    public static List<String> warpWorldNames = new ArrayList<>();
+    public static List<Material> warpWorldMaterials = new ArrayList<>();
+    public static List<String> warpWorldDescs = new ArrayList<>();
+    public static List<Integer> warpWorldOrder = new ArrayList<>();
 
 
     private static void loadData() {
@@ -31,13 +31,15 @@ public class WarpMenu {
         try {
             File worldFiles = new File(worldDir);
             String[] worldNames = worldFiles.list();
+            System.out.println(Arrays.toString(worldNames));
             //Loops through the worlds and adds the data to local arrays.
-            for (int i = 0; i < Objects.requireNonNull(worldNames).length - 1; i++) {
+            for (int i = 0; i < Objects.requireNonNull(worldNames).length; i++) {
+                System.out.println("Looping thru worlds...");
                 String[] nameParts = worldNames[i].split("=");
                 String name = nameParts[0].trim();
-                warpWorldNames.set(i, name);
+                warpWorldNames.add(name);
                 try {
-                    File file = new File(worldNames[i] + "\\worldData.dat");
+                    File file = new File(worldDir + worldNames[i] + "\\worldData.dat");
                     Scanner fileReader = new Scanner(file).useDelimiter(",");
                     List<String> dataList = new ArrayList<>();
                     while (fileReader.hasNext()) {
@@ -46,9 +48,9 @@ public class WarpMenu {
                     fileReader.close();
                     String[] data = dataList.toArray(new String[0]);
                     Material material = Material.matchMaterial(data[0]);
-                    warpWorldMaterials.set(i, Objects.requireNonNullElse(material, Material.GRASS_BLOCK));
-                    warpWorldDescs.set(i, data[1]);
-                    warpWorldOrder.set(i, Integer.parseInt(data[2]));
+                    warpWorldMaterials.add(Objects.requireNonNullElse(material, Material.GRASS_BLOCK));
+                    warpWorldDescs.add(data[1]);
+                    warpWorldOrder.add(Integer.parseInt(data[2]));
                     fileReader.close();
                 } catch (Exception e) {
                     getLogger().log(Level.WARNING, e.toString());
@@ -61,10 +63,12 @@ public class WarpMenu {
     }
 
     public static void open(Player p) {
+        System.out.println("Starting warp menu...");
         //Opens the main warp menu to the player.
 
         //Updates the warp points.
         loadData();
+        System.out.println("Loaded data!");
 
         try {
             File playerFile = new File(playerDir + p.getUniqueId() + ".yml");
@@ -79,22 +83,26 @@ public class WarpMenu {
             getLogger().log(Level.WARNING, e.toString());
         }
 
+        System.out.println("Got Player data!");
         //Initialize the inventory.
         int invSize = 6 * 9;
         int currentInvSquare = 0;
         Inventory gui = Bukkit.createInventory(p, invSize, ChatColor.AQUA + "Warp Menu:");
-        ItemStack infill = new ItemStack(Material.GRAY_STAINED_GLASS_PANE);
+        ItemStack infill = new ItemStack(Material.BLACK_STAINED_GLASS_PANE);
         ItemMeta infillMeta = infill.getItemMeta();
         Objects.requireNonNull(infillMeta).setDisplayName(" ");
         infill.setItemMeta(infillMeta);
 
+        System.out.println("Created Infill Item");
         //Goes through the arrays starting with the lowest order number.
         for (int i = 0; i < warpWorldOrder.size(); i++) {
+            System.out.println("Loop: " + i);
             int lowestIndex = getLowestIndex();
             ItemStack item = new ItemStack(warpWorldMaterials.get(lowestIndex));
             ItemMeta itemMeta = item.getItemMeta();
             Objects.requireNonNull(itemMeta).setDisplayName(warpWorldNames.get(lowestIndex));
             itemMeta.setLore(Collections.singletonList(warpWorldDescs.get(lowestIndex)));
+            item.setItemMeta(itemMeta);
             gui.setItem(currentInvSquare, item);
             warpWorldOrder.remove(lowestIndex);
             warpWorldNames.remove(lowestIndex);
@@ -108,6 +116,7 @@ public class WarpMenu {
         if (currentInvSquare < invSize) {
             for (int i = currentInvSquare; i < invSize; i++) {
                 gui.setItem(currentInvSquare, infill);
+                currentInvSquare ++;
             }
         }
 
@@ -120,10 +129,12 @@ public class WarpMenu {
 
     }
 
-    public static void menuClick(Player p, Material material) {
-        if (material != null) {
-            if (!material.equals(Material.GRAY_STAINED_GLASS_PANE)) {
+    public static void menuClick(Player p, ItemMeta itemMeta) {
+        if (itemMeta != null) {
+            String itemName = itemMeta.getDisplayName();
+            if (!itemName.equals(" ")) {
                 //TODO Check if the material matches a world. If so open sub menu.
+                System.out.println(itemName);
             } else {
 
             }

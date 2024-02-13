@@ -33,7 +33,7 @@ public class ViewCommand implements TabExecutor {
                             String[] worldParts = s.split("=");
                             p.sendMessage("World Name: " + worldParts[0].trim() + " UUID: " + UUID.fromString(worldParts[1].trim()));
                             File warpLengthFile = new File(worldDir + s);
-                            p.sendMessage("Number of warps: " + warpLengthFile.length());
+                            p.sendMessage("Number of warps: " + (Objects.requireNonNull(warpLengthFile.listFiles()).length - 1));
                         }
                     } catch (Exception e) {
                         getLogger().log(Level.WARNING, e.toString());
@@ -53,7 +53,11 @@ public class ViewCommand implements TabExecutor {
                                 p.sendMessage("World Name: " + worldParts[0].trim());
                                 p.sendMessage("Warps: ");
                                 for(String s : warpFileList){
-                                    p.sendMessage(s);
+                                    String[] warpNameParts = s.split("\\.");
+                                    if(!warpNameParts[0].trim().equals("worldData")){
+                                        p.sendMessage(warpNameParts[0].trim());
+                                    }
+
                                 }
                             }
                         }

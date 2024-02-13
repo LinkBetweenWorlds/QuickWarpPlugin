@@ -3,18 +3,20 @@ package co.xenocraft.commands;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.block.CommandBlock;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.meta.BlockStateMeta;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.metadata.MetadataValue;
 
 import java.io.File;
 import java.io.FileWriter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 import java.util.logging.Level;
 
 import static org.bukkit.Bukkit.getLogger;
@@ -35,7 +37,7 @@ public class CreateWarpCommand implements TabExecutor {
                     Location playerLoc = p.getLocation();
                     if (addWarpPoint(p.getWorld().getUID(), p, locName, playerLoc)) {
                         int range = Integer.parseInt(rangeString);
-                        boolean secret = Boolean.parseBoolean(args[1].toLowerCase());
+                        boolean secret = Boolean.parseBoolean(args[2]);
                         p.sendMessage("Name: " + locName);
                         p.sendMessage("Secret: " + secret);
                         p.sendMessage("Range: " + range);
@@ -66,7 +68,11 @@ public class CreateWarpCommand implements TabExecutor {
 
                         chainBlockLoc.getBlock().setType(Material.CHAIN_COMMAND_BLOCK);
                         CommandBlock chainBlock = (CommandBlock) chainBlockLoc.getBlock().getState();
+                        BlockData newData = Material.CHAIN_COMMAND_BLOCK.createBlockData("[conditional=true,facing=north]");
+                        chainBlock.setBlockData(newData);
                         chainBlock.setCommand(chainCommand);
+                        chainBlock.update();
+
                         if (secret) {
                             chainBlock.setName("1=" + locName + "=" + range);
                         } else {
@@ -103,6 +109,7 @@ public class CreateWarpCommand implements TabExecutor {
         }
         return null;
     }
+
 
     public boolean checkWorldFolder(UUID worldUUID) {
         String UUIDString = worldUUID.toString();
@@ -147,19 +154,18 @@ public class CreateWarpCommand implements TabExecutor {
                     String dataString = blockX + "," + blockY + "," + blockZ + "," + pitch + "," + yaw;
                     if (Objects.requireNonNull(warpDirList).length != 0) {
                         for (String d : warpDirList) {
-                            if (d.contains(warpName)) {
-                                p.sendMessage(ChatColor.RED + "There is another warp point in this world that is already using that name.");
+                            if (d.equals(warpName + ".yml")) {
                                 warpFile.close();
                                 return false;
-                            } else {
-                                try {
-                                    warpFile.write(dataString);
-                                    warpFile.close();
-                                    return true;
-                                } catch (Exception e) {
-                                    getLogger().log(Level.WARNING, e.toString());
-                                }
                             }
+                        }
+                        try {
+                            warpFile.write(dataString);
+                            warpFile.close();
+                            return true;
+                        } catch (Exception e) {
+                            getLogger().log(Level.WARNING, e.toString());
+                            return false;
                         }
                     } else {
                         try {
