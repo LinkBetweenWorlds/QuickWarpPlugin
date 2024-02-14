@@ -81,7 +81,7 @@ public class WarpMenu {
         }
 
         //Initialize the inventory.
-        int invSize = 6 * 9;
+        int invSize = (6 * 9);
         int currentInvSquare = 0;
         Inventory gui = Bukkit.createInventory(p, invSize, ChatColor.AQUA + "Warp Menu:");
 
@@ -96,15 +96,14 @@ public class WarpMenu {
         Objects.requireNonNull(backMeta).setDisplayName(ChatColor.RED + "Back");
         backButton.setItemMeta(backMeta);
 
+        System.out.println("Order Size: " + warpWorldOrder.size());
         //Goes through the arrays starting with the lowest order number.
-        for (int i = 0; i < warpWorldOrder.size(); i++) {
+        for (int i = 0; i < warpWorldOrder.size() + 1; i++) {
             //TODO Add check to only show worlds that player has been to.
-            System.out.println("Loop: " + i);
             int lowestIndex = getLowestIndex();
             ItemStack item = new ItemStack(warpWorldMaterials.get(lowestIndex));
             ItemMeta itemMeta = item.getItemMeta();
             Objects.requireNonNull(itemMeta).setDisplayName(warpWorldNames.get(lowestIndex));
-            System.out.println(warpWorldNames.get(lowestIndex));
             itemMeta.setLore(Collections.singletonList(warpWorldDescs.get(lowestIndex)));
             item.setItemMeta(itemMeta);
             gui.setItem(currentInvSquare, item);
@@ -112,7 +111,7 @@ public class WarpMenu {
             warpWorldNames.remove(lowestIndex);
             warpWorldDescs.remove(lowestIndex);
             warpWorldMaterials.remove(lowestIndex);
-            currentInvSquare++;
+            currentInvSquare += 1;
 
             if (currentInvSquare > invSize) {
                 break;
@@ -121,7 +120,7 @@ public class WarpMenu {
         //Fill in the rest of the squares with infill.
         if (currentInvSquare < invSize) {
             for (int i = currentInvSquare; i < invSize; i++) {
-                if (currentInvSquare == invSize) {
+                if (currentInvSquare == (invSize - 1)) {
                     gui.setItem(currentInvSquare, backButton);
                 } else {
                     gui.setItem(currentInvSquare, infill);

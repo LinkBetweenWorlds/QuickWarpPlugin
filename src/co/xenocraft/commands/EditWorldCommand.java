@@ -84,7 +84,7 @@ public class EditWorldCommand implements TabExecutor {
                                     p.sendMessage("Change the description of the world.");
                                 } else {
                                     StringBuilder desc = new StringBuilder(args[1]);
-                                    for (int i = 2; i <= args.length; i++) {
+                                    for (int i = 2; i <= args.length - 1; i++) {
                                         desc.append(" ");
                                         desc.append(args[i]);
                                     }
@@ -103,7 +103,7 @@ public class EditWorldCommand implements TabExecutor {
                                     p.sendMessage("Changes the order that world appear in world menu.");
                                     p.sendMessage("This will push down all other world after it.");
                                 } else {
-                                    int orderNum = Math.abs(Integer.parseInt(args[2]));
+                                    int orderNum = Math.abs(Integer.parseInt(args[1]));
                                     System.out.println("Change world order to: " + orderNum);
                                     updateOrderData(orderNum);
                                 }
@@ -120,7 +120,7 @@ public class EditWorldCommand implements TabExecutor {
                                     p.sendMessage("Changes the name of the world.");
                                 } else {
                                     StringBuilder name = new StringBuilder(args[1]);
-                                    for (int i = 2; i <= args.length; i++) {
+                                    for (int i = 2; i <= args.length - 1; i++) {
                                         name.append(" ");
                                         name.append(args[i]);
                                     }
@@ -203,20 +203,22 @@ public class EditWorldCommand implements TabExecutor {
 
     public boolean checkWorldFolder(UUID worldUUID) {
         String UUIDString = worldUUID.toString();
+        System.out.println("Checking world folder...");
         try {
             File dirList = new File(fileDir);
             String[] worldDirList = dirList.list();
+            System.out.println(Arrays.toString(worldDirList));
             if (Objects.requireNonNull(worldDirList).length != 0) {
                 for (String s : worldDirList) {
+                    System.out.println(s);
                     String[] nameParts = s.split("=");
                     String UUIDPart = nameParts[1].trim();
-                    if (UUIDPart.equals(UUIDString)) {
+                    if (UUIDPart.contains(UUIDString)) {
                         worldName = nameParts[0].trim();
                         worldDir = fileDir + worldName + "=" + UUIDPart;
+                        System.out.println(worldDir);
                         getWorldData();
                         return true;
-                    } else {
-                        return false;
                     }
                 }
             } else {
@@ -276,6 +278,7 @@ public class EditWorldCommand implements TabExecutor {
         try {
             try {
                 File[] fileList = new File(fileDir).listFiles();
+                System.out.println(Arrays.toString(fileList));
                 if (fileList != null) {
                     for (File value : fileList) {
                         try {
@@ -288,12 +291,11 @@ public class EditWorldCommand implements TabExecutor {
                                 dataList.add(fileReader.next());
                             }
                             fileReader.close();
-                            String[] data = dataList.toArray(new String[0]);
-                            int orderNum = Integer.parseInt(data[2]);
+                            int orderNum = Integer.parseInt(dataList.get(2));
                             if (orderNum >= num) {
                                 try {
                                     FileWriter fw = new FileWriter(file);
-                                    String newData = worldBlock + "," + worldDesc + "," + orderNum + 1;
+                                    String newData = dataList.get(0) + "," + dataList.get(1) + "," + (orderNum + 1);
                                     fw.write(newData);
                                     fw.close();
                                 } catch (Exception e) {
