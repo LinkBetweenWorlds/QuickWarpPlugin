@@ -25,19 +25,20 @@ public class WarpMenu {
     public static List<String> warpWorldDescs = new ArrayList<>();
     public static List<Integer> warpWorldOrder = new ArrayList<>();
 
-
+    //Loads the data from the world folder.
     private static void loadData() {
-        //Loads the data from the world folder.
         try {
             File worldFiles = new File(worldDir);
             String[] worldNames = worldFiles.list();
             System.out.println(Arrays.toString(worldNames));
+
             //Loops through the worlds and adds the data to local arrays.
             for (int i = 0; i < Objects.requireNonNull(worldNames).length; i++) {
                 System.out.println("Looping thru worlds...");
                 String[] nameParts = worldNames[i].split("=");
                 String name = nameParts[0].trim();
                 warpWorldNames.add(name);
+
                 try {
                     File file = new File(worldDir + worldNames[i] + "\\worldData.dat");
                     Scanner fileReader = new Scanner(file).useDelimiter(",");
@@ -59,16 +60,12 @@ public class WarpMenu {
         } catch (Exception e) {
             getLogger().log(Level.WARNING, e.toString());
         }
-
     }
 
+    //Opens the main warp menu to the player.
     public static void open(Player p) {
-        System.out.println("Starting warp menu...");
-        //Opens the main warp menu to the player.
-
         //Updates the warp points.
         loadData();
-        System.out.println("Loaded data!");
 
         try {
             File playerFile = new File(playerDir + p.getUniqueId() + ".yml");
@@ -83,24 +80,31 @@ public class WarpMenu {
             getLogger().log(Level.WARNING, e.toString());
         }
 
-        System.out.println("Got Player data!");
         //Initialize the inventory.
         int invSize = 6 * 9;
         int currentInvSquare = 0;
         Inventory gui = Bukkit.createInventory(p, invSize, ChatColor.AQUA + "Warp Menu:");
+
+        //Create infill and back items.
         ItemStack infill = new ItemStack(Material.BLACK_STAINED_GLASS_PANE);
         ItemMeta infillMeta = infill.getItemMeta();
         Objects.requireNonNull(infillMeta).setDisplayName(" ");
         infill.setItemMeta(infillMeta);
 
-        System.out.println("Created Infill Item");
+        ItemStack backButton = new ItemStack(Material.BARRIER);
+        ItemMeta backMeta = backButton.getItemMeta();
+        Objects.requireNonNull(backMeta).setDisplayName(ChatColor.RED + "Back");
+        backButton.setItemMeta(backMeta);
+
         //Goes through the arrays starting with the lowest order number.
         for (int i = 0; i < warpWorldOrder.size(); i++) {
+            //TODO Add check to only show worlds that player has been to.
             System.out.println("Loop: " + i);
             int lowestIndex = getLowestIndex();
             ItemStack item = new ItemStack(warpWorldMaterials.get(lowestIndex));
             ItemMeta itemMeta = item.getItemMeta();
             Objects.requireNonNull(itemMeta).setDisplayName(warpWorldNames.get(lowestIndex));
+            System.out.println(warpWorldNames.get(lowestIndex));
             itemMeta.setLore(Collections.singletonList(warpWorldDescs.get(lowestIndex)));
             item.setItemMeta(itemMeta);
             gui.setItem(currentInvSquare, item);
@@ -109,14 +113,21 @@ public class WarpMenu {
             warpWorldDescs.remove(lowestIndex);
             warpWorldMaterials.remove(lowestIndex);
             currentInvSquare++;
+
             if (currentInvSquare > invSize) {
                 break;
             }
         }
+        //Fill in the rest of the squares with infill.
         if (currentInvSquare < invSize) {
             for (int i = currentInvSquare; i < invSize; i++) {
-                gui.setItem(currentInvSquare, infill);
-                currentInvSquare ++;
+                if (currentInvSquare == invSize) {
+                    gui.setItem(currentInvSquare, backButton);
+                } else {
+                    gui.setItem(currentInvSquare, infill);
+                    currentInvSquare++;
+                }
+
             }
         }
 
@@ -124,25 +135,44 @@ public class WarpMenu {
 
     }
 
-    public static void openSubMenu(Player p, Material material) {
+    public static void openSubMenu(Player p, String worldName) {
         //TODO Display the discovered warp points in selected world.
+        for (String warpWorldName : warpWorldNames) {
+            if (worldName.equals(warpWorldName)) {
+                //TODO Open new GUI with all discovered warp points.
+                //Initialize the new inventory.
+                int invSize = 6 * 9;
+                int currentInvSquare = 0;
+                Inventory subGui = Bukkit.createInventory(p, invSize, ChatColor.AQUA + worldName + " Warp Menu:");
 
-    }
+                //Create infill and back items.
+                ItemStack infill = new ItemStack(Material.BLACK_STAINED_GLASS_PANE);
+                ItemMeta infillMeta = infill.getItemMeta();
+                Objects.requireNonNull(infillMeta).setDisplayName(" ");
+                infill.setItemMeta(infillMeta);
 
-    public static void menuClick(Player p, ItemMeta itemMeta) {
-        if (itemMeta != null) {
-            String itemName = itemMeta.getDisplayName();
-            if (!itemName.equals(" ")) {
-                //TODO Check if the material matches a world. If so open sub menu.
-                System.out.println(itemName);
-            } else {
-
+                ItemStack backButton = new ItemStack(Material.BARRIER);
+                ItemMeta backMeta = backButton.getItemMeta();
+                Objects.requireNonNull(backMeta).setDisplayName(ChatColor.RED + "Back");
+                backButton.setItemMeta(backMeta);
             }
         }
     }
 
+    //Get the itemmeta from gui click
+    public static void menuClick(Player p, ItemMeta itemMeta) {
+        if (itemMeta != null) {
+            String itemName = itemMeta.getDisplayName();
+            if (itemName.equals("Back")) {
+                p.closeInventory();
+            } else if (!itemName.equals(" ")) {
+                openSubMenu(p, itemName);
+            }
+        }
+    }
+
+    //Returns the lowest value in an array.
     public static int getLowestIndex() {
-        //Returns the lowest value in an array.
         int lowestValues = warpWorldOrder.get(0);
         int lowestIndex = 0;
         for (int i = 0; i < warpWorldOrder.size(); i++) {

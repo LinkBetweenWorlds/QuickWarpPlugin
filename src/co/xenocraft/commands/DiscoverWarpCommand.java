@@ -18,9 +18,6 @@ public class DiscoverWarpCommand implements TabExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
         if (sender instanceof BlockCommandSender block) {
-            //TODO Display discovered warp name on player's screen.
-            // Change colour and effects if secret warp points.
-
             //Gets the command block location
             Location blockLoc = block.getBlock().getLocation();
             int blockX = blockLoc.getBlockX();
@@ -28,15 +25,13 @@ public class DiscoverWarpCommand implements TabExecutor {
             int blockZ = blockLoc.getBlockZ();
 
             //Gets the nearby entities in bbox
-            //TODO Check if the args from command block get passed thru.
-            // If so change createWarp command to pass range thru and use it in bbox.
             int range = 5;
             boolean secret = false;
             String blockName = "WarpPoint";
             String blockString = block.getName();
             String[] blockArgs = blockString.split("=");
             try {
-                if(blockArgs[0].trim().equals("1")){
+                if (blockArgs[0].trim().equals("1")) {
                     secret = true;
                 }
                 blockName = blockArgs[1].trim();
@@ -47,8 +42,6 @@ public class DiscoverWarpCommand implements TabExecutor {
             BoundingBox bbox = new BoundingBox(blockX - range, blockY - 1, blockZ - range, blockX + range, blockY + 4, blockZ + range);
             Collection<Entity> players = Objects.requireNonNull(Bukkit.getWorld(Objects.requireNonNull(blockLoc.getWorld()).getUID())).getNearbyEntities(bbox);
             ArrayList<Entity> nearestPLayers = new ArrayList<>((players));
-
-            //TODO Change so it updates player file with discovered warp points.
 
             //Find the nearest Player in bbox
             for (Entity nearestPLayer : nearestPLayers) {
@@ -73,22 +66,23 @@ public class DiscoverWarpCommand implements TabExecutor {
                             Location particleLoc = new Location(pLoc.getWorld(), pLoc.getX(), pLoc.getY() + 2, pLoc.getZ());
                             p.sendMessage(ChatColor.GREEN + "You discovered " + blockName);
                             if (secret) {
-                                p.sendTitle(ChatColor.GOLD + blockName, ChatColor.GOLD + "has been discovered", 10, 80, 15);
-                                p.spawnParticle(Particle.FIREWORKS_SPARK, particleLoc, 100);
+                                p.sendTitle(ChatColor.GOLD + blockName, ChatColor.GOLD + "has been discovered", 8, 80, 14);
+                                p.spawnParticle(Particle.FIREWORKS_SPARK, particleLoc, 200);
                                 p.spawnParticle(Particle.ELECTRIC_SPARK, particleLoc, 200);
                                 p.playSound(p, Sound.UI_TOAST_CHALLENGE_COMPLETE, SoundCategory.MUSIC, 115, 1);
                             } else {
-                                p.sendTitle(ChatColor.GREEN + blockName, "has been discovered", 10, 80, 15);
+                                p.sendTitle(ChatColor.GREEN + blockName, "has been discovered", 6, 60, 12);
                                 p.spawnParticle(Particle.FIREWORKS_SPARK, particleLoc, 200);
-                                p.playSound(p, Sound.UI_TOAST_CHALLENGE_COMPLETE, SoundCategory.MUSIC, 100, 1);
+                                String soundDir = System.getProperty("user.dir") + "\\plugins\\QuickWarp\\sounds\\test.mp3";
+                                p.playSound(p.getLocation(), soundDir, SoundCategory.MUSIC, 100, 1);
                             }
-                            String data = blockName;
+                            StringBuilder data = new StringBuilder(blockName);
                             for (String d : warpList) {
-                                data += "," + d;
+                                data.append(",").append(d);
                             }
                             try {
                                 FileWriter writer = new FileWriter(file);
-                                writer.write(data);
+                                writer.write(data.toString());
                                 writer.close();
                             } catch (Exception e) {
                                 getLogger().log(Level.WARNING, e.toString());
