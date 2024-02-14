@@ -134,6 +134,7 @@ public class WarpMenu {
 
     }
 
+    //Opens the world's sub menu that contains all discovered warp points.
     public static void openSubMenu(Player p, String worldName) {
         //TODO Display the discovered warp points in selected world.
         for (String warpWorldName : warpWorldNames) {
@@ -154,17 +155,32 @@ public class WarpMenu {
                 ItemMeta backMeta = backButton.getItemMeta();
                 Objects.requireNonNull(backMeta).setDisplayName(ChatColor.RED + "Back");
                 backButton.setItemMeta(backMeta);
+
+                try{
+                    File worldDirFile = new File(worldDir);
+                    List<String> worldDirList = List.of(Objects.requireNonNull(worldDirFile.list()));
+                } catch(Exception e){
+                    getLogger().log(Level.WARNING, e.toString());
+                }
+
+
+                p.openInventory(subGui);
             }
         }
     }
 
-    //Get the itemmeta from gui click
+    //Warps the player to the selected warp point
+    public static void teleportPlayer(Player p){
+
+    }
+
+    //Get the itemMeta from gui click
     public static void menuClick(Player p, ItemMeta itemMeta) {
         if (itemMeta != null) {
             String itemName = itemMeta.getDisplayName();
             if (itemName.equals("Back")) {
                 p.closeInventory();
-            } else if (!itemName.equals(" ")) {
+            } else if (itemName.contains((CharSequence) warpWorldNames)) {
                 openSubMenu(p, itemName);
             }
         }
