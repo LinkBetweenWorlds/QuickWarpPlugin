@@ -23,22 +23,23 @@ commands:
     permission-message: You don't have permission to do that.
   editWorld:
     description: Edit the name, desc, order, and block of the current world. Or remove it.
-    usage: /<command> <name/edit/delete/desc/order/block>
+    usage: /<command> <name/edit/delete/desc/order/block> <options>
     permission: quickwarp.editWorld
     permission-message: You don't have permission to do that.
   editWarp:
     description: Edit the name, order and block of a warp point. Or remove it.
-    usage: /<command> <warp point> <name/order/block/delete>
+    usage: /<command> <warp point> <name/order/block/delete> <options>
     permission: quickwarp.editWarp
     permission-message: You don't have permission to do that.
   view:
     description: View all worlds or warp in your current worlds.
+    usage: /<command>
     permission: quickwarp.view
     permission-message: You don't have permission to do that.
   discoverWarp:
     description: Discover warp points for a player
     usage: /<command>
-    permission: command
+    permission: quickwarp.discovery
     permission-message: This is not a command you can use.
   warp:
     description: Opens warp menu.
@@ -47,7 +48,7 @@ commands:
 
 permissions:
   quickwarp.warpEditor:
-    description: Gives access so you can create, edit, see, or remove warp points.
+    description: Gives access so you can create, edit, see, or remove warp points. Includes all the permissions needed to create and edit all the warp points and worlds.
     default: op
     children:
       quickwarp.createWarp: true
@@ -56,23 +57,26 @@ permissions:
       quickwarp.editWarp: true
       quickwarp.view: true
   quickwarp.createWarp:
-    description: Allows one to create warp point.
+    description: Allows one to create warp point. Should not be given to players.
     default: op
   quickwarp.createWorldName:
-    description: Allows one to create worlds to warp to.
+    description: Allows one to create worlds to warp to. Should not be given to players.
     default: op
   quickwarp.editWorld:
-    description: Allows you to edit the worlds.
+    description: Allows you to edit the worlds. Should not be given to players.
     default: op
   quickwarp.editWarp:
-    description: Allows you to edit a warp point.
+    description: Allows you to edit a warp point. Should not be given to players.
     default: op
   quickwarp.view:
-    description: Allows you to see all create worlds or warp points.
+    description: Allows you to see all create worlds or warp points. Should not be given to players.
     default: op
   quickwarp.warp:
-    description: Allows one to teleport through the dimensions.
+    description: Allows one to teleport through the dimensions. Should be auto given to players.
     default: true
+  quickwarp.discovery:
+    description: This permission is not meant to be given to anyone, including admin.
+    default: false
   quickwarp.god:
-    description: Allows one to become God.
+    description: Allows one to become God. Should not be given to players.
     default: op

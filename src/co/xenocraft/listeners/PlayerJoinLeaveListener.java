@@ -7,7 +7,12 @@ import org.bukkit.event.player.PlayerJoinEvent;
 
 import java.io.File;
 import java.io.FileWriter;
+import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
+import java.util.logging.Level;
+
+import static org.bukkit.Bukkit.getLogger;
 
 public class PlayerJoinLeaveListener implements Listener {
 
@@ -18,27 +23,22 @@ public class PlayerJoinLeaveListener implements Listener {
         UUID playerID = p.getUniqueId();
         String fileDir = System.getProperty("user.dir") + "\\plugins\\QuickWarp\\playerData\\";
         File playerDir = new File(fileDir);
-        String[] playerList = playerDir.list();
-        if (playerList != null) {
+        List<String> playerList = List.of(Objects.requireNonNull(playerDir.list()));
+        if (!playerList.isEmpty()) {
             try {
-                FileWriter file = new FileWriter(playerDir + "\\" + playerID.toString() + ".yml");
-                String data = "";
-                if (playerList.length != 0) {
+                if (!playerList.contains(playerID + ".yml")) {
+                    FileWriter file = new FileWriter(playerDir + "\\" + playerID + ".yml");
+                    String data = "";
                     for (String s : playerList) {
                         if (!s.equals(playerID.toString())) {
                             file.write(data);
                             file.close();
                         }
                     }
-                } else {
-                    file.write(data);
-                    file.close();
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                getLogger().log(Level.WARNING, e.toString());
             }
-
-
         }
     }
 }

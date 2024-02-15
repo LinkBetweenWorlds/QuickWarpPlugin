@@ -16,21 +16,13 @@ import static org.bukkit.Bukkit.getLogger;
 
 public class EditWorldCommand implements TabExecutor {
 
+    private final String fileDir = System.getProperty("user.dir") + "\\plugins\\QuickWarp\\worldData\\";
     private String worldName = null;
     private Material worldBlock = null;
     private String worldDesc = null;
     private int worldOrder = -1;
-
-    private final String fileDir = System.getProperty("user.dir") + "\\plugins\\QuickWarp\\worldData\\";
     private String worldDir = "";
 
-    //TODO Allows the user to change the name of the world, or delete it.
-    // /<command> <block> material
-    // /<command> <delete> confirm
-    // /<command> <desc> description
-    // /<command> <order> number
-    // /<command> <name> newName
-    // /<command> <info>
     @Override
     public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
         if (sender instanceof Player p) {
@@ -45,7 +37,6 @@ public class EditWorldCommand implements TabExecutor {
                                     p.sendMessage("Changes the block that appears on the warp menu.");
                                     p.sendMessage("Please use underscore for spaces. Ex: GRASS_BLOCK");
                                 } else {
-                                    //TODO Update the block for the warp menu.
                                     Material mat = Material.getMaterial(args[1].toUpperCase());
                                     if (mat != null) {
                                         updateMaterialData(mat);
@@ -73,11 +64,10 @@ public class EditWorldCommand implements TabExecutor {
                             } else {
                                 p.sendMessage(ChatColor.RED + "Please type /editWorld delete confirm");
                                 p.sendMessage(ChatColor.RED + "To delete the world name and the warp point within it.");
-                                p.sendMessage(ChatColor.RED + "PLEASE NOTE, THERE IS NO GOING BACK AFTER YOU TYPE THAT COMMAND!");
+                                p.sendMessage(ChatColor.RED + "PLEASE NOTE, THERE IS NO GOING BACK AFTER YOU TYPE THIS COMMAND!");
                             }
                         }
                         case "desc" -> {
-                            //TODO Update the description in the warp menu.
                             if (args.length > 1) {
                                 if (args[1].equals("help")) {
                                     p.sendMessage("World Description Change");
@@ -96,7 +86,6 @@ public class EditWorldCommand implements TabExecutor {
                             }
                         }
                         case "order" -> {
-                            //TODO Change the order of the worlds in the warp menu.
                             if (args.length > 1) {
                                 if (args[1].equals("help")) {
                                     p.sendMessage("World Order Change");
@@ -132,8 +121,6 @@ public class EditWorldCommand implements TabExecutor {
                             }
                         }
                         case "info" -> {
-                            //TODO Display the current info of the world.
-                            // World Name, block, lore, order
                             p.sendMessage("World Info:");
                             p.sendMessage("Name: " + worldName);
                             p.sendMessage("Block: " + worldBlock);
@@ -179,7 +166,6 @@ public class EditWorldCommand implements TabExecutor {
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String s, String[] args) {
-        //TODO Add autofill for all options.
         List<String> options = new ArrayList<>();
         if (args.length == 1) {
             options.add("block");
@@ -261,9 +247,9 @@ public class EditWorldCommand implements TabExecutor {
 
     private void updateDescData(String desc) {
         try {
-            desc.replace(",", "");
+            String newDesc = desc.replace(",", "");
             FileWriter file = new FileWriter(worldDir + "\\worldData.dat");
-            String data = worldBlock + "," + desc + "," + worldOrder;
+            String data = worldBlock + "," + newDesc + "," + worldOrder;
             file.write(data);
             file.close();
         } catch (Exception e) {
@@ -315,12 +301,15 @@ public class EditWorldCommand implements TabExecutor {
     }
 
     //TODO Add ability to change world name.
-    private void updateNameData(String name) {
-
+    // Create new folder with new name but same UUID.
+    // Move all the contents of all folder over to new folder.
+    // Remove the old folder.
+    private void updateNameData(String newName) {
     }
 
     //TODO Add ability to delete world.
+    // Remove the world folder.
+    // Go through all the player files and remove warp from that world.
     private void deleteWorld() {
-
     }
 }

@@ -99,10 +99,6 @@ public class CreateWorldNameCommand implements TabExecutor {
     }
 
     public void worldDataFile(String dir) {
-        //TODO Add data file that contains the world's info.
-        // Like What block to display.
-        // The world desc and the order it should appear in.
-        // Add another command that allows you to edit this data file.
         try {
             Material worldBlock = Material.GRASS_BLOCK;
             String worldDesc = "";

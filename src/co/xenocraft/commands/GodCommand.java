@@ -36,7 +36,6 @@ public class GodCommand implements TabExecutor {
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String s, String[] args) {
-        //TODO Allows you to select any player to give the power of a God.
         return null;
     }
 }

@@ -58,7 +58,6 @@ public class DiscoverWarpCommand implements TabExecutor {
                             warpList.add(fileReader.next());
                         }
                         fileReader.close();
-                        //TODO After reading the file, Check the discovered warp points.
                         if (warpList.contains(blockName)) {
                             break;
                         } else {
