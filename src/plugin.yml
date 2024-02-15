@@ -22,9 +22,14 @@ commands:
     permission: quickwarp.createWorldName
     permission-message: You don't have permission to do that.
   editWorld:
-    description: Edit the name, desc, order, and block of the current world.
+    description: Edit the name, desc, order, and block of the current world. Or remove it.
     usage: /<command> <name/edit/delete/desc/order/block>
     permission: quickwarp.editWorld
+    permission-message: You don't have permission to do that.
+  editWarp:
+    description: Edit the name, order and block of a warp point. Or remove it.
+    usage: /<command> <warp point> <name/order/block/delete>
+    permission: quickwarp.editWarp
     permission-message: You don't have permission to do that.
   view:
     description: View all worlds or warp in your current worlds.
@@ -48,6 +53,7 @@ permissions:
       quickwarp.createWarp: true
       quickwarp.createWorldName: true
       quickwarp.editWorld: true
+      quickwarp.editWarp: true
       quickwarp.view: true
   quickwarp.createWarp:
     description: Allows one to create warp point.
@@ -57,6 +63,9 @@ permissions:
     default: op
   quickwarp.editWorld:
     description: Allows you to edit the worlds.
+    default: op
+  quickwarp.editWarp:
+    description: Allows you to edit a warp point.
     default: op
   quickwarp.view:
     description: Allows you to see all create worlds or warp points.

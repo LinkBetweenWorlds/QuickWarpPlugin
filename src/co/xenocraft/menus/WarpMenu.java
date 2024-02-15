@@ -3,6 +3,7 @@ package co.xenocraft.menus;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.Statistic;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -24,20 +25,20 @@ public class WarpMenu {
     public static List<Material> warpWorldMaterials = new ArrayList<>();
     public static List<String> warpWorldDescs = new ArrayList<>();
     public static List<Integer> warpWorldOrder = new ArrayList<>();
+    public static List<String> warpMenuNames = new ArrayList<>();
 
     //Loads the data from the world folder.
     private static void loadData() {
         try {
             File worldFiles = new File(worldDir);
             String[] worldNames = worldFiles.list();
-            System.out.println(Arrays.toString(worldNames));
 
             //Loops through the worlds and adds the data to local arrays.
             for (int i = 0; i < Objects.requireNonNull(worldNames).length; i++) {
-                System.out.println("Looping thru worlds...");
                 String[] nameParts = worldNames[i].split("=");
                 String name = nameParts[0].trim();
                 warpWorldNames.add(name);
+                warpMenuNames.add(name);
 
                 try {
                     File file = new File(worldDir + worldNames[i] + "\\worldData.dat");
@@ -61,6 +62,7 @@ public class WarpMenu {
             getLogger().log(Level.WARNING, e.toString());
         }
     }
+
 
     //Opens the main warp menu to the player.
     public static void open(Player p) {
@@ -96,7 +98,6 @@ public class WarpMenu {
         Objects.requireNonNull(backMeta).setDisplayName(ChatColor.RED + "Back");
         backButton.setItemMeta(backMeta);
 
-        System.out.println("Order Size: " + warpWorldOrder.size());
         //Goes through the arrays starting with the lowest order number.
         for (int i = 0; i < warpWorldOrder.size() + 1; i++) {
             //TODO Add check to only show worlds that player has been to.
@@ -137,7 +138,7 @@ public class WarpMenu {
     //Opens the world's sub menu that contains all discovered warp points.
     public static void openSubMenu(Player p, String worldName) {
         //TODO Display the discovered warp points in selected world.
-        for (String warpWorldName : warpWorldNames) {
+        for (String warpWorldName : warpMenuNames) {
             if (worldName.equals(warpWorldName)) {
                 //TODO Open new GUI with all discovered warp points.
                 //Initialize the new inventory.
@@ -158,11 +159,29 @@ public class WarpMenu {
 
                 try{
                     File worldDirFile = new File(worldDir);
-                    List<String> worldDirList = List.of(Objects.requireNonNull(worldDirFile.list()));
+                    List<File> worldDirList;
+                    worldDirList = List.of(Objects.requireNonNull(worldDirFile.listFiles()));
+                    for(File f : worldDirList){
+                        if(f.getName().contains(worldName)){
+
+                        }
+                    }
                 } catch(Exception e){
                     getLogger().log(Level.WARNING, e.toString());
                 }
 
+                //Fill in the rest of the squares with infill.
+                if (currentInvSquare < invSize) {
+                    for (int i = currentInvSquare; i < invSize; i++) {
+                        if (currentInvSquare == (invSize - 1)) {
+                            subGui.setItem(currentInvSquare, backButton);
+                        } else {
+                            subGui.setItem(currentInvSquare, infill);
+                            currentInvSquare++;
+                        }
+
+                    }
+                }
 
                 p.openInventory(subGui);
             }
@@ -178,9 +197,9 @@ public class WarpMenu {
     public static void menuClick(Player p, ItemMeta itemMeta) {
         if (itemMeta != null) {
             String itemName = itemMeta.getDisplayName();
-            if (itemName.equals("Back")) {
+            if (itemName.equals(ChatColor.RED + "Back")) {
                 p.closeInventory();
-            } else if (itemName.contains((CharSequence) warpWorldNames)) {
+            } else if (warpMenuNames.contains(itemName)) {
                 openSubMenu(p, itemName);
             }
         }

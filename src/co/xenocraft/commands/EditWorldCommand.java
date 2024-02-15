@@ -104,8 +104,8 @@ public class EditWorldCommand implements TabExecutor {
                                     p.sendMessage("This will push down all other world after it.");
                                 } else {
                                     int orderNum = Math.abs(Integer.parseInt(args[1]));
-                                    System.out.println("Change world order to: " + orderNum);
                                     updateOrderData(orderNum);
+                                    p.sendMessage("Change world order to:" + orderNum);
                                 }
                             } else {
                                 p.sendMessage(ChatColor.YELLOW + "Please check your arguments.");
@@ -203,20 +203,16 @@ public class EditWorldCommand implements TabExecutor {
 
     public boolean checkWorldFolder(UUID worldUUID) {
         String UUIDString = worldUUID.toString();
-        System.out.println("Checking world folder...");
         try {
             File dirList = new File(fileDir);
             String[] worldDirList = dirList.list();
-            System.out.println(Arrays.toString(worldDirList));
             if (Objects.requireNonNull(worldDirList).length != 0) {
                 for (String s : worldDirList) {
-                    System.out.println(s);
                     String[] nameParts = s.split("=");
                     String UUIDPart = nameParts[1].trim();
                     if (UUIDPart.contains(UUIDString)) {
                         worldName = nameParts[0].trim();
                         worldDir = fileDir + worldName + "=" + UUIDPart;
-                        System.out.println(worldDir);
                         getWorldData();
                         return true;
                     }
@@ -265,6 +261,7 @@ public class EditWorldCommand implements TabExecutor {
 
     private void updateDescData(String desc) {
         try {
+            desc.replace(",", "");
             FileWriter file = new FileWriter(worldDir + "\\worldData.dat");
             String data = worldBlock + "," + desc + "," + worldOrder;
             file.write(data);
@@ -278,12 +275,9 @@ public class EditWorldCommand implements TabExecutor {
         try {
             try {
                 File[] fileList = new File(fileDir).listFiles();
-                System.out.println(Arrays.toString(fileList));
                 if (fileList != null) {
                     for (File value : fileList) {
                         try {
-                            System.out.println("File List");
-                            System.out.println(value.getAbsolutePath());
                             File file = new File(value.getAbsolutePath() + "\\worldData.dat");
                             Scanner fileReader = new Scanner(file).useDelimiter(",");
                             List<String> dataList = new ArrayList<>();
