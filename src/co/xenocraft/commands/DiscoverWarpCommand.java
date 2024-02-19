@@ -72,8 +72,6 @@ public class DiscoverWarpCommand implements TabExecutor {
                             } else {
                                 p.sendTitle(ChatColor.GREEN + blockName, "has been discovered", 6, 60, 12);
                                 p.spawnParticle(Particle.FIREWORKS_SPARK, particleLoc, 200);
-                                //String soundDir = System.getProperty("user.dir") + "\\plugins\\QuickWarp\\sounds\\test.mp3";
-                                //p.playSound(p.getLocation(), soundDir, SoundCategory.MUSIC, 100, 1);
                                 p.playSound(p, Sound.UI_TOAST_CHALLENGE_COMPLETE, SoundCategory.MUSIC, 100, 1);
                             }
                             StringBuilder data = new StringBuilder(blockName);

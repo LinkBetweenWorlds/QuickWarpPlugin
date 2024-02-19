@@ -1,6 +1,5 @@
 package co.xenocraft.commands;
 
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.command.Command;
@@ -14,22 +13,17 @@ public class GodCommand implements TabExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
         if (sender instanceof Player p) {
-            if (args.length >= 1) {
-                Player t = Bukkit.getPlayerExact(args[0]);
+            if (p.isInvulnerable()) {
+                p.setInvulnerable(false);
+                p.setGameMode(GameMode.ADVENTURE);
+                p.sendMessage(ChatColor.RED + "You have fallen from the light.");
             } else {
-                if (p.isInvulnerable()) {
-                    p.setInvulnerable(false);
-                    p.setGameMode(GameMode.ADVENTURE);
-                    p.sendMessage(ChatColor.RED + "You have fallen from the light.");
-                } else {
-                    p.setInvulnerable(true);
-                    p.setGameMode(GameMode.CREATIVE);
-                    for (int i = 0; i < 10; i++) p.getWorld().strikeLightningEffect(p.getLocation());
-                    p.sendMessage(ChatColor.GOLD + "You now have the power of a God.");
-                    p.sendMessage(ChatColor.GOLD + "How does it feel?");
-                }
+                p.setInvulnerable(true);
+                p.setGameMode(GameMode.CREATIVE);
+                for (int i = 0; i < 10; i++) p.getWorld().strikeLightningEffect(p.getLocation());
+                p.sendMessage(ChatColor.GOLD + "You now have the power of a God.");
+                p.sendMessage(ChatColor.GOLD + "How does it feel?");
             }
-
         }
         return true;
     }

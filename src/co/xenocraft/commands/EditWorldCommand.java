@@ -6,6 +6,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
+import org.bukkit.util.FileUtil;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -56,9 +57,11 @@ public class EditWorldCommand implements TabExecutor {
                                 if (args[1].equals("help")) {
                                     p.sendMessage("World Deletion");
                                     p.sendMessage("Deletes the world name and all the warp points within it.");
+                                    p.sendMessage("This is a very dangerous action there is no going back.");
                                 } else if (args[1].equals("confirm")) {
                                     //TODO Deleting both the warp points and the world folder.
                                     p.sendMessage(ChatColor.RED + "Deleting world...");
+                                    deleteWorld();
                                     p.sendMessage(ChatColor.GREEN + "The world has been deleted.");
                                 }
                             } else {
@@ -110,10 +113,9 @@ public class EditWorldCommand implements TabExecutor {
                                 } else {
                                     StringBuilder name = new StringBuilder(args[1]);
                                     for (int i = 2; i <= args.length - 1; i++) {
-                                        name.append(" ");
-                                        name.append(args[i]);
+                                        name.append(" ").append(args[i]);
                                     }
-                                    name.toString();
+                                    updateNameData(name.toString(), worldUUID);
                                 }
                             } else {
                                 p.sendMessage(ChatColor.YELLOW + "Please check your arguments.");
@@ -300,16 +302,36 @@ public class EditWorldCommand implements TabExecutor {
         }
     }
 
-    //TODO Add ability to change world name.
-    // Create new folder with new name but same UUID.
-    // Move all the contents of all folder over to new folder.
-    // Remove the old folder.
-    private void updateNameData(String newName) {
+    private void updateNameData(String newName, UUID worldUUID) {
+        File newWorldDir = new File(fileDir + newName + "=" + worldUUID);
+        File oldWorldDir = new File(worldDir);
+        try {
+            newWorldDir.mkdirs();
+            FileUtil.copy(oldWorldDir, newWorldDir);
+            File[] contents = oldWorldDir.listFiles();
+            if (contents != null) {
+                for (File f : contents) {
+                    f.delete();
+                }
+            }
+            oldWorldDir.delete();
+        } catch (Exception e) {
+            getLogger().log(Level.WARNING, e.toString());
+        }
     }
 
-    //TODO Add ability to delete world.
-    // Remove the world folder.
-    // Go through all the player files and remove warp from that world.
     private void deleteWorld() {
+        File worldDirToDelete = new File(worldDir);
+        try {
+            File[] contents = worldDirToDelete.listFiles();
+            if (contents != null) {
+                for (File f : contents) {
+                    f.delete();
+                }
+            }
+            worldDirToDelete.delete();
+        } catch (Exception e) {
+            getLogger().log(Level.WARNING, e.toString());
+        }
     }
 }

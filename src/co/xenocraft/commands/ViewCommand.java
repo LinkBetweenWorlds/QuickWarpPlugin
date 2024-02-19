@@ -45,16 +45,16 @@ public class ViewCommand implements TabExecutor {
                     try {
                         File worldFiles = new File(worldDir);
                         worldFileList = Arrays.asList(Objects.requireNonNull(worldFiles.list()));
-                        for(String f : worldFileList){
+                        for (String f : worldFileList) {
                             String[] worldParts = f.split("=");
-                            if(worldUUID.equals(worldParts[1].trim())){
+                            if (worldUUID.equals(worldParts[1].trim())) {
                                 File warpFiles = new File(worldDir + f);
                                 warpFileList = Arrays.asList(Objects.requireNonNull(warpFiles.list()));
                                 p.sendMessage("World Name: " + worldParts[0].trim());
                                 p.sendMessage("Warps: ");
-                                for(String s : warpFileList){
+                                for (String s : warpFileList) {
                                     String[] warpNameParts = s.split("\\.");
-                                    if(!warpNameParts[0].trim().equals("worldData")){
+                                    if (!warpNameParts[0].trim().equals("worldData")) {
                                         p.sendMessage(warpNameParts[0].trim());
                                     }
 

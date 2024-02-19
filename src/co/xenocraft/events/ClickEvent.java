@@ -13,7 +13,7 @@ public class ClickEvent implements Listener {
         Player p = (Player) event.getWhoClicked();
         if (event.getView().getTitle().contains("Warp Menu:")) {
             event.setCancelled(true);
-            if (event.getCurrentItem() != null){
+            if (event.getCurrentItem() != null) {
                 WarpMenu.menuClick(p, event.getCurrentItem().getItemMeta());
             }
         }
