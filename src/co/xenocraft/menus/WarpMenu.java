@@ -2,7 +2,6 @@ package co.xenocraft.menus;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
@@ -64,10 +63,6 @@ public class WarpMenu {
         }
     }
 
-    private static void loadSubData(){
-
-    }
-
 
     //Opens the main warp menu to the player.
     public static void open(Player p) {
@@ -103,8 +98,9 @@ public class WarpMenu {
         Objects.requireNonNull(backMeta).setDisplayName(ChatColor.RED + "Back");
         backButton.setItemMeta(backMeta);
 
+        int listSize = warpWorldOrder.size();
         //Goes through the arrays starting with the lowest order number.
-        for (int i = 0; i < warpWorldOrder.size() + 1; i++) {
+        for (int i = 1; i <= listSize; i++) {
             //TODO Add check to only show worlds that player has been to.
             int lowestIndex = getLowestIndex();
             ItemStack item = new ItemStack(warpWorldMaterials.get(lowestIndex));
@@ -145,6 +141,7 @@ public class WarpMenu {
         //TODO Display the discovered warp points in selected world.
         for (String warpWorldName : warpMenuNames) {
             if (worldName.equals(warpWorldName)) {
+                //TODO Open new GUI with all discovered warp points.
                 //Initialize the new inventory.
                 int invSize = 6 * 9;
                 int currentInvSquare = 0;
@@ -166,9 +163,15 @@ public class WarpMenu {
                     List<File> worldDirList;
                     worldDirList = List.of(Objects.requireNonNull(worldDirFile.listFiles()));
                     for (File f : worldDirList) {
-                        if (f.getName().contains(worldName)) {
-
-                            currentInvSquare ++;
+                        String[] nameParts = f.getName().split("=");
+                        if (nameParts[0].equals(worldName)) {
+                            File warpDirFile = new File(worldDir + "\\"+ f.getName());
+                            List<File> warpDirlist = List.of(Objects.requireNonNull(warpDirFile.listFiles()));
+                            for (File wf : warpDirlist){
+                                if(!wf.getName().equals("worldData.dat")){
+                                    System.out.println(wf.getName());
+                                }
+                            }
                         }
                     }
                 } catch (Exception e) {
@@ -191,42 +194,38 @@ public class WarpMenu {
                 p.openInventory(subGui);
             }
         }
+        warpMenuNames.clear();
     }
 
     //Warps the player to the selected warp point
-    // TODO After sub menu click, find file, get location data, than teleport player.
-    public static void teleportPlayer(Player p, String itemName) {
+    public static void teleportPlayer(Player p) {
 
     }
 
     //Get the itemMeta from gui click
-    public static void menuClick(Player p, ItemMeta itemMeta) {
-        if (itemMeta != null) {
-            String itemName = itemMeta.getDisplayName();
-            if (itemName.equals(ChatColor.RED + "Back")) {
-                p.closeInventory();
-            } else if (warpMenuNames.contains(itemName)) {
-                openSubMenu(p, itemName);
-            } else {
-                subMenuClick(p, itemMeta);
+    public static void menuClick(Player p, ItemStack item, String guiName) {
+        if (item != null) {
+            ItemMeta itemMeta = item.getItemMeta();
+            if(itemMeta != null){
+                String itemName = itemMeta.getDisplayName();
+                if (itemName.equals(ChatColor.RED + "Back")) {
+                    if (guiName.equals(ChatColor.AQUA + "Warp Menu:")) {
+                        p.closeInventory();
+                    } else {
+                        open(p);
+                    }
+                } else if (warpMenuNames.contains(itemName)) {
+                    p.closeInventory();
+                    openSubMenu(p, itemName);
+                }
             }
-        }
-    }
 
-    public static void subMenuClick(Player p, ItemMeta itemMeta){
-        if(itemMeta != null){
-            String itemName = itemMeta.getDisplayName();
-            if(itemName.equals(ChatColor.RED + "Back")){
-                p.closeInventory();
-            } else if(warpMenuNames.contains(itemName)){
-                teleportPlayer(p, itemName);
-            }
         }
     }
 
     //Returns the lowest value in an array.
     public static int getLowestIndex() {
-        int lowestValues = warpWorldOrder.getFirst();
+        int lowestValues = warpWorldOrder.get(0);
         int lowestIndex = 0;
         for (int i = 0; i < warpWorldOrder.size(); i++) {
             int current = warpWorldOrder.get(i);

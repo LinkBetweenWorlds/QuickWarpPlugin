@@ -10,6 +10,7 @@ import org.bukkit.util.FileUtil;
 
 import java.io.File;
 import java.io.FileWriter;
+import java.nio.file.Files;
 import java.util.*;
 import java.util.logging.Level;
 
@@ -306,8 +307,10 @@ public class EditWorldCommand implements TabExecutor {
         File newWorldDir = new File(fileDir + newName + "=" + worldUUID);
         File oldWorldDir = new File(worldDir);
         try {
-            newWorldDir.mkdirs();
-            FileUtil.copy(oldWorldDir, newWorldDir);
+            //Files.copy(oldWorldDir.toPath(), newWorldDir.toPath());
+            //Files.createDirectory(newWorldDir.toPath());
+            Files.move(oldWorldDir.toPath(), newWorldDir.toPath());
+            //FileUtil.copy(oldWorldDir, newWorldDir);
             File[] contents = oldWorldDir.listFiles();
             if (contents != null) {
                 for (File f : contents) {
@@ -315,6 +318,7 @@ public class EditWorldCommand implements TabExecutor {
                 }
             }
             oldWorldDir.delete();
+
         } catch (Exception e) {
             getLogger().log(Level.WARNING, e.toString());
         }

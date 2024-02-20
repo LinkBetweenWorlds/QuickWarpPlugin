@@ -23,6 +23,8 @@ public class DiscoverWarpCommand implements TabExecutor {
             int blockX = blockLoc.getBlockX();
             int blockY = blockLoc.getBlockY();
             int blockZ = blockLoc.getBlockZ();
+            //TODO Add to string the world each warp was found in.
+            // This is so warps in different worlds can have the same name.
 
             //Gets the nearby entities in bbox
             int range = 5;
@@ -39,7 +41,7 @@ public class DiscoverWarpCommand implements TabExecutor {
             } catch (Exception e) {
                 getLogger().log(Level.WARNING, e.toString());
             }
-            BoundingBox bbox = new BoundingBox(blockX - range, blockY - 1, blockZ - range, blockX + range, blockY + 4, blockZ + range);
+            BoundingBox bbox = new BoundingBox(blockX - range, blockY - 1, blockZ - range, blockX + range, blockY + 5, blockZ + range);
             Collection<Entity> players = Objects.requireNonNull(Bukkit.getWorld(Objects.requireNonNull(blockLoc.getWorld()).getUID())).getNearbyEntities(bbox);
             ArrayList<Entity> nearestPLayers = new ArrayList<>((players));
 
@@ -76,7 +78,8 @@ public class DiscoverWarpCommand implements TabExecutor {
                             }
                             StringBuilder data = new StringBuilder(blockName);
                             for (String d : warpList) {
-                                data.append(",").append(d);
+                                data.append(",");
+                                data.append(d);
                             }
                             try {
                                 FileWriter writer = new FileWriter(file);

@@ -134,7 +134,9 @@ public class CreateWarpCommand implements TabExecutor {
                 for (String s : worldDirList) {
                     String[] nameParts = s.split("=");
                     String UUIDParts = nameParts[1].trim();
-                    return UUIDParts.equals(UUIDString);
+                    if (UUIDParts.equals(UUIDString)) {
+                        return true;
+                    }
                 }
             } else {
                 return false;
@@ -155,6 +157,13 @@ public class CreateWarpCommand implements TabExecutor {
             File dirList = new File(fileDir);
             String[] worldDirList = dirList.list();
             for (String s : Objects.requireNonNull(worldDirList)) {
+                File checkWarpDir = new File(fileDir + "\\" + s);
+                String[] checkWarpList = checkWarpDir.list();
+                for (String w : Objects.requireNonNull(checkWarpList)) {
+                    if (w.equals(warpName + ".yml")) {
+                        return false;
+                    }
+                }
                 if (s.endsWith(UUIDString)) {
                     int order = worldDirList.length + 1;
                     File warpDir = new File(fileDir + s);
@@ -167,32 +176,18 @@ public class CreateWarpCommand implements TabExecutor {
                     FileWriter warpFile = new FileWriter(fileDir + s + "\\" + warpName + ".yml");
                     String dataString = blockX + "," + blockY + "," + blockZ + "," +
                             pitch + "," + yaw + "," + warpMaterial + "," + order;
-                    if (Objects.requireNonNull(warpDirList).length != 0) {
-                        for (String d : warpDirList) {
-                            if (d.equals(warpName + ".yml")) {
-                                warpFile.close();
-                                return false;
-                            }
-                        }
-                        try {
-                            warpFile.write(dataString);
-                            warpFile.close();
-                            return true;
-                        } catch (Exception e) {
-                            getLogger().log(Level.WARNING, e.toString());
-                            return false;
-                        }
-                    } else {
-                        try {
-                            warpFile.write(dataString);
-                            warpFile.close();
-                            return true;
-                        } catch (Exception e) {
-                            getLogger().log(Level.WARNING, e.toString());
-                        }
+                    try {
+                        warpFile.write(dataString);
+                        warpFile.close();
+                        return true;
+                    } catch (Exception e) {
+                        getLogger().log(Level.WARNING, e.toString());
+                        return false;
                     }
                 }
             }
+
+
         } catch (Exception e) {
             getLogger().log(Level.WARNING, e.toString());
             return false;

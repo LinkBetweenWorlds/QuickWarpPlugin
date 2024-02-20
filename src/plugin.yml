@@ -76,7 +76,7 @@ permissions:
     default: true
   quickwarp.discovery:
     description: This permission is not meant to be given to anyone, including admin.
-    default: false
+    default: op
   quickwarp.god:
     description: Allows one to become God. Should not be given to players.
     default: op
