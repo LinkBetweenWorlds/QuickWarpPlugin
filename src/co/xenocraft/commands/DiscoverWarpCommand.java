@@ -23,8 +23,6 @@ public class DiscoverWarpCommand implements TabExecutor {
             int blockX = blockLoc.getBlockX();
             int blockY = blockLoc.getBlockY();
             int blockZ = blockLoc.getBlockZ();
-            //TODO Add to string the world each warp was found in.
-            // This is so warps in different worlds can have the same name.
 
             //Gets the nearby entities in bbox
             int range = 5;

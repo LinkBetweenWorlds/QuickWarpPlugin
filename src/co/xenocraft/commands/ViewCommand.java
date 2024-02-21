@@ -21,9 +21,6 @@ public class ViewCommand implements TabExecutor {
         if (sender instanceof Player p) {
             if (args.length == 1) {
                 args[0].toLowerCase();
-                //TODO Display either all worlds with a name.
-                // or display all the warp points in the current world,
-                // along with each warp points data (secret, location, range)
                 if (args[0].equals("world")) {
                     List<String> worldFileList;
                     try {
@@ -41,7 +38,7 @@ public class ViewCommand implements TabExecutor {
                 } else if (args[0].equals("warps")) {
                     String worldUUID = p.getWorld().getUID().toString();
                     List<String> worldFileList;
-                    List<String> warpFileList;
+                    List<File> warpFileList;
                     try {
                         File worldFiles = new File(worldDir);
                         worldFileList = Arrays.asList(Objects.requireNonNull(worldFiles.list()));
@@ -49,13 +46,20 @@ public class ViewCommand implements TabExecutor {
                             String[] worldParts = f.split("=");
                             if (worldUUID.equals(worldParts[1].trim())) {
                                 File warpFiles = new File(worldDir + f);
-                                warpFileList = Arrays.asList(Objects.requireNonNull(warpFiles.list()));
+                                warpFileList = Arrays.asList(Objects.requireNonNull(warpFiles.listFiles()));
                                 p.sendMessage("World Name: " + worldParts[0].trim());
                                 p.sendMessage("Warps: ");
-                                for (String s : warpFileList) {
-                                    String[] warpNameParts = s.split("\\.");
+                                for (File s : warpFileList) {
+                                    String[] warpNameParts = s.getName().split("\\.");
                                     if (!warpNameParts[0].trim().equals("worldData")) {
-                                        p.sendMessage(warpNameParts[0].trim());
+                                        Scanner fileReader = new Scanner(s);
+                                        List<String> dataList = new ArrayList<>();
+                                        while (fileReader.hasNext()) {
+                                            dataList.add(fileReader.next());
+                                        }
+                                        fileReader.close();
+                                        p.sendMessage("Name: " + warpNameParts[0].trim());
+                                        p.sendMessage("\tLocation: X: " + dataList.getFirst() + ", Y: " + dataList.get(1) + ", Z: " + dataList.get(2));
                                     }
 
                                 }

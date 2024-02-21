@@ -6,7 +6,6 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
-import org.bukkit.util.FileUtil;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -58,17 +57,16 @@ public class EditWorldCommand implements TabExecutor {
                                 if (args[1].equals("help")) {
                                     p.sendMessage("World Deletion");
                                     p.sendMessage("Deletes the world name and all the warp points within it.");
-                                    p.sendMessage("This is a very dangerous action there is no going back.");
+                                    p.sendMessage(ChatColor.RED + "This is a very dangerous action there is no going back.");
                                 } else if (args[1].equals("confirm")) {
-                                    //TODO Deleting both the warp points and the world folder.
                                     p.sendMessage(ChatColor.RED + "Deleting world...");
                                     deleteWorld();
                                     p.sendMessage(ChatColor.GREEN + "The world has been deleted.");
                                 }
                             } else {
-                                p.sendMessage(ChatColor.RED + "Please type /editWorld delete confirm");
+                                p.sendMessage(ChatColor.YELLOW + "Please type /editWorld delete confirm");
                                 p.sendMessage(ChatColor.RED + "To delete the world name and the warp point within it.");
-                                p.sendMessage(ChatColor.RED + "PLEASE NOTE, THERE IS NO GOING BACK AFTER YOU TYPE THIS COMMAND!");
+                                p.sendMessage(ChatColor.DARK_RED + "PLEASE NOTE, THERE IS NO GOING BACK AFTER YOU TYPE THIS COMMAND!");
                             }
                         }
                         case "desc" -> {
@@ -106,7 +104,6 @@ public class EditWorldCommand implements TabExecutor {
                             }
                         }
                         case "name" -> {
-                            //TODO Change the name of the current world.
                             if (args.length > 1) {
                                 if (args[1].equals("help")) {
                                     p.sendMessage("World Name Change");
@@ -324,6 +321,8 @@ public class EditWorldCommand implements TabExecutor {
         }
     }
 
+    //TODO Remove all warp points from player files.
+    // Remove all the warp point command blocks.
     private void deleteWorld() {
         File worldDirToDelete = new File(worldDir);
         try {

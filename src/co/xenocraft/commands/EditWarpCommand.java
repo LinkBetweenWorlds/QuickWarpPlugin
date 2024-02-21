@@ -40,6 +40,7 @@ public class EditWarpCommand implements TabExecutor {
 
     //TODO Delete the warp.
     // Remove the warp from all the player files.
+    // Remove command blocks from world as well. (Replace with air blocks. )
     public static void deleteWarp(String warp) {
 
     }
@@ -63,7 +64,7 @@ public class EditWarpCommand implements TabExecutor {
             if (args.length == 3) {
                 switch (args[1]) {
                     case "block" -> {
-                        if (args[2].equals("help")) {
+                        if (args[2].equalsIgnoreCase("help")) {
                             p.sendMessage("Warp Block Change");
                             p.sendMessage("Changes the block that appears on the warp menu.");
                             p.sendMessage("Please use underscore for spaces. Ex: GRASS_BLOCK");
@@ -72,11 +73,11 @@ public class EditWarpCommand implements TabExecutor {
                         }
                     }
                     case "delete" -> {
-                        if (args[2].equals("help")) {
+                        if (args[2].equalsIgnoreCase("help")) {
                             p.sendMessage("Warp Deletion");
                             p.sendMessage("Deletes the warp point from the worlds.");
                             p.sendMessage("Please use carefully, deleting warp point will remove it from player files as well.");
-                        } else if (args[2].equals("confirm")) {
+                        } else if (args[2].equalsIgnoreCase("confirm")) {
                             //TODO Deleting both the warp points and the world folder.
                             p.sendMessage(ChatColor.RED + "Deleting warp point...");
                             deleteWarp(args[0]);
@@ -89,13 +90,21 @@ public class EditWarpCommand implements TabExecutor {
                         }
                     }
                     case "name" -> {
-                        if(args[2].equals("help")){
+                        if(args[2].equalsIgnoreCase("help")){
                             p.sendMessage("Warp Point Name Change");
                             p.sendMessage("Changes the name of all the warp points.");
+                        } else{
+                            updateName(args[0], args[2]);
                         }
                     }
                     case "order" -> {
-
+                        if(args[2].equalsIgnoreCase("help")){
+                            p.sendMessage("Warp Point Order Change");
+                            p.sendMessage("Changes the order that world appear in world menu.");
+                            p.sendMessage("This will push down all other world after it.");
+                        }else{
+                            updateOrder(args[0], Integer.parseInt(args[2]));
+                        }
                     }
                 }
             } else {

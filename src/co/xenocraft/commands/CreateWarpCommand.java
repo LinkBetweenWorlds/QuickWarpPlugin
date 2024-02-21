@@ -172,7 +172,7 @@ public class CreateWarpCommand implements TabExecutor {
                     int blockY = loc.getBlockY() + 1;
                     int blockZ = loc.getBlockZ();
                     int pitch = 0;
-                    double yaw = getCardinalDirection(p.getLocation().getYaw());
+                    int yaw = getCardinalDirection(p.getLocation().getYaw());
                     FileWriter warpFile = new FileWriter(fileDir + s + "\\" + warpName + ".yml");
                     String dataString = blockX + "," + blockY + "," + blockZ + "," +
                             pitch + "," + yaw + "," + warpMaterial + "," + order;

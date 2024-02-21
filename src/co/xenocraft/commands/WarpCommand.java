@@ -24,20 +24,24 @@ public class WarpCommand implements TabExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (sender instanceof Player p) {
-            if (!this.coolDown.containsKey(p.getUniqueId())) {
-                this.coolDown.put(p.getUniqueId(), System.currentTimeMillis());
+            if (p.isOp()) {
                 WarpMenu.open(p);
-                //warpMenu(p);
             } else {
-                //Difference in milliseconds
-                long timeElapsed = System.currentTimeMillis() - coolDown.get(p.getUniqueId());
-                //Convert to seconds
-                int seconds = (int) ((timeElapsed / 1000) % 60);
-                if (seconds >= 10) {
+                if (!this.coolDown.containsKey(p.getUniqueId())) {
                     this.coolDown.put(p.getUniqueId(), System.currentTimeMillis());
                     WarpMenu.open(p);
+                    //warpMenu(p);
                 } else {
-                    p.sendMessage(ChatColor.YELLOW + "Please wait " + (10 - seconds) + " seconds before trying to warp again.");
+                    //Difference in milliseconds
+                    long timeElapsed = System.currentTimeMillis() - coolDown.get(p.getUniqueId());
+                    //Convert to seconds
+                    int seconds = (int) ((timeElapsed / 1000) % 60);
+                    if (seconds >= 10) {
+                        this.coolDown.put(p.getUniqueId(), System.currentTimeMillis());
+                        WarpMenu.open(p);
+                    } else {
+                        p.sendMessage(ChatColor.YELLOW + "Please wait " + (10 - seconds) + " seconds before trying to warp again.");
+                    }
                 }
             }
         }
