@@ -59,7 +59,7 @@ public class ViewCommand implements TabExecutor {
                                         }
                                         fileReader.close();
                                         p.sendMessage("Name: " + warpNameParts[0].trim());
-                                        p.sendMessage("\tLocation: X: " + dataList.getFirst() + ", Y: " + dataList.get(1) + ", Z: " + dataList.get(2));
+                                        p.sendMessage("\tLocation: X: " + dataList.get(0) + ", Y: " + dataList.get(1) + ", Z: " + dataList.get(2));
                                     }
 
                                 }

@@ -27,6 +27,11 @@ public class WarpMenu {
 
     //Loads the data from the world folder.
     private static void loadData() {
+        warpMenuNames.clear();
+        warpWorldNames.clear();
+        warpWorldMaterials.clear();
+        warpWorldOrder.clear();
+        warpWorldDescs.clear();
         try {
             File worldFiles = new File(worldDir);
             String[] worldNames = worldFiles.list();
@@ -46,7 +51,7 @@ public class WarpMenu {
                         dataList.add(fileReader.next());
                     }
                     fileReader.close();
-                    Material material = Material.matchMaterial(dataList.getFirst());
+                    Material material = Material.matchMaterial(dataList.get(0));
                     warpWorldMaterials.add(Objects.requireNonNullElse(material, Material.GRASS_BLOCK));
                     warpWorldDescs.add(dataList.get(1));
                     warpWorldOrder.add(Integer.parseInt(dataList.get(2)));
@@ -61,6 +66,10 @@ public class WarpMenu {
     }
 
     public static void loadSubData(String worldName) {
+        warpMenuNames.clear();
+        warpWorldNames.clear();
+        warpWorldMaterials.clear();
+        warpWorldOrder.clear();
         try {
             File worldDirFile = new File(worldDir);
             List<File> worldDirList;
@@ -70,10 +79,6 @@ public class WarpMenu {
                 if (nameParts[0].equals(worldName)) {
                     File warpDirFile = new File(worldDir + "\\" + f.getName());
                     List<File> warpDirlist = List.of(Objects.requireNonNull(warpDirFile.listFiles()));
-                    warpMenuNames.clear();
-                    warpWorldNames.clear();
-                    warpWorldMaterials.clear();
-                    warpWorldOrder.clear();
                     for (File wf : warpDirlist) {
                         if (!wf.getName().equals("worldData.dat")) {
                             System.out.println(wf.getName());
@@ -167,18 +172,17 @@ public class WarpMenu {
 
             }
         }
-
         p.openInventory(gui);
-
     }
 
     //Opens the world's sub menu that contains all discovered warp points.
     public static void openSubMenu(Player p, String worldName) {
         //TODO Display the discovered warp points in selected world.
         for (String warpWorldName : warpMenuNames) {
-            if (worldName.equals(warpWorldName)) {
+            loadSubData(worldName);
+            if (warpWorldName.equals(worldName)) {
                 //TODO Open new GUI with all discovered warp points.
-                loadSubData(worldName);
+
 
                 //Initialize the new inventory.
                 int invSize = 6 * 9;
@@ -231,15 +235,15 @@ public class WarpMenu {
                 p.openInventory(subGui);
             }
         }
-        warpMenuNames.clear();
+
     }
 
     //Warps the player to the selected warp point
     public static void teleportPlayer(Player p, String worldName, String warpName) {
         System.out.println("Teleporting player...");
         System.out.println("Player: " + p.getDisplayName());
+        System.out.println("World: " + worldName.replace(ChatColor.GREEN + "", ""));
         System.out.println("Warp: " + warpName);
-        System.out.println("World: " + worldName);
         int blockX = 0;
         int blockY = 0;
         int blockZ = 0;
@@ -265,7 +269,7 @@ public class WarpMenu {
                                 dataList.add(warpReader.nextInt());
                             }
                             warpReader.close();
-                            blockX = dataList.getFirst();
+                            blockX = dataList.get(0);
                             blockY = dataList.get(1);
                             blockZ = dataList.get(2);
                             pitch = dataList.get(3);
@@ -295,8 +299,9 @@ public class WarpMenu {
                         open(p);
                     }
                 } else if (warpMenuNames.contains(itemName)) {
-                    if (guiName.contains(ChatColor.GREEN + " Warp Menu:")) {
-                        teleportPlayer(p, itemName, guiName);
+                    if (!guiName.contains(ChatColor.AQUA + "Warp Menu:")) {
+                        p.closeInventory();
+                        teleportPlayer(p, guiName, itemName);
                     } else {
                         openSubMenu(p, itemName);
                     }
@@ -309,7 +314,7 @@ public class WarpMenu {
 
     //Returns the lowest value in an array.
     public static int getLowestIndex() {
-        int lowestValues = warpWorldOrder.getFirst();
+        int lowestValues = warpWorldOrder.get(0);
         int lowestIndex = 0;
         for (int i = 0; i < warpWorldOrder.size(); i++) {
             int current = warpWorldOrder.get(i);

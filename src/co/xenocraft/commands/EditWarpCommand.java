@@ -112,7 +112,7 @@ public class EditWarpCommand implements TabExecutor {
                         "/editWarp <warpName> <block/name/order/delete> <options>");
             }
         }
-        return false;
+        return true;
     }
 
     @Override
@@ -126,7 +126,9 @@ public class EditWarpCommand implements TabExecutor {
                     if (currentWorldFileList != null) {
                         for (String w : currentWorldFileList) {
                             String[] warpNameParts = w.split("\\.");
-                            options.add(warpNameParts[0]);
+                            if (!warpNameParts[0].equalsIgnoreCase("worldData")) {
+                                options.add(warpNameParts[0]);
+                            }
                         }
                     }
                 } catch (Exception e) {
@@ -139,10 +141,11 @@ public class EditWarpCommand implements TabExecutor {
                 options.add("order");
                 options.add("name");
                 options.add("delete");
+                return options;
             }
             if (args.length == 3) {
-                if (args[0].contains("block")) {
-                    options = getContainedMaterials(args[1]);
+                if (args[1].contains("block")) {
+                    options = getContainedMaterials(args[2]);
                 } else {
                     options.add("help");
                 }
