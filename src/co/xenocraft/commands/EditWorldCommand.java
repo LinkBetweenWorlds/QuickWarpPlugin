@@ -304,10 +304,7 @@ public class EditWorldCommand implements TabExecutor {
         File newWorldDir = new File(fileDir + newName + "=" + worldUUID);
         File oldWorldDir = new File(worldDir);
         try {
-            //Files.copy(oldWorldDir.toPath(), newWorldDir.toPath());
-            //Files.createDirectory(newWorldDir.toPath());
             Files.move(oldWorldDir.toPath(), newWorldDir.toPath());
-            //FileUtil.copy(oldWorldDir, newWorldDir);
             File[] contents = oldWorldDir.listFiles();
             if (contents != null) {
                 for (File f : contents) {
@@ -323,6 +320,7 @@ public class EditWorldCommand implements TabExecutor {
 
     //TODO Remove all warp points from player files.
     // Remove all the warp point command blocks.
+    // Remove all files and directory.
     private void deleteWorld() {
         File worldDirToDelete = new File(worldDir);
         try {
