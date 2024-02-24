@@ -2,13 +2,16 @@ package co.xenocraft.menus;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.io.File;
+import java.sql.SQLOutput;
 import java.util.*;
 import java.util.logging.Level;
 
@@ -21,6 +24,10 @@ public class WarpMenu {
     public static final List<String> warpWorldDescs = new ArrayList<>();
     public static final List<Integer> warpWorldOrder = new ArrayList<>();
     public static final List<String> warpMenuNames = new ArrayList<>();
+    public static final List<String> warpSubNames = new ArrayList<>();
+    public static final List<Material> warpSubMaterials = new ArrayList<>();
+    public static final List<Integer> warpSubOrder = new ArrayList<>();
+    public static final List<String> warpSubMenuNames = new ArrayList<>();
     private static final String currentDir = System.getProperty("user.dir");
     private static final String playerDir = currentDir + "\\plugins\\QuickWarp\\playerData\\";
     private static final String worldDir = currentDir + "\\plugins\\QuickWarp\\worldData\\";
@@ -66,10 +73,10 @@ public class WarpMenu {
     }
 
     public static void loadSubData(String worldName) {
-        warpMenuNames.clear();
-        warpWorldNames.clear();
-        warpWorldMaterials.clear();
-        warpWorldOrder.clear();
+        warpSubMenuNames.clear();
+        warpSubNames.clear();
+        warpSubMaterials.clear();
+        warpSubOrder.clear();
         try {
             File worldDirFile = new File(worldDir);
             List<File> worldDirList;
@@ -84,17 +91,22 @@ public class WarpMenu {
                             System.out.println(wf.getName());
                             String[] warpNameParts = wf.getName().split("\\.");
                             String name = warpNameParts[0].trim();
-                            warpWorldNames.add(name);
-                            warpMenuNames.add(name);
-                            Scanner warpReader = new Scanner(wf).useDelimiter(",");
-                            List<String> warpData = new ArrayList<>();
-                            while (warpReader.hasNext()) {
-                                warpData.add(warpReader.next());
+                            warpSubNames.add(name);
+                            warpSubMenuNames.add(name);
+                            try {
+                                Scanner warpReader = new Scanner(wf).useDelimiter(",");
+                                List<String> warpData = new ArrayList<>();
+                                while (warpReader.hasNext()) {
+                                    warpData.add(warpReader.next());
+                                }
+                                warpReader.close();
+                                Material material = Material.matchMaterial(warpData.get(5));
+                                warpSubMaterials.add(Objects.requireNonNullElse(material, Material.GRASS_BLOCK));
+                                warpSubOrder.add(Integer.parseInt(warpData.get(6)));
+                            } catch (Exception e) {
+                                getLogger().log(Level.WARNING, e.toString());
                             }
-                            warpReader.close();
-                            Material material = Material.matchMaterial(warpData.get(5));
-                            warpWorldMaterials.add(Objects.requireNonNullElse(material, Material.GRASS_BLOCK));
-                            warpWorldOrder.add(Integer.parseInt(warpData.get(6)));
+
                         }
                     }
                 }
@@ -179,8 +191,8 @@ public class WarpMenu {
     public static void openSubMenu(Player p, String worldName) {
         //TODO Display the discovered warp points in selected world.
         for (String warpWorldName : warpMenuNames) {
-            loadSubData(worldName);
             if (warpWorldName.equals(worldName)) {
+                loadSubData(worldName);
                 //TODO Open new GUI with all discovered warp points.
 
 
@@ -200,19 +212,19 @@ public class WarpMenu {
                 Objects.requireNonNull(backMeta).setDisplayName(ChatColor.RED + "Back");
                 backButton.setItemMeta(backMeta);
 
-                int listSize = warpWorldOrder.size();
+                int listSize = warpSubOrder.size();
                 //Goes through the arrays starting with the lowest order number.
                 for (int i = 1; i <= listSize; i++) {
                     //TODO Add check to only show worlds that player has been to.
-                    int lowestIndex = getLowestIndex();
-                    ItemStack item = new ItemStack(warpWorldMaterials.get(lowestIndex));
+                    int lowestIndex = getSubLowestIndex();
+                    ItemStack item = new ItemStack(warpSubMaterials.get(lowestIndex));
                     ItemMeta itemMeta = item.getItemMeta();
-                    Objects.requireNonNull(itemMeta).setDisplayName(warpWorldNames.get(lowestIndex));
+                    Objects.requireNonNull(itemMeta).setDisplayName(warpSubNames.get(lowestIndex));
                     item.setItemMeta(itemMeta);
                     subGui.setItem(currentInvSquare, item);
-                    warpWorldOrder.remove(lowestIndex);
-                    warpWorldNames.remove(lowestIndex);
-                    warpWorldMaterials.remove(lowestIndex);
+                    warpSubOrder.remove(lowestIndex);
+                    warpSubNames.remove(lowestIndex);
+                    warpSubMaterials.remove(lowestIndex);
                     currentInvSquare += 1;
 
                     if (currentInvSquare > invSize) {
@@ -240,10 +252,9 @@ public class WarpMenu {
 
     //Warps the player to the selected warp point
     public static void teleportPlayer(Player p, String worldName, String warpName) {
-        System.out.println("Teleporting player...");
-        System.out.println("Player: " + p.getDisplayName());
-        System.out.println("World: " + worldName.replace(ChatColor.GREEN + "", ""));
-        System.out.println("Warp: " + warpName);
+        String cleanWorldName = worldName.replace(ChatColor.GREEN + "", "");
+        String[] cleanNameParts = cleanWorldName.split("Warp Menu");
+        cleanWorldName = cleanNameParts[0].trim();
         int blockX = 0;
         int blockY = 0;
         int blockZ = 0;
@@ -255,7 +266,7 @@ public class WarpMenu {
         List<String> worldDirList = List.of(Objects.requireNonNull(worldDirFile.list()));
         for (String s : worldDirList) {
             String[] nameParts = s.split("=");
-            if (nameParts[0].equalsIgnoreCase(worldName)) {
+            if (nameParts[0].equalsIgnoreCase(cleanWorldName)) {
                 worldUUID = UUID.fromString(nameParts[1].trim());
                 File warpDirFile = new File(worldDir + s);
                 List<File> warpDirList = List.of(Objects.requireNonNull(warpDirFile.listFiles()));
@@ -264,16 +275,16 @@ public class WarpMenu {
                     if (warpNameParts[0].equalsIgnoreCase(warpName)) {
                         try {
                             Scanner warpReader = new Scanner(f).useDelimiter(",");
-                            List<Integer> dataList = new ArrayList<>();
-                            while (warpReader.hasNextInt()) {
-                                dataList.add(warpReader.nextInt());
+                            List<String> dataList = new ArrayList<>();
+                            while (warpReader.hasNext()) {
+                                dataList.add(warpReader.next());
                             }
                             warpReader.close();
-                            blockX = dataList.get(0);
-                            blockY = dataList.get(1);
-                            blockZ = dataList.get(2);
-                            pitch = dataList.get(3);
-                            yaw = dataList.get(4);
+                            blockX = Integer.parseInt(dataList.get(0));
+                            blockY = Integer.parseInt(dataList.get(1));
+                            blockZ = Integer.parseInt(dataList.get(2));
+                            pitch = Integer.parseInt(dataList.get(3));
+                            yaw = Integer.parseInt(dataList.get(4));
                         } catch (Exception e) {
                             getLogger().log(Level.WARNING, e.toString());
                         }
@@ -281,9 +292,9 @@ public class WarpMenu {
                 }
             }
         }
-        //TODO Actually teleport the player.
-        System.out.println("X: " + blockX + ", Y: " + blockY + ", Z: " + blockZ);
-        System.out.println("World UUID: " + worldUUID + "Pitch: " + pitch + ", Yaw: " + yaw);
+        Location teleportLocation = new Location(Bukkit.getWorld(Objects.requireNonNull(worldUUID)), blockX, blockY, blockZ, yaw, pitch);
+        p.closeInventory();
+        p.teleport(teleportLocation, PlayerTeleportEvent.TeleportCause.PLUGIN);
     }
 
     //Get the itemMeta from gui click
@@ -299,13 +310,10 @@ public class WarpMenu {
                         open(p);
                     }
                 } else if (warpMenuNames.contains(itemName)) {
-                    if (!guiName.contains(ChatColor.AQUA + "Warp Menu:")) {
-                        p.closeInventory();
-                        teleportPlayer(p, guiName, itemName);
-                    } else {
-                        openSubMenu(p, itemName);
-                    }
-
+                    openSubMenu(p, itemName);
+                } else if (warpSubMenuNames.contains(itemName)) {
+                    p.closeInventory();
+                    teleportPlayer(p, guiName, itemName);
                 }
             }
 
@@ -318,6 +326,19 @@ public class WarpMenu {
         int lowestIndex = 0;
         for (int i = 0; i < warpWorldOrder.size(); i++) {
             int current = warpWorldOrder.get(i);
+            if (current < lowestValues) {
+                lowestValues = current;
+                lowestIndex = i;
+            }
+        }
+        return lowestIndex;
+    }
+
+    public static int getSubLowestIndex() {
+        int lowestValues = warpSubOrder.get(0);
+        int lowestIndex = 0;
+        for (int i = 0; i < warpSubOrder.size(); i++) {
+            int current = warpSubOrder.get(i);
             if (current < lowestValues) {
                 lowestValues = current;
                 lowestIndex = i;

@@ -52,14 +52,15 @@ public class ViewCommand implements TabExecutor {
                                 for (File s : warpFileList) {
                                     String[] warpNameParts = s.getName().split("\\.");
                                     if (!warpNameParts[0].trim().equals("worldData")) {
-                                        Scanner fileReader = new Scanner(s);
+                                        System.out.println(s.getName());
+                                        Scanner fileReader = new Scanner(s).useDelimiter(",");
                                         List<String> dataList = new ArrayList<>();
                                         while (fileReader.hasNext()) {
                                             dataList.add(fileReader.next());
                                         }
                                         fileReader.close();
                                         p.sendMessage("Name: " + warpNameParts[0].trim());
-                                        p.sendMessage("\tLocation: X: " + dataList.get(0) + ", Y: " + dataList.get(1) + ", Z: " + dataList.get(2));
+                                        p.sendMessage("    Location: X: " + dataList.get(0) + ", Y: " + dataList.get(1) + ", Z: " + dataList.get(2));
                                     }
 
                                 }
@@ -75,7 +76,7 @@ public class ViewCommand implements TabExecutor {
                 argsMessage(p);
             }
         }
-        return false;
+        return true;
     }
 
     private void argsMessage(Player p) {
