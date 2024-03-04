@@ -11,7 +11,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.io.File;
-import java.sql.SQLOutput;
 import java.util.*;
 import java.util.logging.Level;
 
@@ -88,7 +87,6 @@ public class WarpMenu {
                     List<File> warpDirlist = List.of(Objects.requireNonNull(warpDirFile.listFiles()));
                     for (File wf : warpDirlist) {
                         if (!wf.getName().equals("worldData.dat")) {
-                            System.out.println(wf.getName());
                             String[] warpNameParts = wf.getName().split("\\.");
                             String name = warpNameParts[0].trim();
                             warpSubNames.add(name);
@@ -292,7 +290,7 @@ public class WarpMenu {
                 }
             }
         }
-        Location teleportLocation = new Location(Bukkit.getWorld(Objects.requireNonNull(worldUUID)), blockX, blockY, blockZ, yaw, pitch);
+        Location teleportLocation = new Location(Bukkit.getWorld(Objects.requireNonNull(worldUUID)), blockX + 0.5, blockY, blockZ + 0.5, yaw, pitch);
         p.closeInventory();
         p.teleport(teleportLocation, PlayerTeleportEvent.TeleportCause.PLUGIN);
     }

@@ -165,11 +165,11 @@ public class CreateWarpCommand implements TabExecutor {
                     }
                 }
                 if (s.endsWith(UUIDString)) {
-                    int order = worldDirList.length + 1;
+                    int order = checkWarpList.length;
                     File warpDir = new File(fileDir + s);
                     String[] warpDirList = warpDir.list();
                     int blockX = loc.getBlockX();
-                    int blockY = loc.getBlockY() + 1;
+                    int blockY = loc.getBlockY();
                     int blockZ = loc.getBlockZ();
                     int pitch = 0;
                     int yaw = getCardinalDirection(p.getLocation().getYaw());
