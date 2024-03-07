@@ -1,7 +1,10 @@
 package co.xenocraft.commands;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.CommandBlock;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
@@ -25,20 +28,52 @@ public class EditWarpCommand implements TabExecutor {
     public static int[] blockRot;
     public static Material blockMaterial;
     public static int blockOrder;
+    public static String currentWorldUUID;
 
-    //TODO Update the name of the warp point.
-    // Loop thru all the player files and replace the old warp name with the name one.
     public static void updateName(Player p, String warp, String newName) {
         try {
             File f;
             if ((f = getWarpFile(warp)) != null) {
-                System.out.println("Parent Dir: " + f.getParent());
-                System.out.println("Abs Dir: " + f.getAbsolutePath());
-                System.out.println("Name: " + f.getName());
                 FileWriter fw = new FileWriter(f.getParent() + "\\" + newName + ".yml");
                 String data = blockLocation[0] + "," + blockLocation[1] + "," + blockLocation[2] + "," + blockRot[0] + "," + blockRot[1] + "," + blockMaterial + "," + blockOrder;
                 fw.write(data);
                 fw.close();
+                Location blockLoc = new Location(Bukkit.getWorld(currentWorldUUID), blockLocation[0], blockLocation[1], blockLocation[2]);
+                CommandBlock commandBlock = (CommandBlock) blockLoc.getBlock();
+                String oldName = commandBlock.getName();
+                String[] oldNameParts = oldName.split("=");
+                String blockNewName = oldNameParts[0] + "=" + newName + "=" + oldNameParts[2];
+                commandBlock.setName(blockNewName);
+                File playerFile = new File(playerDir);
+                File[] playerFileList = playerFile.listFiles();
+                if (playerFileList != null) {
+                    for (File pf : playerFileList) {
+                        Scanner pfReader = new Scanner(pf).useDelimiter(",");
+                        List<String> pfData = new ArrayList<>();
+                        while (pfReader.hasNext()) {
+                            pfData.add(pfReader.next());
+                        }
+                        for (int i = 0; i < pfData.size(); i++) {
+                            if (pfData.get(i).equalsIgnoreCase(oldNameParts[1])) {
+                                pfData.set(i, newName);
+                            }
+                        }
+                        try {
+                            FileWriter pfWriter = new FileWriter(pf);
+                            StringBuilder pfNewData = new StringBuilder(pfData.getFirst());
+                            for (int j = 1; j < pfData.size(); j++) {
+                                pfNewData.append(",");
+                                pfNewData.append(pfData.get(j));
+                            }
+                            pfWriter.write(pfNewData.toString());
+                            pfWriter.close();
+                        } catch (Exception e) {
+                            getLogger().log(Level.WARNING, e.toString());
+                        }
+
+                    }
+                }
+
             } else {
                 p.sendMessage(ChatColor.YELLOW + "That warp point does not exist.");
             }
@@ -64,8 +99,6 @@ public class EditWarpCommand implements TabExecutor {
         }
     }
 
-    //TODO Change warp's order number.
-    // Push back all the other warp points behind the new number.
     public static void updateOrder(Player p, String warp, int order) {
         try {
             File f;
@@ -78,10 +111,26 @@ public class EditWarpCommand implements TabExecutor {
                             if (!file.getName().equalsIgnoreCase(f.getName())) {
                                 Scanner fileReader = new Scanner(file).useDelimiter(",");
                                 List<String> dataList = new ArrayList<>();
-                                while(fileReader.hasNext()){
+                                while (fileReader.hasNext()) {
                                     dataList.add(fileReader.next());
                                 }
                                 fileReader.close();
+                                int orderNum = Integer.parseInt(dataList.get(6));
+                                if (orderNum >= order) {
+                                    try {
+                                        FileWriter fw = new FileWriter(file);
+                                        dataList.set(6, String.valueOf(order + 1));
+                                        StringBuilder newData = new StringBuilder(dataList.getFirst());
+                                        for (int i = 1; i < dataList.size(); i++) {
+                                            newData.append(",");
+                                            newData.append(dataList.get(i));
+                                        }
+                                        fw.write(newData.toString());
+                                        fw.close();
+                                    } catch (Exception e) {
+                                        getLogger().log(Level.WARNING, e.toString());
+                                    }
+                                }
                             }
                         }
                     }
@@ -97,14 +146,36 @@ public class EditWarpCommand implements TabExecutor {
 
     }
 
-    //TODO Delete the warp.
-    // Remove the warp from all the player files.
-    // Remove command blocks from world as well. (Replace with air blocks. )
     public static void deleteWarp(Player p, String warp) {
-        if (getWarpFile(warp) != null) {
+        try {
+            File f;
+            if ((f = getWarpFile(warp)) != null) {
+                // Starts a thread to deal with remove warp from player files.
+                Thread playerFileObject = new Thread(new MultiThreadPlayerWarpRemove(p, warp));
+                playerFileObject.start();
 
-        } else {
-            p.sendMessage(ChatColor.YELLOW + "That warp point does not exist.");
+                // Removes the command block and replace them with air blocks.
+                Location repeatingBlockLoc = new Location(Bukkit.getWorld(currentWorldUUID),
+                        blockLocation[0], blockLocation[1] - 2, blockLocation[2]);
+                repeatingBlockLoc.getBlock().setType(Material.AIR);
+
+                Location chainBlockLoc = new Location(Bukkit.getWorld(currentWorldUUID),
+                        blockLocation[0], blockLocation[1] - 2, blockLocation[2] - 1);
+                chainBlockLoc.getBlock().setType(Material.AIR);
+
+                Location redstoneBlockLoc = new Location(Bukkit.getWorld(currentWorldUUID),
+                        blockLocation[0], blockLocation[1] - 3, blockLocation[2]);
+                redstoneBlockLoc.getBlock().setType(Material.AIR);
+
+                // Removes the warp files from the world directory
+                f.delete();
+
+                p.sendMessage(ChatColor.GREEN + "The warp point has been removed.");
+            } else {
+                p.sendMessage(ChatColor.YELLOW + "That warp point does not exist.");
+            }
+        } catch (Exception e) {
+            getLogger().log(Level.WARNING, e.toString());
         }
     }
 
@@ -113,10 +184,12 @@ public class EditWarpCommand implements TabExecutor {
             File worldDirFile = new File(worldDir);
             String[] worldDirList = Objects.requireNonNull(worldDirFile.list());
             for (String s : worldDirList) {
+                String[] worldNameParts = s.split("=");
+                currentWorldUUID = worldNameParts[0].trim();
                 File warpDirFile = new File(worldDir + "\\" + s);
                 File[] warpDirList = Objects.requireNonNull(warpDirFile.listFiles());
                 for (File f : warpDirList) {
-                    if (f.getName().equalsIgnoreCase(warpName)) {
+                    if (f.getName().equalsIgnoreCase(warpName + ".yml")) {
                         Scanner fileReader = new Scanner(f).useDelimiter(",");
                         List<String> dataList = new ArrayList<>();
                         while (fileReader.hasNext()) {
@@ -175,7 +248,6 @@ public class EditWarpCommand implements TabExecutor {
                             p.sendMessage("Deletes the warp point from the worlds.");
                             p.sendMessage("Please use carefully, deleting warp point will remove it from player files as well.");
                         } else if (args[2].equalsIgnoreCase("confirm")) {
-                            //TODO Deleting both the warp points and the world folder.
                             p.sendMessage(ChatColor.RED + "Deleting warp point...");
                             deleteWarp(p, args[0]);
                             p.sendMessage(ChatColor.GREEN + "The warp point has been deleted.");
@@ -248,7 +320,6 @@ public class EditWarpCommand implements TabExecutor {
                 return options;
             }
         }
-
         return null;
     }
 
@@ -257,7 +328,6 @@ public class EditWarpCommand implements TabExecutor {
         for (Material mat : Material.values()) {
             list.add(mat.name());
         }
-
         return list;
     }
 
@@ -269,5 +339,27 @@ public class EditWarpCommand implements TabExecutor {
             }
         }
         return list;
+    }
+}
+
+// TODO Remove the warp from player files
+class MultiThreadPlayerWarpRemove implements Runnable {
+    Player p;
+    String warp;
+
+    MultiThreadPlayerWarpRemove(Player p, String warp) {
+        this.p = p;
+        this.warp = warp;
+    }
+
+    @Override
+    public void run() {
+        try {
+            System.out.println("Thread: " + Thread.currentThread().threadId());
+            System.out.println(p.getDisplayName());
+            System.out.println(warp);
+        } catch (Exception e) {
+            getLogger().log(Level.WARNING, e.toString());
+        }
     }
 }

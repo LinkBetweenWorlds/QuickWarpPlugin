@@ -1,5 +1,6 @@
 package co.xenocraft.listeners;
 
+import co.xenocraft.QuickWarp;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -19,7 +20,10 @@ public class PlayerJoinLeaveListener implements Listener {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player p = event.getPlayer();
-        event.setJoinMessage("Welcome " + p.getDisplayName() + " to §4Xenocraft!");
+        if(QuickWarp.welcomeMessageEnable){
+            event.setJoinMessage(QuickWarp.welocmeMessageString);
+            //event.setJoinMessage("Welcome " + p.getDisplayName() + " to §4Xenocraft!");
+        }
         UUID playerID = p.getUniqueId();
         String fileDir = System.getProperty("user.dir") + "\\plugins\\QuickWarp\\playerData\\";
         File playerDir = new File(fileDir);

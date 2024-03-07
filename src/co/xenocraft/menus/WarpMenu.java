@@ -290,7 +290,8 @@ public class WarpMenu {
                 }
             }
         }
-        Location teleportLocation = new Location(Bukkit.getWorld(Objects.requireNonNull(worldUUID)), blockX + 0.5, blockY, blockZ + 0.5, yaw, pitch);
+        Location teleportLocation = new Location(Bukkit.getWorld(Objects.requireNonNull(worldUUID)),
+                blockX + 0.5, blockY, blockZ + 0.5, yaw, pitch);
         p.closeInventory();
         p.teleport(teleportLocation, PlayerTeleportEvent.TeleportCause.PLUGIN);
     }

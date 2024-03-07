@@ -60,7 +60,7 @@ public class EditWorldCommand implements TabExecutor {
                                     p.sendMessage(ChatColor.RED + "This is a very dangerous action there is no going back.");
                                 } else if (args[1].equals("confirm")) {
                                     p.sendMessage(ChatColor.RED + "Deleting world...");
-                                    deleteWorld();
+                                    deleteWorld(p);
                                     p.sendMessage(ChatColor.GREEN + "The world has been deleted.");
                                 }
                             } else {
@@ -321,13 +321,15 @@ public class EditWorldCommand implements TabExecutor {
     //TODO Remove all warp points from player files.
     // Remove all the warp point command blocks.
     // Remove all files and directory.
-    private void deleteWorld() {
+    private void deleteWorld(Player p) {
         File worldDirToDelete = new File(worldDir);
         try {
             File[] contents = worldDirToDelete.listFiles();
             if (contents != null) {
                 for (File f : contents) {
-                    f.delete();
+                    String[] warpSplit = f.getName().split("\\.");
+                    String warp = warpSplit[0].trim();
+                    EditWarpCommand.deleteWarp(p, warp);
                 }
             }
             worldDirToDelete.delete();

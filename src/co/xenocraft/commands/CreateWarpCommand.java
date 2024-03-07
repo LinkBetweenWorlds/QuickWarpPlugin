@@ -57,10 +57,6 @@ public class CreateWarpCommand implements TabExecutor {
                         int blockY = playerLoc.getBlockY();
                         int blockZ = playerLoc.getBlockZ();
 
-                        //TODO Remove before release
-                        Location glassLoc = new Location(p.getWorld(), blockX, blockY - 1, blockZ);
-                        glassLoc.getBlock().setType(Material.GLASS);
-
                         //Works out the placement of the blocks.
                         Location repeatBlockLoc = new Location(p.getWorld(), blockX, blockY - 2, blockZ);
                         Location chainBlockLoc = new Location(p.getWorld(), blockX, blockY - 2, blockZ - 1);
@@ -166,8 +162,6 @@ public class CreateWarpCommand implements TabExecutor {
                 }
                 if (s.endsWith(UUIDString)) {
                     int order = checkWarpList.length;
-                    File warpDir = new File(fileDir + s);
-                    String[] warpDirList = warpDir.list();
                     int blockX = loc.getBlockX();
                     int blockY = loc.getBlockY();
                     int blockZ = loc.getBlockZ();

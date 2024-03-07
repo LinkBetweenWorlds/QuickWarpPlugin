@@ -7,10 +7,18 @@ import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
+import java.io.FileWriter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
+import java.util.Scanner;
 import java.util.logging.Level;
 
 public class QuickWarp extends JavaPlugin implements Listener {
+    public static boolean welcomeMessageEnable = true;
+    public static String welocmeMessageString = "Welcome to the server";
+    public static boolean warpCooldownEnable = true;
+    public static int warpCooldown = 10;
     @Override
     public void onEnable() {
         //Checks for necessary files and directories.
@@ -25,8 +33,34 @@ public class QuickWarp extends JavaPlugin implements Listener {
                 playerDir.mkdirs();
             }
             File worldDir = new File(currentDir + "\\worldData");
-            if(!worldDir.exists()){
+            if (!worldDir.exists()) {
                 worldDir.mkdirs();
+            }
+            File configFile = new File(currentDir + "\\config.yml");
+            if (!configFile.exists()) {
+                String data = """
+                        QuickWarp config Note:Please don't use spaces between lines, or :
+                        Welcome Message when a player joins.
+                        Welcome-Message-Enabled:true
+                        Welcome-Message:Welcome to the server
+                        Cooldown on opening the warp menu.
+                        Warp-Cooldown-Enabled:true
+                        Warp-Cooldown:10
+                        """;
+                FileWriter configWriter = new FileWriter(configFile);
+                configWriter.write(data);
+                configWriter.close();
+            }else{
+                Scanner configReader = new Scanner(configFile).useDelimiter("\n");
+                List<String> configData = new ArrayList<>();
+                while(configReader.hasNext()){
+                    configData.add(configReader.next());
+                }
+                configReader.close();
+                welcomeMessageEnable = Boolean.parseBoolean(configData.get(2).substring(24));
+                welocmeMessageString = configData.get(3).substring(16);
+                warpCooldownEnable = Boolean.parseBoolean(configData.get(5).substring(22));
+                warpCooldown = Integer.parseInt(configData.get(6).substring(14));
             }
 
         } catch (Exception e) {
