@@ -318,9 +318,6 @@ public class EditWorldCommand implements TabExecutor {
         }
     }
 
-    //TODO Remove all warp points from player files.
-    // Remove all the warp point command blocks.
-    // Remove all files and directory.
     private void deleteWorld(Player p) {
         File worldDirToDelete = new File(worldDir);
         try {

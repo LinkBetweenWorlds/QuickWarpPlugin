@@ -12,10 +12,7 @@ import org.bukkit.entity.Player;
 
 import java.io.File;
 import java.io.FileWriter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Scanner;
+import java.util.*;
 import java.util.logging.Level;
 
 import static org.bukkit.Bukkit.getLogger;
@@ -342,8 +339,9 @@ public class EditWarpCommand implements TabExecutor {
     }
 }
 
-// TODO Remove the warp from player files
 class MultiThreadPlayerWarpRemove implements Runnable {
+    private static final String currentDir = System.getProperty("user.dir");
+    private static final String playerDir = currentDir + "\\plugins\\QuickWarp\\playerData\\";
     Player p;
     String warp;
 
@@ -358,6 +356,34 @@ class MultiThreadPlayerWarpRemove implements Runnable {
             System.out.println("Thread: " + Thread.currentThread().threadId());
             System.out.println(p.getDisplayName());
             System.out.println(warp);
+            UUID playerUUID = p.getUniqueId();
+            File playerFile = new File(playerDir + "\\" + playerUUID + ".yml");
+            Scanner playerReader = new Scanner(playerFile).useDelimiter(",");
+            List<String> playerData = new ArrayList<>();
+            //Read player file
+            while (playerReader.hasNext()) {
+                playerData.add(playerReader.next());
+            }
+            playerReader.close();
+            //Remove old warp name
+            List<String> newPlayerData = new ArrayList<>();
+            for (String s : playerData) {
+                if (!s.contentEquals(warp)) {
+                    newPlayerData.add(s);
+                }
+            }
+            //Build new data string
+            StringBuilder newPlayerString = new StringBuilder(newPlayerData.getFirst());
+            newPlayerData.removeFirst();
+            for (String s : newPlayerData) {
+                newPlayerString.append(",");
+                newPlayerString.append(s);
+            }
+
+            FileWriter fw = new FileWriter(playerFile);
+            fw.write(newPlayerString.toString());
+            fw.close();
+
         } catch (Exception e) {
             getLogger().log(Level.WARNING, e.toString());
         }

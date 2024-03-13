@@ -39,11 +39,11 @@ public class QuickWarp extends JavaPlugin implements Listener {
             File configFile = new File(currentDir + "\\config.yml");
             if (!configFile.exists()) {
                 String data = """
-                        QuickWarp config Note:Please don't use spaces between lines, or :
-                        Welcome Message when a player joins.
+                        # QuickWarp config file
+                        # Welcome Message when a player joins.
                         Welcome-Message-Enabled:true
                         Welcome-Message:Welcome to the server
-                        Cooldown on opening the warp menu.
+                        # Cooldown on opening the warp menu.
                         Warp-Cooldown-Enabled:true
                         Warp-Cooldown:10
                         """;
