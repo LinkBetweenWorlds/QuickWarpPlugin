@@ -57,7 +57,7 @@ public class EditWarpCommand implements TabExecutor {
                         }
                         try {
                             FileWriter pfWriter = new FileWriter(pf);
-                            StringBuilder pfNewData = new StringBuilder(pfData.getFirst());
+                            StringBuilder pfNewData = new StringBuilder(pfData.get(0));
                             for (int j = 1; j < pfData.size(); j++) {
                                 pfNewData.append(",");
                                 pfNewData.append(pfData.get(j));
@@ -67,10 +67,8 @@ public class EditWarpCommand implements TabExecutor {
                         } catch (Exception e) {
                             getLogger().log(Level.WARNING, e.toString());
                         }
-
                     }
                 }
-
             } else {
                 p.sendMessage(ChatColor.YELLOW + "That warp point does not exist.");
             }
@@ -117,7 +115,7 @@ public class EditWarpCommand implements TabExecutor {
                                     try {
                                         FileWriter fw = new FileWriter(file);
                                         dataList.set(6, String.valueOf(order + 1));
-                                        StringBuilder newData = new StringBuilder(dataList.getFirst());
+                                        StringBuilder newData = new StringBuilder(dataList.get(0));
                                         for (int i = 1; i < dataList.size(); i++) {
                                             newData.append(",");
                                             newData.append(dataList.get(i));
@@ -140,7 +138,6 @@ public class EditWarpCommand implements TabExecutor {
         } catch (Exception e) {
             getLogger().log(Level.WARNING, e.toString());
         }
-
     }
 
     public static void deleteWarp(Player p, String warp) {
@@ -252,7 +249,6 @@ public class EditWarpCommand implements TabExecutor {
                             p.sendMessage(ChatColor.RED + "Please type /editWarp delete confirm");
                             p.sendMessage(ChatColor.RED + "To delete the world name and the warp point within it.");
                             p.sendMessage(ChatColor.RED + "PLEASE NOTE, THERE IS NO GOING BACK AFTER YOU TYPE THIS COMMAND!");
-
                         }
                     }
                     case "name" -> {
@@ -353,7 +349,7 @@ class MultiThreadPlayerWarpRemove implements Runnable {
     @Override
     public void run() {
         try {
-            System.out.println("Thread: " + Thread.currentThread().threadId());
+            System.out.println("Thread: " + Thread.currentThread().getId());
             System.out.println(p.getDisplayName());
             System.out.println(warp);
             UUID playerUUID = p.getUniqueId();
@@ -373,8 +369,8 @@ class MultiThreadPlayerWarpRemove implements Runnable {
                 }
             }
             //Build new data string
-            StringBuilder newPlayerString = new StringBuilder(newPlayerData.getFirst());
-            newPlayerData.removeFirst();
+            StringBuilder newPlayerString = new StringBuilder(newPlayerData.get(0));
+            newPlayerData.remove(0);
             for (String s : newPlayerData) {
                 newPlayerString.append(",");
                 newPlayerString.append(s);

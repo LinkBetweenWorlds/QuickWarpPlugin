@@ -64,7 +64,7 @@ public class CreateWarpCommand implements TabExecutor {
 
                         //Generates the command of command block.
                         String repeatCommand = "execute if entity @a[x=" + (blockX - (range / 2)) + ", y=" + blockY + ", z=" + (blockZ - (range / 2)) +
-                                ", dx=" + range + ", dy=3, dz=" + range + "]";
+                                               ", dx=" + range + ", dy=3, dz=" + range + "]";
                         String chainCommand = "discoverwarp";
                         p.sendMessage("Placing a warp point at: X: " + repeatBlockLoc.getBlockX() + ", Y: " + repeatBlockLoc.getBlockY() + ", Z: " + repeatBlockLoc.getBlockZ());
 
@@ -98,12 +98,10 @@ public class CreateWarpCommand implements TabExecutor {
                     p.sendMessage(ChatColor.RED + "This world does not have a name yet.");
                     p.sendMessage(ChatColor.YELLOW + "Please use /createWorldName first.");
                 }
-
             } else {
                 p.sendMessage("Please provide arguments. /createwarp <name> <range> <secret>");
                 p.sendMessage("Please use _ for spaces in warp point name.");
             }
-
         }
         return true;
     }
@@ -169,7 +167,7 @@ public class CreateWarpCommand implements TabExecutor {
                     int yaw = getCardinalDirection(p.getLocation().getYaw());
                     FileWriter warpFile = new FileWriter(fileDir + s + "\\" + warpName + ".yml");
                     String dataString = blockX + "," + blockY + "," + blockZ + "," +
-                            pitch + "," + yaw + "," + warpMaterial + "," + order;
+                                        pitch + "," + yaw + "," + warpMaterial + "," + order;
                     try {
                         warpFile.write(dataString);
                         warpFile.close();
@@ -180,8 +178,6 @@ public class CreateWarpCommand implements TabExecutor {
                     }
                 }
             }
-
-
         } catch (Exception e) {
             getLogger().log(Level.WARNING, e.toString());
             return false;

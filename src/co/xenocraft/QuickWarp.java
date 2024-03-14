@@ -16,9 +16,10 @@ import java.util.logging.Level;
 
 public class QuickWarp extends JavaPlugin implements Listener {
     public static boolean welcomeMessageEnable = true;
-    public static String welocmeMessageString = "Welcome to the server";
+    public static String welocmeMessageString = "Welcome to the server.";
     public static boolean warpCooldownEnable = true;
     public static int warpCooldown = 10;
+
     @Override
     public void onEnable() {
         //Checks for necessary files and directories.
@@ -42,7 +43,7 @@ public class QuickWarp extends JavaPlugin implements Listener {
                         # QuickWarp config file
                         # Welcome Message when a player joins.
                         Welcome-Message-Enabled:true
-                        Welcome-Message:Welcome to the server
+                        Welcome-Message:Welcome to the server.
                         # Cooldown on opening the warp menu.
                         Warp-Cooldown-Enabled:true
                         Warp-Cooldown:10
@@ -50,10 +51,10 @@ public class QuickWarp extends JavaPlugin implements Listener {
                 FileWriter configWriter = new FileWriter(configFile);
                 configWriter.write(data);
                 configWriter.close();
-            }else{
+            } else {
                 Scanner configReader = new Scanner(configFile).useDelimiter("\n");
                 List<String> configData = new ArrayList<>();
-                while(configReader.hasNext()){
+                while (configReader.hasNext()) {
                     configData.add(configReader.next());
                 }
                 configReader.close();

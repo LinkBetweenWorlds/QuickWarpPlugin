@@ -132,7 +132,7 @@ public class WarpMenu {
 
     public static List<String> warpsInWorld(String worldName) {
         List<String> warps = new ArrayList<>();
-        try{
+        try {
             File worldDirFile = new File(worldDir);
             List<File> worldDirList;
             worldDirList = List.of(Objects.requireNonNull(worldDirFile.listFiles()));
@@ -150,7 +150,7 @@ public class WarpMenu {
                     }
                 }
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             getLogger().log(Level.WARNING, e.toString());
         }
         return warps;
@@ -226,7 +226,6 @@ public class WarpMenu {
                     gui.setItem(currentInvSquare, infill);
                     currentInvSquare++;
                 }
-
             }
         }
         p.openInventory(gui);
@@ -276,7 +275,6 @@ public class WarpMenu {
                             warpSubMaterials.remove(lowestIndex);
                         }
                     }
-
                     if (currentInvSquare > invSize) {
                         break;
                     }
@@ -291,13 +289,11 @@ public class WarpMenu {
                             subGui.setItem(currentInvSquare, infill);
                             currentInvSquare++;
                         }
-
                     }
                 }
                 p.openInventory(subGui);
             }
         }
-
     }
 
     //Warps the player to the selected warp point
@@ -367,13 +363,12 @@ public class WarpMenu {
                     teleportPlayer(p, guiName, itemName);
                 }
             }
-
         }
     }
 
     //Returns the lowest value in an array.
     public static int getLowestIndex() {
-        int lowestValues = warpWorldOrder.getFirst();
+        int lowestValues = warpWorldOrder.get(0);
         int lowestIndex = 0;
         for (int i = 0; i < warpWorldOrder.size(); i++) {
             int current = warpWorldOrder.get(i);
@@ -386,7 +381,7 @@ public class WarpMenu {
     }
 
     public static int getSubLowestIndex() {
-        int lowestValues = warpSubOrder.getFirst();
+        int lowestValues = warpSubOrder.get(0);
         int lowestIndex = 0;
         for (int i = 0; i < warpSubOrder.size(); i++) {
             int current = warpSubOrder.get(i);
