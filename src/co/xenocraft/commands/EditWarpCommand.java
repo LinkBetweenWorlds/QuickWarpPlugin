@@ -21,8 +21,8 @@ public class EditWarpCommand implements TabExecutor {
     private static final String currentDir = System.getProperty("user.dir");
     private static final String playerDir = currentDir + "\\plugins\\QuickWarp\\playerData\\";
     private static final String worldDir = currentDir + "\\plugins\\QuickWarp\\worldData\\";
-    public static int[] blockLocation;
-    public static int[] blockRot;
+    public static int[] blockLocation = new int[3];
+    public static int[] blockRot = new int[2];
     public static Material blockMaterial;
     public static int blockOrder;
     public static String currentWorldUUID;
@@ -190,6 +190,7 @@ public class EditWarpCommand implements TabExecutor {
                             dataList.add(fileReader.next());
                         }
                         fileReader.close();
+                        System.out.println(dataList);
                         blockLocation[0] = Integer.parseInt(dataList.get(0));
                         blockLocation[1] = Integer.parseInt(dataList.get(1));
                         blockLocation[2] = Integer.parseInt(dataList.get(2));
@@ -197,7 +198,7 @@ public class EditWarpCommand implements TabExecutor {
                         blockRot[1] = Integer.parseInt(dataList.get(4));
                         blockMaterial = Material.matchMaterial(dataList.get(5));
                         blockOrder = Integer.parseInt(dataList.get(6));
-
+                        System.out.println(Arrays.toString(blockLocation));
                         return f;
                     }
                 }
