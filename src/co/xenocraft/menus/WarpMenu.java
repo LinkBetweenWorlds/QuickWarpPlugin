@@ -175,7 +175,7 @@ public class WarpMenu {
 
         ItemStack backButton = new ItemStack(Material.BARRIER);
         ItemMeta backMeta = backButton.getItemMeta();
-        Objects.requireNonNull(backMeta).setDisplayName(ChatColor.RED + "Exit");
+        Objects.requireNonNull(backMeta).setDisplayName(ChatColor.RED + "Back");
         backButton.setItemMeta(backMeta);
 
         int listSize = warpWorldOrder.size();

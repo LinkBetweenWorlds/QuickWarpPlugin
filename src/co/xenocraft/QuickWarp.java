@@ -52,6 +52,7 @@ public class QuickWarp extends JavaPlugin implements Listener {
                 configWriter.write(data);
                 configWriter.close();
             } else {
+                System.out.println("Found config file");
                 Scanner configReader = new Scanner(configFile).useDelimiter("\n");
                 List<String> configData = new ArrayList<>();
                 while (configReader.hasNext()) {
@@ -62,6 +63,7 @@ public class QuickWarp extends JavaPlugin implements Listener {
                 welocmeMessageString = configData.get(3).substring(16);
                 warpCooldownEnable = Boolean.parseBoolean(configData.get(5).substring(22));
                 warpCooldown = Integer.parseInt(configData.get(6).substring(14));
+
             }
 
         } catch (Exception e) {

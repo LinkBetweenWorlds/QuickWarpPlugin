@@ -20,29 +20,29 @@ public class PlayerJoinLeaveListener implements Listener {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player p = event.getPlayer();
-        if(QuickWarp.welcomeMessageEnable){
-            event.setJoinMessage(QuickWarp.welocmeMessageString);
-            //event.setJoinMessage("Welcome " + p.getDisplayName() + " to §4Xenocraft!");
-        }
         UUID playerID = p.getUniqueId();
         String fileDir = System.getProperty("user.dir") + "\\plugins\\QuickWarp\\playerData\\";
         File playerDir = new File(fileDir);
         List<String> playerList = List.of(Objects.requireNonNull(playerDir.list()));
-        if (!playerList.isEmpty()) {
-            try {
-                if (!playerList.contains(playerID + ".yml")) {
-                    FileWriter file = new FileWriter(playerDir + "\\" + playerID + ".yml");
-                    String data = "";
-                    for (String s : playerList) {
-                        if (!s.equals(playerID.toString())) {
-                            file.write(data);
-                            file.close();
-                        }
+
+        try {
+            if (!playerList.contains(playerID + ".yml")) {
+                FileWriter file = new FileWriter(playerDir + "\\" + playerID + ".yml");
+                String data = "";
+                for (String s : playerList) {
+                    if (!s.equals(playerID.toString())) {
+                        file.write(data);
+                        file.close();
                     }
                 }
-            } catch (Exception e) {
-                getLogger().log(Level.WARNING, e.toString());
             }
+        } catch (Exception e) {
+            getLogger().log(Level.WARNING, e.toString());
         }
+        if (QuickWarp.welcomeMessageEnable) {
+            event.setJoinMessage(QuickWarp.welocmeMessageString);
+            //event.setJoinMessage("Welcome " + p.getDisplayName() + " to §4Xenocraft!");
+        }
+
     }
 }
