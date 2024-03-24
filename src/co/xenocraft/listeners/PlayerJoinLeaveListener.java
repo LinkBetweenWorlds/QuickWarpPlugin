@@ -40,7 +40,12 @@ public class PlayerJoinLeaveListener implements Listener {
             getLogger().log(Level.WARNING, e.toString());
         }
         if (QuickWarp.welcomeMessageEnable) {
-            event.setJoinMessage(QuickWarp.welocmeMessageString);
+            String joinMessage = QuickWarp.welocmeMessageString;
+            if(joinMessage.contains("@")){
+                joinMessage.indexOf("@");
+
+            }
+            event.setJoinMessage(joinMessage);
             //event.setJoinMessage("Welcome " + p.getDisplayName() + " to §4Xenocraft!");
         }
 

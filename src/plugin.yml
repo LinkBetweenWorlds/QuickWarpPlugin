@@ -2,7 +2,7 @@ main: co.xenocraft.QuickWarp
 name: QuickWarp
 version: 1.0
 author: Blink9085
-description: QuickWarp Plugin
+description: The QuickWarp plugin allows player to discover warp points placed throughout the worlds.
 api-version: 1.18
 
 commands:
@@ -12,7 +12,7 @@ commands:
     permission: quickwarp.god
     permission-message: You really think you can become a God.
   createWarp:
-    description: Creates a new warp point under feet. Creates a new command block below the surface. Use underscores _ for spaces. Use range for discovery range. Use secret for different text style.
+    description: Creates a new warp point under feet. Creates a new command block below the surface. Use underscores _ for spaces. Range counts for all directions. Use secret for different text style.
     usage: /<command> <name> <range> <secret> (Use underscore for spaces.)
     permission: quickwarp.createWarp
     permission-message: You don't have permission to do that.
@@ -23,24 +23,29 @@ commands:
     permission-message: You don't have permission to do that.
   editWorld:
     description: Edit the name, desc, order, and block of the current world. Or remove it.
-    usage: /<command> <name/edit/delete/desc/order/block> <options>
+    usage: /<command> <name/edit/delete/desc/order/block/info> <options>
     permission: quickwarp.editWorld
     permission-message: You don't have permission to do that.
   editWarp:
     description: Edit the name, order and block of a warp point. Or remove it. Must be in same world as warp point you want to edit.
-    usage: /<command> <warp point> <name/order/block/delete> <options>
+    usage: /<command> <warpPoint> <name/order/block/delete> <options>
     permission: quickwarp.editWarp
     permission-message: You don't have permission to do that.
   view:
-    description: View all worlds or warp in your current worlds.
+    description: View info on the worlds or warp points.
     usage: /<command>
     permission: quickwarp.view
     permission-message: You don't have permission to do that.
   discoverWarp:
-    description: For command blocks only.
-    usage: /<command>
+    description: Unlocks a warp point to a single player.
+    usage: /<command> <world> <warpPoint> <player>
     permission: quickwarp.discovery
-    permission-message: This is not a command you can use.
+    permission-message: You don't have permission to do that.
+  unlockWarp:
+    description: Permanently unlocks a warp point for all players. If you lock it, players will have to rediscover to use again.
+    usage: /<command> <world> <warpPoint> <unlock/lock>
+    permission: quickwarp.unlockWarp
+    permission-message: You don't have permission to do that.
   warp:
     description: Opens warp menu. Displays all discovered worlds and warp points.
     usage: /<command>
@@ -56,7 +61,8 @@ permissions:
       quickwarp.editWorld: true
       quickwarp.editWarp: true
       quickwarp.view: true
-
+      quickwarp.discovery: true
+      quickwarp.unlockWarp: true
   quickwarp.createWarp:
     description: Allows one to create warp point.
     default: op
@@ -76,7 +82,10 @@ permissions:
     description: Allows one to teleport through the dimensions. Should be auto given to players.
     default: true
   quickwarp.discovery:
-    description: For command block only.
+    description: Allows one to unlock warp point for a player.
+    default: op
+  quickwarp.unlockWarp:
+    description: Allows one to permanently unlock a warp point for all players.
     default: op
   quickwarp.god:
     description: Allows one to become God. Should not be given to players.

@@ -12,7 +12,6 @@ import java.util.logging.Level;
 
 import static org.bukkit.Bukkit.getLogger;
 
-
 public class ViewCommand implements TabExecutor {
     private final String worldDir = System.getProperty("user.dir") + "\\plugins\\QuickWarp\\worldData\\";
 

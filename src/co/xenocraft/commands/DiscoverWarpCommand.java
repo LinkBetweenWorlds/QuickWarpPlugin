@@ -15,6 +15,8 @@ import java.util.logging.Level;
 import static org.bukkit.Bukkit.getLogger;
 
 public class DiscoverWarpCommand implements TabExecutor {
+    //TODO Add feature that allows user to unlock a warp point for a player.
+    // /<command> <world> <warpPoint> <player>
     @Override
     public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
         if (sender instanceof BlockCommandSender block) {

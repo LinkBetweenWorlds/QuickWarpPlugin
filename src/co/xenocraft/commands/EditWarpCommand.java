@@ -151,7 +151,9 @@ public class EditWarpCommand implements TabExecutor {
                 // Removes the command block and replace them with air blocks.
                 Location repeatingBlockLoc = new Location(Bukkit.getWorld(currentWorldUUID),
                         blockLocation[0], blockLocation[1] - 2, blockLocation[2]);
+                System.out.println(repeatingBlockLoc.getBlock());
                 repeatingBlockLoc.getBlock().setType(Material.AIR);
+                System.out.println(repeatingBlockLoc.getBlock());
 
                 Location chainBlockLoc = new Location(Bukkit.getWorld(currentWorldUUID),
                         blockLocation[0], blockLocation[1] - 2, blockLocation[2] - 1);

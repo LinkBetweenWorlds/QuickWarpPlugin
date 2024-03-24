@@ -17,6 +17,7 @@ import java.util.logging.Level;
 import static org.bukkit.Bukkit.getLogger;
 
 public class WarpMenu {
+    // TODO Change warp menu to read unlock list and show it to players.
 
     private static final String currentDir = System.getProperty("user.dir");
     private static final String playerDir = currentDir + "\\plugins\\QuickWarp\\playerData\\";
@@ -338,8 +339,7 @@ public class WarpMenu {
                 }
             }
         }
-        Location teleportLocation = new Location(Bukkit.getWorld(Objects.requireNonNull(worldUUID)),
-                blockX + 0.5, blockY, blockZ + 0.5, yaw, pitch);
+        Location teleportLocation = new Location(Bukkit.getWorld(Objects.requireNonNull(worldUUID)), blockX + 0.5, blockY, blockZ + 0.5, yaw, pitch);
         p.closeInventory();
         p.teleport(teleportLocation, PlayerTeleportEvent.TeleportCause.PLUGIN);
     }
