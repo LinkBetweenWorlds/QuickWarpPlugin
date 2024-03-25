@@ -1,9 +1,6 @@
 package co.xenocraft.commands;
 
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.Material;
+import org.bukkit.*;
 import org.bukkit.block.CommandBlock;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -35,7 +32,7 @@ public class EditWarpCommand implements TabExecutor {
                 String data = blockLocation[0] + "," + blockLocation[1] + "," + blockLocation[2] + "," + blockRot[0] + "," + blockRot[1] + "," + blockMaterial + "," + blockOrder;
                 fw.write(data);
                 fw.close();
-                Location blockLoc = new Location(Bukkit.getWorld(currentWorldUUID), blockLocation[0], blockLocation[1], blockLocation[2]);
+                Location blockLoc = new Location(Bukkit.getWorld(UUID.fromString(currentWorldUUID)), blockLocation[0], blockLocation[1], blockLocation[2]);
                 CommandBlock commandBlock = (CommandBlock) blockLoc.getBlock();
                 String oldName = commandBlock.getName();
                 String[] oldNameParts = oldName.split("=");
@@ -148,18 +145,17 @@ public class EditWarpCommand implements TabExecutor {
                 Thread playerFileObject = new Thread(new MultiThreadPlayerWarpRemove(p, warp));
                 playerFileObject.start();
 
+                World world = Bukkit.getWorld(UUID.fromString(currentWorldUUID));
                 // Removes the command block and replace them with air blocks.
-                Location repeatingBlockLoc = new Location(Bukkit.getWorld(currentWorldUUID),
+                Location repeatingBlockLoc = new Location(world,
                         blockLocation[0], blockLocation[1] - 2, blockLocation[2]);
-                System.out.println(repeatingBlockLoc.getBlock());
                 repeatingBlockLoc.getBlock().setType(Material.AIR);
-                System.out.println(repeatingBlockLoc.getBlock());
 
-                Location chainBlockLoc = new Location(Bukkit.getWorld(currentWorldUUID),
+                Location chainBlockLoc = new Location(world,
                         blockLocation[0], blockLocation[1] - 2, blockLocation[2] - 1);
                 chainBlockLoc.getBlock().setType(Material.AIR);
 
-                Location redstoneBlockLoc = new Location(Bukkit.getWorld(currentWorldUUID),
+                Location redstoneBlockLoc = new Location(world,
                         blockLocation[0], blockLocation[1] - 3, blockLocation[2]);
                 redstoneBlockLoc.getBlock().setType(Material.AIR);
 
@@ -181,7 +177,7 @@ public class EditWarpCommand implements TabExecutor {
             String[] worldDirList = Objects.requireNonNull(worldDirFile.list());
             for (String s : worldDirList) {
                 String[] worldNameParts = s.split("=");
-                currentWorldUUID = worldNameParts[0].trim();
+                currentWorldUUID = worldNameParts[1].trim();
                 File warpDirFile = new File(worldDir + "\\" + s);
                 File[] warpDirList = Objects.requireNonNull(warpDirFile.listFiles());
                 for (File f : warpDirList) {
@@ -192,7 +188,6 @@ public class EditWarpCommand implements TabExecutor {
                             dataList.add(fileReader.next());
                         }
                         fileReader.close();
-                        System.out.println(dataList);
                         blockLocation[0] = Integer.parseInt(dataList.get(0));
                         blockLocation[1] = Integer.parseInt(dataList.get(1));
                         blockLocation[2] = Integer.parseInt(dataList.get(2));
@@ -200,7 +195,6 @@ public class EditWarpCommand implements TabExecutor {
                         blockRot[1] = Integer.parseInt(dataList.get(4));
                         blockMaterial = Material.matchMaterial(dataList.get(5));
                         blockOrder = Integer.parseInt(dataList.get(6));
-                        System.out.println(Arrays.toString(blockLocation));
                         return f;
                     }
                 }
@@ -229,6 +223,7 @@ public class EditWarpCommand implements TabExecutor {
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (sender instanceof Player p) {
             if (args.length == 3) {
+                args[0] = args[0].replace("_", " ");
                 switch (args[1]) {
                     case "block" -> {
                         if (args[2].equalsIgnoreCase("help")) {
@@ -247,7 +242,6 @@ public class EditWarpCommand implements TabExecutor {
                         } else if (args[2].equalsIgnoreCase("confirm")) {
                             p.sendMessage(ChatColor.RED + "Deleting warp point...");
                             deleteWarp(p, args[0]);
-                            p.sendMessage(ChatColor.GREEN + "The warp point has been deleted.");
                         } else {
                             p.sendMessage(ChatColor.RED + "Please type /editWarp delete confirm");
                             p.sendMessage(ChatColor.RED + "To delete the world name and the warp point within it.");
@@ -291,7 +285,7 @@ public class EditWarpCommand implements TabExecutor {
                         for (String w : currentWorldFileList) {
                             String[] warpNameParts = w.split("\\.");
                             if (!warpNameParts[0].equalsIgnoreCase("worldData")) {
-                                options.add(warpNameParts[0]);
+                                options.add(warpNameParts[0].replace(" ", "_"));
                             }
                         }
                     }
@@ -352,9 +346,6 @@ class MultiThreadPlayerWarpRemove implements Runnable {
     @Override
     public void run() {
         try {
-            System.out.println("Thread: " + Thread.currentThread().getId());
-            System.out.println(p.getDisplayName());
-            System.out.println(warp);
             UUID playerUUID = p.getUniqueId();
             File playerFile = new File(playerDir + "\\" + playerUUID + ".yml");
             Scanner playerReader = new Scanner(playerFile).useDelimiter(",");
@@ -364,6 +355,7 @@ class MultiThreadPlayerWarpRemove implements Runnable {
                 playerData.add(playerReader.next());
             }
             playerReader.close();
+
             //Remove old warp name
             List<String> newPlayerData = new ArrayList<>();
             for (String s : playerData) {

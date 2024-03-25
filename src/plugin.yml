@@ -39,7 +39,7 @@ commands:
   discoverWarp:
     description: Unlocks a warp point to a single player.
     usage: /<command> <world> <warpPoint> <player>
-    permission: quickwarp.discovery
+    permission: quickwarp.discoverWarp
     permission-message: You don't have permission to do that.
   unlockWarp:
     description: Permanently unlocks a warp point for all players. If you lock it, players will have to rediscover to use again.
@@ -61,7 +61,7 @@ permissions:
       quickwarp.editWorld: true
       quickwarp.editWarp: true
       quickwarp.view: true
-      quickwarp.discovery: true
+      quickwarp.discoverWarp: true
       quickwarp.unlockWarp: true
   quickwarp.createWarp:
     description: Allows one to create warp point.
@@ -81,7 +81,7 @@ permissions:
   quickwarp.warp:
     description: Allows one to teleport through the dimensions. Should be auto given to players.
     default: true
-  quickwarp.discovery:
+  quickwarp.discoverWarp:
     description: Allows one to unlock warp point for a player.
     default: op
   quickwarp.unlockWarp:

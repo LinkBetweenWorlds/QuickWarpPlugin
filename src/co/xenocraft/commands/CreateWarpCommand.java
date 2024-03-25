@@ -43,8 +43,7 @@ public class CreateWarpCommand implements TabExecutor {
                 if (checkWorldFolder(p.getWorld().getUID())) {
                     //Pulls name, range, and secret from arguments.
                     String locName = args[0].replace("_", " ");
-                    String rangeString = args[1];
-                    int range = Integer.parseInt(rangeString);
+                    int range = Integer.parseInt(args[1]);
                     boolean secret = Boolean.parseBoolean(args[2]);
                     //Gets the current location of sender.
                     Location playerLoc = p.getLocation();
@@ -65,7 +64,7 @@ public class CreateWarpCommand implements TabExecutor {
                         //Generates the command of command block.
                         String repeatCommand = "execute if entity @a[x=" + (blockX - (range / 2)) + ", y=" + blockY + ", z=" + (blockZ - (range / 2)) +
                                                ", dx=" + range + ", dy=3, dz=" + range + "]";
-                        String chainCommand = "discoverwarp";
+                        String chainCommand = "discoverwarp " + locName.replace(" ", "_") + " " + range + " " + secret;
                         p.sendMessage("Placing a warp point at: X: " + repeatBlockLoc.getBlockX() + ", Y: " + repeatBlockLoc.getBlockY() + ", Z: " + repeatBlockLoc.getBlockZ());
 
                         //Sets up the repeating command block with name, command, and a redstone block.
@@ -108,13 +107,18 @@ public class CreateWarpCommand implements TabExecutor {
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String s, String[] args) {
+        List<String> options = new ArrayList<>();
+        if (args.length == 1){
+            options.add("<name>");
+        }
+        if (args.length == 2){
+            options.add("<range>");
+        }
         if (args.length == 3) {
-            List<String> options = new ArrayList<>();
             options.add("true");
             options.add("false");
-            return options;
         }
-        return null;
+        return options;
     }
 
     //Checks if the world folder exists.

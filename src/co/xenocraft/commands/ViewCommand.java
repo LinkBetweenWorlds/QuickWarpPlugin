@@ -3,6 +3,7 @@ package co.xenocraft.commands;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 
@@ -27,7 +28,7 @@ public class ViewCommand implements TabExecutor {
                         worldFileList = Arrays.asList(Objects.requireNonNull(worldFiles.list()));
                         for (String s : worldFileList) {
                             String[] worldParts = s.split("=");
-                            p.sendMessage("World Name: " + worldParts[0].trim() + " UUID: " + UUID.fromString(worldParts[1].trim()));
+                            p.sendMessage("World Name: " + worldParts[0].trim());
                             File warpLengthFile = new File(worldDir + s);
                             p.sendMessage("Number of warps: " + (Objects.requireNonNull(warpLengthFile.listFiles()).length - 1));
                         }
@@ -51,7 +52,6 @@ public class ViewCommand implements TabExecutor {
                                 for (File s : warpFileList) {
                                     String[] warpNameParts = s.getName().split("\\.");
                                     if (!warpNameParts[0].trim().equals("worldData")) {
-                                        System.out.println(s.getName());
                                         Scanner fileReader = new Scanner(s).useDelimiter(",");
                                         List<String> dataList = new ArrayList<>();
                                         while (fileReader.hasNext()) {
@@ -74,6 +74,8 @@ public class ViewCommand implements TabExecutor {
             } else {
                 argsMessage(p);
             }
+        } else if (sender instanceof ConsoleCommandSender){
+
         }
         return true;
     }
