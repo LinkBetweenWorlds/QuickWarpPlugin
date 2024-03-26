@@ -107,28 +107,22 @@ public class DiscoverWarpCommand implements TabExecutor {
                 if (playersList.contains(playerName)) {
                     File[] worldList = new File(worldDir).listFiles();
                     if (worldList != null) {
-                        List<String> worldNameList = new ArrayList<>();
                         for (File f : worldList) {
-                            String worldFileName = f.getName().split("=")[0];
-                            worldNameList.add(worldFileName);
-                        }
-                        if(worldNameList.contains(worldName)){
+                            if(f.getName().startsWith(worldName)){
+                                List<String> warpList = Arrays.asList(Objects.requireNonNull(new File(worldDir + "").list()));
+                                Player unlockPlayer = Bukkit.getPlayer(playerName);
+                                if(unlockPlayer != null){
 
-                            Player unlockPlayer = Bukkit.getPlayer(playerName);
-                            if(unlockPlayer != null){
-
-
-                                unlockPlayer.sendMessage(ChatColor.GREEN + p.getDisplayName() + " unlocked " + warpPointName + " for you.");
-                                Location unlockPlayerLocation = unlockPlayer.getLocation();
-                                unlockPlayer.sendTitle(ChatColor.GREEN + warpPointName, "has been discovered", 6, 60, 12);
-                                unlockPlayer.spawnParticle(Particle.FIREWORKS_SPARK, unlockPlayerLocation, 200);
-                                unlockPlayer.playSound(p, Sound.UI_TOAST_CHALLENGE_COMPLETE, SoundCategory.MUSIC, 100, 1);
-                                p.sendMessage(ChatColor.GREEN + "Warp point unlocked.");
+                                    unlockPlayer.sendMessage(ChatColor.GREEN + p.getDisplayName() + " unlocked " + warpPointName + " for you.");
+                                    Location unlockPlayerLocation = unlockPlayer.getLocation();
+                                    unlockPlayer.sendTitle(ChatColor.GREEN + warpPointName, "has been discovered", 6, 60, 12);
+                                    unlockPlayer.spawnParticle(Particle.FIREWORKS_SPARK, unlockPlayerLocation, 200);
+                                    unlockPlayer.playSound(p, Sound.UI_TOAST_CHALLENGE_COMPLETE, SoundCategory.MUSIC, 100, 1);
+                                    p.sendMessage(ChatColor.GREEN + "Warp point unlocked.");
+                                }
                             }
-
-                        }else{
-                            p.sendMessage(ChatColor.RED + "That world does not exist.");
                         }
+                        p.sendMessage(ChatColor.YELLOW + "That world does not exist.");
                     }
                 } else {
                     p.sendMessage(ChatColor.RED + "That player does not exist, or is not online.");
