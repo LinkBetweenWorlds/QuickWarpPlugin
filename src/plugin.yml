@@ -38,7 +38,7 @@ commands:
     permission-message: You don't have permission to do that.
   discoverWarp:
     description: Unlocks a warp point to a single player.
-    usage: /<command> <world> <warpPoint> <player>
+    usage: /<command> <world> <warpPoint> <player> <unlock/lock>
     permission: quickwarp.discoverWarp
     permission-message: You don't have permission to do that.
   unlockWarp:
