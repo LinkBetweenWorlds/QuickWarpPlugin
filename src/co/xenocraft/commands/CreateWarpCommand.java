@@ -3,6 +3,7 @@ package co.xenocraft.commands;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.block.CommandBlock;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.command.Command;
@@ -45,9 +46,10 @@ public class CreateWarpCommand implements TabExecutor {
                     String locName = args[0].replace("_", " ");
                     int range = Integer.parseInt(args[1]);
                     boolean secret = Boolean.parseBoolean(args[2]);
+                    World world = p.getWorld();
                     //Gets the current location of sender.
                     Location playerLoc = p.getLocation();
-                    if (addWarpPoint(p.getWorld().getUID(), p, locName, playerLoc)) {
+                    if (addWarpPoint(world.getUID(), p, locName, playerLoc)) {
                         p.sendMessage("Name: " + locName);
                         p.sendMessage("Secret: " + secret);
                         p.sendMessage("Range: " + range);
@@ -55,16 +57,27 @@ public class CreateWarpCommand implements TabExecutor {
                         int blockX = playerLoc.getBlockX();
                         int blockY = playerLoc.getBlockY();
                         int blockZ = playerLoc.getBlockZ();
+                        int yOffset = 0;
+
+                        String worldType = world.getEnvironment().toString();
+                        System.out.println(worldType);
+                        if (worldType.equals("NORMAL")) {
+                            yOffset = -64 - blockY;
+                        } else {
+                            yOffset = -blockY;
+                        }
+
+                        System.out.println(yOffset);
 
                         //Works out the placement of the blocks.
-                        Location repeatBlockLoc = new Location(p.getWorld(), blockX, blockY - 2, blockZ);
-                        Location chainBlockLoc = new Location(p.getWorld(), blockX, blockY - 2, blockZ - 1);
-                        Location redstoneRepeatLoc = new Location(p.getWorld(), blockX, blockY - 3, blockZ);
+                        Location repeatBlockLoc = new Location(p.getWorld(), blockX, blockY + yOffset, blockZ);
+                        Location chainBlockLoc = new Location(p.getWorld(), blockX, blockY + yOffset, blockZ - 1);
+                        Location redstoneRepeatLoc = new Location(p.getWorld(), blockX, blockY + yOffset, blockZ + 1);
 
                         //Generates the command of command block.
                         String repeatCommand = "execute if entity @a[x=" + (blockX - (range / 2)) + ", y=" + blockY + ", z=" + (blockZ - (range / 2)) +
-                                               ", dx=" + range + ", dy=3, dz=" + range + "]";
-                        String chainCommand = "discoverwarp " + locName.replace(" ", "_") + " " + range + " " + secret;
+                                ", dx=" + range + ", dy=3, dz=" + range + "]";
+                        String chainCommand = "discoverwarp " + locName.replace(" ", "_") + " " + range + " " + secret + " " + yOffset;
                         p.sendMessage("Placing a warp point at: X: " + repeatBlockLoc.getBlockX() + ", Y: " + repeatBlockLoc.getBlockY() + ", Z: " + repeatBlockLoc.getBlockZ());
 
                         //Sets up the repeating command block with name, command, and a redstone block.
@@ -108,10 +121,10 @@ public class CreateWarpCommand implements TabExecutor {
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String s, String[] args) {
         List<String> options = new ArrayList<>();
-        if (args.length == 1){
+        if (args.length == 1) {
             options.add("<name>");
         }
-        if (args.length == 2){
+        if (args.length == 2) {
             options.add("<range>");
         }
         if (args.length == 3) {
@@ -171,7 +184,7 @@ public class CreateWarpCommand implements TabExecutor {
                     int yaw = getCardinalDirection(p.getLocation().getYaw());
                     FileWriter warpFile = new FileWriter(fileDir + s + "\\" + warpName + ".yml");
                     String dataString = blockX + "," + blockY + "," + blockZ + "," +
-                                        pitch + "," + yaw + "," + warpMaterial + "," + order;
+                            pitch + "," + yaw + "," + warpMaterial + "," + order;
                     try {
                         warpFile.write(dataString);
                         warpFile.close();
