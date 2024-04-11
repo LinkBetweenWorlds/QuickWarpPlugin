@@ -7,9 +7,9 @@ import java.util.logging.Level;
 import static org.bukkit.Bukkit.getLogger;
 
 public class fileSystem {
-    private static final String currentDir = System.getProperty("user.dir");
-    private static final String playerDir = currentDir + "\\plugins\\QuickWarp\\playerData\\";
-    private static final String worldDir = currentDir + "\\plugins\\QuickWarp\\worldData\\";
+    private static final String currentDir = QuickWarp.class.getProtectionDomain().getCodeSource().getLocation().getPath().replaceAll("%20", " ").split("QuickWarp.jar")[0];
+    private static final String playerDir = currentDir + "/QuickWarp/playerData/";
+    private static final String worldDir = currentDir + "/QuickWarp/worldData/";
     public static List<String> getPlayerWarps (UUID playerUUID) {
         List<String> playerWarps = new ArrayList<>();
 

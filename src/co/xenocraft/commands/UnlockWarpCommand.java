@@ -1,5 +1,6 @@
 package co.xenocraft.commands;
 
+import co.xenocraft.QuickWarp;
 import co.xenocraft.fileSystem;
 import org.bukkit.*;
 import org.bukkit.command.Command;
@@ -20,9 +21,9 @@ public class UnlockWarpCommand implements TabExecutor {
     // TODO allows user to unlock a warp point for all players or remove a warp point for unlocked list.
     // /<command> <world> <warpPoint> <player> <unlock/lock>
 
-    private static final String currentDir = System.getProperty("user.dir");
-    private static final String playerDir = currentDir + "\\plugins\\QuickWarp\\playerData\\";
-    private static final String worldDir = currentDir + "\\plugins\\QuickWarp\\worldData\\";
+    private static final String currentDir = QuickWarp.class.getProtectionDomain().getCodeSource().getLocation().getPath().replaceAll("%20", " ").split("QuickWarp.jar")[0];
+    private static final String playerDir = currentDir + "/QuickWarp/playerData/";
+    private static final String worldDir = currentDir + "/QuickWarp/worldData/";
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
@@ -76,10 +77,15 @@ public class UnlockWarpCommand implements TabExecutor {
                                             unlockPlayer.sendMessage(ChatColor.RED + p.getDisplayName() + " has removed " + warpPointName + " from you.");
                                         }
                                     }
-                                    StringBuilder dataBuilder = new StringBuilder(playerWarpList.get(0));
-                                    for (int i = 1; i < playerWarpList.size(); i++) {
-                                        dataBuilder.append(",");
-                                        dataBuilder.append(playerWarpList.get(i));
+                                    StringBuilder dataBuilder = new StringBuilder();
+                                    if(!playerWarpList.isEmpty()){
+                                        dataBuilder.append(playerWarpList.get(0));
+                                        if(playerWarpList.size() > 1){
+                                            for (int i = 1; i < playerWarpList.size(); i++) {
+                                                dataBuilder.append(",");
+                                                dataBuilder.append(playerWarpList.get(i));
+                                            }
+                                        }
                                     }
                                     try {
                                         FileWriter writer = new FileWriter(playerDir + playerUUID + ".yml");
@@ -116,7 +122,7 @@ public class UnlockWarpCommand implements TabExecutor {
                 }
                 break;
             case 2:
-                options.addAll(fileSystem.getWarpList(args[0]));
+                options.addAll(fileSystem.getWarpList(args[0].replace("_", " ")));
                 break;
             case 3:
                 for (Player p : Bukkit.getOnlinePlayers()) {

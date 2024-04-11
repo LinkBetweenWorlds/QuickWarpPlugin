@@ -1,5 +1,6 @@
 package co.xenocraft.menus;
 
+import co.xenocraft.QuickWarp;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -19,9 +20,9 @@ import static org.bukkit.Bukkit.getLogger;
 public class WarpMenu {
     // TODO Change warp menu to read unlock list and show it to players.
 
-    private static final String currentDir = System.getProperty("user.dir");
-    private static final String playerDir = currentDir + "\\plugins\\QuickWarp\\playerData\\";
-    private static final String worldDir = currentDir + "\\plugins\\QuickWarp\\worldData\\";
+    private static final String currentDir = QuickWarp.class.getProtectionDomain().getCodeSource().getLocation().getPath().replaceAll("%20", " ").split("QuickWarp.jar")[0];
+    private static final String playerDir = currentDir + "/QuickWarp/playerData/";
+    private static final String worldDir = currentDir + "/QuickWarp/worldData/";
     public static List<String> warpWorldNames = new ArrayList<>();
     public static List<Material> warpWorldMaterials = new ArrayList<>();
     public static List<String> warpWorldDescs = new ArrayList<>();
@@ -52,7 +53,7 @@ public class WarpMenu {
                 warpMenuNames.add(name);
 
                 try {
-                    File file = new File(worldDir + worldNames[i] + "\\worldData.dat");
+                    File file = new File(worldDir + worldNames[i] + "/worldData.dat");
                     Scanner fileReader = new Scanner(file).useDelimiter(",");
                     List<String> dataList = new ArrayList<>();
                     while (fileReader.hasNext()) {
@@ -85,7 +86,7 @@ public class WarpMenu {
             for (File f : worldDirList) {
                 String[] nameParts = f.getName().split("=");
                 if (nameParts[0].equals(worldName)) {
-                    File warpDirFile = new File(worldDir + "\\" + f.getName());
+                    File warpDirFile = new File(worldDir + "/" + f.getName());
                     List<File> warpDirlist = List.of(Objects.requireNonNull(warpDirFile.listFiles()));
                     for (File wf : warpDirlist) {
                         if (!wf.getName().equals("worldData.dat")) {
@@ -140,7 +141,7 @@ public class WarpMenu {
             for (File f : worldDirList) {
                 String[] nameParts = f.getName().split("=");
                 if (nameParts[0].equals(worldName)) {
-                    File warpDirFile = new File(worldDir + "\\" + f.getName());
+                    File warpDirFile = new File(worldDir + "/" + f.getName());
                     List<File> warpDirlist = List.of(Objects.requireNonNull(warpDirFile.listFiles()));
                     for (File wf : warpDirlist) {
                         if (!wf.getName().equals("worldData.dat")) {
@@ -246,7 +247,7 @@ public class WarpMenu {
                 //Create infill and back items.
                 ItemStack infill = new ItemStack(Material.BLACK_STAINED_GLASS_PANE);
                 ItemMeta infillMeta = infill.getItemMeta();
-                Objects.requireNonNull(infillMeta).setDisplayName("");
+                Objects.requireNonNull(infillMeta).setDisplayName(" ");
                 infill.setItemMeta(infillMeta);
 
                 ItemStack backButton = new ItemStack(Material.BARRIER);
@@ -339,7 +340,7 @@ public class WarpMenu {
                 }
             }
         }
-        Location teleportLocation = new Location(Bukkit.getWorld(Objects.requireNonNull(worldUUID)), blockX + 0.5, blockY, blockZ + 0.5, yaw, pitch);
+        Location teleportLocation = new Location(Bukkit.getWorld(Objects.requireNonNull(worldUUID)), blockX + 0.5, blockY + 0.3, blockZ + 0.5, yaw, pitch);
         p.closeInventory();
         p.teleport(teleportLocation, PlayerTeleportEvent.TeleportCause.PLUGIN);
     }

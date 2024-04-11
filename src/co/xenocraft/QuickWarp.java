@@ -23,21 +23,22 @@ public class QuickWarp extends JavaPlugin implements Listener {
     @Override
     public void onEnable() {
         //Checks for necessary files and directories.
-        String currentDir = System.getProperty("user.dir") + "\\plugins\\QuickWarp";
+        String dir = QuickWarp.class.getProtectionDomain().getCodeSource().getLocation().getPath().replaceAll("%20", " ").split("QuickWarp.jar")[0];
+        String currentDir = dir + "QuickWarp";
         try {
             File dataDir = new File(currentDir);
             if (!dataDir.exists()) {
                 dataDir.mkdirs();
             }
-            File playerDir = new File(currentDir + "\\playerData");
+            File playerDir = new File(currentDir + "/playerData");
             if (!playerDir.exists()) {
                 playerDir.mkdirs();
             }
-            File worldDir = new File(currentDir + "\\worldData");
+            File worldDir = new File(currentDir + "/worldData");
             if (!worldDir.exists()) {
                 worldDir.mkdirs();
             }
-            File configFile = new File(currentDir + "\\config.yml");
+            File configFile = new File(currentDir + "/config.yml");
             if (!configFile.exists()) {
                 createConfigFile(configFile);
             } else {

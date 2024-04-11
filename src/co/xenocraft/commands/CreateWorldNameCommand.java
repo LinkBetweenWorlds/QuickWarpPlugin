@@ -1,5 +1,6 @@
 package co.xenocraft.commands;
 
+import co.xenocraft.QuickWarp;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
@@ -49,7 +50,7 @@ public class CreateWorldNameCommand implements TabExecutor {
         //Creates the file directory path of the folder.
         String UUIDString = worldUUID.toString();
         String folderName = worldName + "=" + UUIDString;
-        String fileDir = System.getProperty("user.dir") + "\\plugins\\QuickWarp\\worldData\\";
+        String fileDir = QuickWarp.class.getProtectionDomain().getCodeSource().getLocation().getPath().replaceAll("%20", " ").split("QuickWarp.jar")[0] + "/QuickWarp/worldData/";
         String worldDir = fileDir + folderName;
         p.sendMessage(ChatColor.GREEN + "Trying to create world...");
         try {
@@ -104,7 +105,7 @@ public class CreateWorldNameCommand implements TabExecutor {
             String worldDesc = "";
             int worldOrder = 0;
             try {
-                String worldDir = System.getProperty("user.dir") + "\\plugins\\QuickWarp\\worldData\\";
+                String worldDir = QuickWarp.class.getProtectionDomain().getCodeSource().getLocation().getPath().replaceAll("%20", " ").split("QuickWarp.jar")[0] + "/QuickWarp/worldData/";
                 File[] dirList = new File(worldDir).listFiles();
                 if (dirList != null) {
                     worldOrder = dirList.length;
@@ -112,7 +113,7 @@ public class CreateWorldNameCommand implements TabExecutor {
             } catch (Exception e) {
                 getLogger().log(Level.WARNING, e.toString());
             }
-            FileWriter file = new FileWriter(dir + "\\worldData.dat");
+            FileWriter file = new FileWriter(dir + "/worldData.dat");
             String data = worldBlock + "," + worldDesc + "," + worldOrder;
             file.write(data);
             file.close();

@@ -1,5 +1,6 @@
 package co.xenocraft.commands;
 
+import co.xenocraft.QuickWarp;
 import org.bukkit.*;
 import org.bukkit.block.CommandBlock;
 import org.bukkit.command.Command;
@@ -15,9 +16,9 @@ import java.util.logging.Level;
 import static org.bukkit.Bukkit.getLogger;
 
 public class EditWarpCommand implements TabExecutor {
-    private static final String currentDir = System.getProperty("user.dir");
-    private static final String playerDir = currentDir + "\\plugins\\QuickWarp\\playerData\\";
-    private static final String worldDir = currentDir + "\\plugins\\QuickWarp\\worldData\\";
+    private static final String currentDir = QuickWarp.class.getProtectionDomain().getCodeSource().getLocation().getPath().replaceAll("%20", " ").split("QuickWarp.jar")[0];
+    private static final String playerDir = currentDir + "/QuickWarp/playerData/";
+    private static final String worldDir = currentDir + "/QuickWarp/worldData/";
     public static int[] blockLocation = new int[3];
     public static int[] blockRot = new int[2];
     public static Material blockMaterial;
@@ -148,15 +149,15 @@ public class EditWarpCommand implements TabExecutor {
                 World world = Bukkit.getWorld(UUID.fromString(currentWorldUUID));
                 // Removes the command block and replace them with air blocks.
                 Location repeatingBlockLoc = new Location(world,
-                        blockLocation[0], blockLocation[1] - 2, blockLocation[2]);
+                        blockLocation[0], -64, blockLocation[2]);
                 repeatingBlockLoc.getBlock().setType(Material.AIR);
 
                 Location chainBlockLoc = new Location(world,
-                        blockLocation[0], blockLocation[1] - 2, blockLocation[2] - 1);
+                        blockLocation[0], -64, blockLocation[2] - 1);
                 chainBlockLoc.getBlock().setType(Material.AIR);
 
                 Location redstoneBlockLoc = new Location(world,
-                        blockLocation[0], blockLocation[1] - 3, blockLocation[2]);
+                        blockLocation[0], -64, blockLocation[2] + 1);
                 redstoneBlockLoc.getBlock().setType(Material.AIR);
 
                 // Removes the warp files from the world directory
@@ -178,7 +179,7 @@ public class EditWarpCommand implements TabExecutor {
             for (String s : worldDirList) {
                 String[] worldNameParts = s.split("=");
                 currentWorldUUID = worldNameParts[1].trim();
-                File warpDirFile = new File(worldDir + "\\" + s);
+                File warpDirFile = new File(worldDir + "/" + s);
                 File[] warpDirList = Objects.requireNonNull(warpDirFile.listFiles());
                 for (File f : warpDirList) {
                     if (f.getName().equalsIgnoreCase(warpName + ".yml")) {
@@ -333,8 +334,8 @@ public class EditWarpCommand implements TabExecutor {
 }
 
 class MultiThreadPlayerWarpRemove implements Runnable {
-    private static final String currentDir = System.getProperty("user.dir");
-    private static final String playerDir = currentDir + "\\plugins\\QuickWarp\\playerData\\";
+    private static final String currentDir = QuickWarp.class.getProtectionDomain().getCodeSource().getLocation().getPath().replaceAll("%20", " ").split("QuickWarp.jar")[0];
+    private static final String playerDir = currentDir + "/QuickWarp/playerData/";
     Player p;
     String warp;
 

@@ -1,5 +1,6 @@
 package co.xenocraft.commands;
 
+import co.xenocraft.QuickWarp;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
@@ -16,8 +17,10 @@ import java.util.logging.Level;
 import static org.bukkit.Bukkit.getLogger;
 
 public class EditWorldCommand implements TabExecutor {
+    private static final String currentDir = QuickWarp.class.getProtectionDomain().getCodeSource().getLocation().getPath().replaceAll("%20", " ").split("QuickWarp.jar")[0];
 
-    private final String fileDir = System.getProperty("user.dir") + "\\plugins\\QuickWarp\\worldData\\";
+
+    private final String fileDir = currentDir + "/QuickWarp/worldData/";
     private String worldName = null;
     private Material worldBlock = null;
     private String worldDesc = null;
@@ -40,7 +43,7 @@ public class EditWorldCommand implements TabExecutor {
                                 } else {
                                     Material mat = Material.getMaterial(args[1].toUpperCase());
                                     if (mat != null) {
-                                        updateMaterialData(mat);
+                                        updateMaterialData(mat, p);
                                         p.sendMessage("Set the world block to " + mat.name());
                                     } else {
                                         p.sendMessage(ChatColor.YELLOW + "Please check the block that you gave.");
@@ -80,7 +83,7 @@ public class EditWorldCommand implements TabExecutor {
                                         desc.append(" ");
                                         desc.append(args[i]);
                                     }
-                                    updateDescData(String.valueOf(desc));
+                                    updateDescData(String.valueOf(desc), p);
                                 }
                             } else {
                                 p.sendMessage(ChatColor.YELLOW + "Please check your arguments.");
@@ -95,7 +98,7 @@ public class EditWorldCommand implements TabExecutor {
                                     p.sendMessage("This will push down all other world after it.");
                                 } else {
                                     int orderNum = Math.abs(Integer.parseInt(args[1]));
-                                    updateOrderData(orderNum);
+                                    updateOrderData(orderNum, p);
                                     p.sendMessage("Change world order to:" + orderNum);
                                 }
                             } else {
@@ -113,7 +116,7 @@ public class EditWorldCommand implements TabExecutor {
                                     for (int i = 2; i <= args.length - 1; i++) {
                                         name.append(" ").append(args[i]);
                                     }
-                                    updateNameData(name.toString(), worldUUID);
+                                    updateNameData(name.toString(), worldUUID, p);
                                 }
                             } else {
                                 p.sendMessage(ChatColor.YELLOW + "Please check your arguments.");
@@ -215,7 +218,7 @@ public class EditWorldCommand implements TabExecutor {
 
     public void getWorldData() {
         try {
-            File file = new File(worldDir + "\\worldData.dat");
+            File file = new File(worldDir + "/worldData.dat");
             Scanner fileReader = new Scanner(file).useDelimiter(",");
             List<String> dataList = new ArrayList<>();
             while (fileReader.hasNext()) {
@@ -234,37 +237,39 @@ public class EditWorldCommand implements TabExecutor {
 
     }
 
-    private void updateMaterialData(Material block) {
+    private void updateMaterialData(Material block, Player p) {
         try {
-            FileWriter file = new FileWriter(worldDir + "\\worldData.dat");
+            FileWriter file = new FileWriter(worldDir + "/worldData.dat");
             String data = block.toString() + "," + worldDesc + "," + worldOrder;
             file.write(data);
             file.close();
+            p.sendMessage(ChatColor.GREEN + "Updated World Material.");
         } catch (Exception e) {
             getLogger().log(Level.WARNING, e.toString());
         }
     }
 
-    private void updateDescData(String desc) {
+    private void updateDescData(String desc, Player p) {
         try {
             String newDesc = desc.replace(",", "");
-            FileWriter file = new FileWriter(worldDir + "\\worldData.dat");
+            FileWriter file = new FileWriter(worldDir + "/worldData.dat");
             String data = worldBlock + "," + newDesc + "," + worldOrder;
             file.write(data);
             file.close();
+            p.sendMessage(ChatColor.GREEN + "Updated World Description.");
         } catch (Exception e) {
             getLogger().log(Level.WARNING, e.toString());
         }
     }
 
-    private void updateOrderData(int num) {
+    private void updateOrderData(int num, Player p) {
         try {
             try {
                 File[] fileList = new File(fileDir).listFiles();
                 if (fileList != null) {
                     for (File value : fileList) {
                         try {
-                            File file = new File(value.getAbsolutePath() + "\\worldData.dat");
+                            File file = new File(value.getAbsolutePath() + "/worldData.dat");
                             Scanner fileReader = new Scanner(file).useDelimiter(",");
                             List<String> dataList = new ArrayList<>();
                             while (fileReader.hasNext()) {
@@ -282,6 +287,7 @@ public class EditWorldCommand implements TabExecutor {
                                     getLogger().log(Level.WARNING, e.toString());
                                 }
                             }
+                            p.sendMessage(ChatColor.GREEN + "Updated World Order.");
                         } catch (Exception e) {
                             getLogger().log(Level.WARNING, e.toString());
                         }
@@ -291,7 +297,7 @@ public class EditWorldCommand implements TabExecutor {
             } catch (Exception e) {
                 getLogger().log(Level.WARNING, e.toString());
             }
-            FileWriter file = new FileWriter(worldDir + "\\worldData.dat");
+            FileWriter file = new FileWriter(worldDir + "/worldData.dat");
             String data = worldBlock + "," + worldDesc + "," + num;
             file.write(data);
             file.close();
@@ -300,18 +306,22 @@ public class EditWorldCommand implements TabExecutor {
         }
     }
 
-    private void updateNameData(String newName, UUID worldUUID) {
+    private void updateNameData(String newName, UUID worldUUID, Player p) {
         File newWorldDir = new File(fileDir + newName + "=" + worldUUID);
         File oldWorldDir = new File(worldDir);
         try {
-            Files.move(oldWorldDir.toPath(), newWorldDir.toPath());
-            File[] contents = oldWorldDir.listFiles();
-            if (contents != null) {
-                for (File f : contents) {
-                    f.delete();
+            if(newWorldDir.mkdirs()){
+                //Files.move(oldWorldDir.toPath(), newWorldDir.toPath());
+                File[] contents = oldWorldDir.listFiles();
+                if (contents != null) {
+                    for (File f : contents) {
+                        f.renameTo(new File(newWorldDir + "/" +  f.getName()));
+                        f.delete();
+                    }
                 }
+                oldWorldDir.delete();
+                p.sendMessage(ChatColor.GREEN + "Updated World Name.");
             }
-            oldWorldDir.delete();
 
         } catch (Exception e) {
             getLogger().log(Level.WARNING, e.toString());

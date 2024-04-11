@@ -1,5 +1,6 @@
 package co.xenocraft.commands;
 
+import co.xenocraft.QuickWarp;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -14,7 +15,9 @@ import java.util.logging.Level;
 import static org.bukkit.Bukkit.getLogger;
 
 public class ViewCommand implements TabExecutor {
-    private final String worldDir = System.getProperty("user.dir") + "\\plugins\\QuickWarp\\worldData\\";
+    private static final String currentDir = QuickWarp.class.getProtectionDomain().getCodeSource().getLocation().getPath().replaceAll("%20", " ").split("QuickWarp.jar")[0];
+
+    private final String worldDir = currentDir + "/QuickWarp/worldData/";
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {

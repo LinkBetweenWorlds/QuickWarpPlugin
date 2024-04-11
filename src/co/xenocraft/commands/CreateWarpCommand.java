@@ -1,9 +1,11 @@
 package co.xenocraft.commands;
 
+import co.xenocraft.QuickWarp;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.bukkit.block.CommandBlock;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.command.Command;
@@ -67,7 +69,10 @@ public class CreateWarpCommand implements TabExecutor {
                             yOffset = -blockY;
                         }
 
-                        System.out.println(yOffset);
+                        Block currentBlock = playerLoc.getBlock();
+                        if(currentBlock.getType() == Material.DIRT_PATH){
+                            blockY += 1;
+                        }
 
                         //Works out the placement of the blocks.
                         Location repeatBlockLoc = new Location(p.getWorld(), blockX, blockY + yOffset, blockZ);
@@ -137,7 +142,7 @@ public class CreateWarpCommand implements TabExecutor {
     //Checks if the world folder exists.
     public boolean checkWorldFolder(UUID worldUUID) {
         String UUIDString = worldUUID.toString();
-        String fileDir = System.getProperty("user.dir") + "\\plugins\\QuickWarp\\worldData\\";
+        String fileDir = QuickWarp.class.getProtectionDomain().getCodeSource().getLocation().getPath().replaceAll("%20", " ").split("QuickWarp.jar")[0] + "/QuickWarp/worldData/";
         try {
             File dirList = new File(fileDir);
             String[] worldDirList = dirList.list();
@@ -162,13 +167,13 @@ public class CreateWarpCommand implements TabExecutor {
     //Creates a file in the world folder with the warp point data.
     public boolean addWarpPoint(UUID worldUUID, Player p, String warpName, Location loc) {
         String UUIDString = worldUUID.toString();
-        String fileDir = System.getProperty("user.dir") + "\\plugins\\QuickWarp\\worldData\\";
+        String fileDir = QuickWarp.class.getProtectionDomain().getCodeSource().getLocation().getPath().replaceAll("%20", " ").split("QuickWarp.jar")[0] + "/QuickWarp/worldData/";
         Material warpMaterial = Material.GRASS_BLOCK;
         try {
             File dirList = new File(fileDir);
             String[] worldDirList = dirList.list();
             for (String s : Objects.requireNonNull(worldDirList)) {
-                File checkWarpDir = new File(fileDir + "\\" + s);
+                File checkWarpDir = new File(fileDir + "/" + s);
                 String[] checkWarpList = checkWarpDir.list();
                 for (String w : Objects.requireNonNull(checkWarpList)) {
                     if (w.equals(warpName + ".yml")) {
@@ -182,7 +187,7 @@ public class CreateWarpCommand implements TabExecutor {
                     int blockZ = loc.getBlockZ();
                     int pitch = 0;
                     int yaw = getCardinalDirection(p.getLocation().getYaw());
-                    FileWriter warpFile = new FileWriter(fileDir + s + "\\" + warpName + ".yml");
+                    FileWriter warpFile = new FileWriter(fileDir + s + "/" + warpName + ".yml");
                     String dataString = blockX + "," + blockY + "," + blockZ + "," +
                             pitch + "," + yaw + "," + warpMaterial + "," + order;
                     try {
