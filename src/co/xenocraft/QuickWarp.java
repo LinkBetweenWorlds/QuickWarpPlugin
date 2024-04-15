@@ -99,7 +99,6 @@ public class QuickWarp extends JavaPlugin implements Listener {
 
     private void loadConfigFile(File configFile) {
         try {
-            System.out.println("Found config file");
             Scanner configReader = new Scanner(configFile).useDelimiter("\n");
             List<String> configData = new ArrayList<>();
             while (configReader.hasNext()) {

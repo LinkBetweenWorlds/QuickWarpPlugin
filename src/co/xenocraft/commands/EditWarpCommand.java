@@ -62,6 +62,7 @@ public class EditWarpCommand implements TabExecutor {
                             }
                             pfWriter.write(pfNewData.toString());
                             pfWriter.close();
+                            p.sendMessage(ChatColor.GREEN + "Warp point updated.");
                         } catch (Exception e) {
                             getLogger().log(Level.WARNING, e.toString());
                         }
@@ -84,6 +85,7 @@ public class EditWarpCommand implements TabExecutor {
                 FileWriter fw = new FileWriter(f);
                 fw.write(data);
                 fw.close();
+                p.sendMessage(ChatColor.GREEN + "Warp point updated.");
             } else {
                 p.sendMessage(ChatColor.YELLOW + "That warp point does not exist.");
             }
@@ -120,6 +122,7 @@ public class EditWarpCommand implements TabExecutor {
                                         }
                                         fw.write(newData.toString());
                                         fw.close();
+                                        p.sendMessage(ChatColor.GREEN + "Warp point updated.");
                                     } catch (Exception e) {
                                         getLogger().log(Level.WARNING, e.toString());
                                     }
@@ -213,7 +216,7 @@ public class EditWarpCommand implements TabExecutor {
         String[] currentWorldFileList = new String[0];
         for (String s : worldDirList) {
             if (s.endsWith(worldUUID)) {
-                File currentWorldDir = new File(worldDir + "\\" + s);
+                File currentWorldDir = new File(worldDir + "/" + s);
                 currentWorldFileList = currentWorldDir.list();
             }
         }

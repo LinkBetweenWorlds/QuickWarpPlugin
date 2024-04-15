@@ -31,7 +31,7 @@ public class PlayerJoinLeaveListener implements Listener {
 
         try {
             if (!playerList.contains(playerID + ".yml")) {
-                FileWriter file = new FileWriter(playerDir + "\\" + playerID + ".yml");
+                FileWriter file = new FileWriter(playerDir + "/" + playerID + ".yml");
                 String data = "";
                 for (String s : playerList) {
                     if (!s.equals(playerID.toString())) {
