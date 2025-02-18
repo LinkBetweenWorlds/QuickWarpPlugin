@@ -1,0 +1,10 @@
+name: Collectopaedia
+version: '1.0-SNAPSHOT'
+main: org.xenocraft.collectopaedia.Collectopaedia
+api-version: '1.21'
+authors: [ Blink ]
+
+commands:
+  open:
+    description: Opens Collectopaedia Menu
+    usage: /<command>

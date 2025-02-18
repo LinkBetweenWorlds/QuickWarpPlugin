@@ -1,0 +1,3 @@
+org/xenocraft/collectopaedia/commands/OpenMenuCommand.class
+org/xenocraft/collectopaedia/Collectopaedia.class
+org/xenocraft/collectopaedia/listener/PlayerJoinLeaveListener.class

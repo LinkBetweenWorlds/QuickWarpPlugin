@@ -1,0 +1,137 @@
+other:
+  count: 7
+  veg:
+    - None
+  fruit:
+    - None
+  flower:
+    - None
+  animal:
+    - None
+  bug:
+    - Minute Mantis
+    - Love Beetle
+  nature:
+    - None
+  parts:
+    - Golden Cog
+    - Angel Engine Y
+    - Thunder Compass
+  strange:
+    - Coin of Fortune
+    - Love Source
+colony9:
+  count: 17
+  veg:
+    - Sweet Wasabi
+    - Cool Potato
+    - Red Lettuce
+    - Chewy Radish
+  fruit:
+    - Dance Apple
+    - Black Kiwi
+  flower:
+    - Strong Dandelion
+    - Moon Flower
+    - Dawn Hydrangea
+  animal:
+    - None
+  bug:
+    - Prairie Dragonfly
+    - Giant Hornet
+    - White Beetle
+    - Sorrow Beetle
+  nature:
+    - None
+  parts:
+    - Blue Chain
+    - Rabbit Diode
+  strange:
+    - Plate Snow
+    - Rainbow Zirconia
+tephraCave:
+  count: 17
+  veg:
+    - None
+  fruit:
+    - Clear Almond
+    - Bright Fig
+    - Dark Grape
+  flower:
+    - Insanity Mint
+    - Night Tulip
+  animal:
+    - Shin Newt
+    - Cave Rat
+    - Shin Gecko
+    - Happy Rabbit
+  bug:
+    - Brown Butterfly
+    - Gold Caterpillar
+    - Rumble Stonefly
+  nature:
+    - Kneecap Rock
+    - Confusion Ivy
+    - Clarity Moss
+  parts:
+    - None
+  strange:
+    - Leaf Mystery
+    - Steel Silk
+bionisLeg:
+  count: 23
+  veg:
+    - Hot Taro
+    - Juicy Broccoli
+    - Spicy Cabbage
+    - Hard Lotus
+  fruit:
+    - Sour Gooseberry
+    - Red Durian
+    - Walnut Grape
+    - Humming Plum
+  flower:
+    - None
+  bug:
+    - White Ladybird
+    - Hill Firefly
+    - Moth Crawler
+    - Queen Locust
+    - Fire Tarantula
+  animal:
+    - None
+  nature:
+    - Mat Ice
+    - Bluesky Bark
+    - Pione Stone
+  parts:
+    - Rusty Bolt
+    - Winding Gear
+  strange:
+    - Gold Dust Illusion
+    - Devious Gravity
+    - White Songbird
+    - Death Bangle
+colony6:
+  count: 8
+  veg:
+    - None
+  fruit:
+    - None
+  flower:
+    - Cute Orchid
+    - Sirius Anemone
+    - Spirit Clematis
+  animal:
+    - Pyro Lizard
+    - Amblygon Turtle
+    - Dobercorgi
+  bug:
+    - None
+  nature:
+    - None
+  strange:
+    - Verdant Eternity
+    - White Night Rod
+  parts:
+    - None
