@@ -113,15 +113,9 @@ public final class Collectopaedia extends JavaPlugin implements Listener {
     // Create all required data files
     private void createDataFiles() {
         Bukkit.getScheduler().runTask(this, () -> {
-            if(getResource("items.yml") == null) {
-                saveResource("items.yml", false);
-            }
-            if(getResource("rewards.yml") == null) {
-                saveResource("rewards.yml", false);
-            }
-            if(getResource("areas.yml") == null) {
-                saveResource("areas.yml", false);
-            }
+            saveResource("items.yml", false);
+            saveResource("rewards.yml", false);
+            saveResource("areas.yml", false);
             itemsData = YamlConfiguration.loadConfiguration(new File(getDataFolder(), "items.yml"));
             areasData = YamlConfiguration.loadConfiguration(new File(getDataFolder(), "areas.yml"));
             rewardsData = YamlConfiguration.loadConfiguration(new File(getDataFolder(), "rewards.yml"));
