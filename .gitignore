@@ -4,6 +4,11 @@ out/
 !**/src/test/**/out/
 *.iml
 .idea/
+.target/
+
+### Minecraft ###
+*.jar
+*.class
 
 ### Eclipse ###
 .apt_generated
