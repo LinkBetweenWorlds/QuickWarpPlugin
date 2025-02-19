@@ -87,13 +87,13 @@ public class OpenMenuCommand implements TabExecutor {
         Bukkit.getScheduler().runTask(collectopaedia, () -> {
             FileConfiguration playerData = getPlayerData(player);
             List<String> unlockedAreas = playerData.getStringList("unlockedAreas");
-            List<String> areaList = collectopaedia.areasData.getStringList("areas");
+            Bukkit.getLogger().log(Level.INFO, "Unlocked Areas: " + unlockedAreas);
+
             int rows = 6;
             int cols = 9;
             int invSize = rows * cols;
             int slot = 0;
             for (String area : unlockedAreas) {
-                Bukkit.getLogger().log(Level.INFO, "[Collectopaedia] " + area);
                 ItemStack areaMaps = createAreaMapItem(area);
                 if (slot < 9 || slot % 9 == 8 || slot >= 45) {
                     inventory.setItem(slot, areaMaps);
@@ -110,11 +110,20 @@ public class OpenMenuCommand implements TabExecutor {
     }
 
     private ItemStack createAreaMapItem(String area) {
-        String areaDisplayName = collectopaedia.areasData.getString("areas." + area);
+        String areaDisplayName = collectopaedia.areasData.getString(area);
+        Bukkit.getLogger().log(Level.INFO, "[Collectopaedia] " + areaDisplayName);
         ItemStack item = new ItemStack(Material.MAP);
         ItemMeta meta = item.getItemMeta();
         Objects.requireNonNull(meta).setDisplayName(ChatColor.WHITE + areaDisplayName);
         item.setItemMeta(meta);
+        return item;
+    }
+
+    private ItemStack createPercentMeter(FileConfiguration playerFile, String area){
+        ItemStack item = new ItemStack(Material.CLOCK);
+        ItemMeta meta = item.getItemMeta();
+        int itemCount = collectopaedia.itemsData.getInt(area + ".count");
+        int playerItemCount = playerFile.getInt("depositedItems." + area);
         return item;
     }
 

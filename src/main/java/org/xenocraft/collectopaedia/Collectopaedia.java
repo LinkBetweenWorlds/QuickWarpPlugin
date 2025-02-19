@@ -64,14 +64,23 @@ public final class Collectopaedia extends JavaPlugin implements Listener {
                     if (file.createNewFile()) {
                         FileConfiguration playerFile = YamlConfiguration.loadConfiguration(file);
 
+                        //TODO
+                        // Add count of item per area that player has deposited.
+                        // Add list of rewards that player has collected.
+
                         // Fill the file with default data
                         playerFile.set("name", player.getName());
                         playerFile.set("selectedArea", "colony9");
                         playerFile.set("selectedPage", 0);
-                        List<String> list = List.of("other", "colony9");
+                        List<String> list = List.of("other", "colony9", "tephraCave",
+                                "bionisLeg", "colony6");
                         playerFile.set("unlockedAreas", list);
                         playerFile.set("depositedItems", list);
+                        for (String area : list) {
+                            playerFile.set("depositedArea." + area + ".count", 0);
+                        }
                         playerFile.set("rewards", "colony9");
+
 
                         // Save the data to the fileB
                         savePlayerFile(playerFile, player);
