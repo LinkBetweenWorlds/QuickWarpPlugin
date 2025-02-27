@@ -23,6 +23,7 @@ import java.util.logging.Level;
 public class OpenMenuCommand implements TabExecutor {
 
     private final Collectopaedia collectopaedia;
+
     public OpenMenuCommand(Collectopaedia collectopaedia) {
         this.collectopaedia = collectopaedia;
     }
@@ -46,18 +47,17 @@ public class OpenMenuCommand implements TabExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
-        if (sender instanceof ConsoleCommandSender console){
-            console.sendMessage(ChatColor.RED + "This command can only be executed by players");
+        if (sender instanceof ConsoleCommandSender console) {
+            console.sendMessage(ChatColor.RED + "[Collectopaedia] This command can only be executed by players");
             return true;
-        }
-        else if(sender instanceof Player player){
+        } else if (sender instanceof Player player) {
             createInventory(player);
             return true;
         }
         return false;
     }
 
-    public void createInventory(Player player){
+    public void createInventory(Player player) {
         Bukkit.getScheduler().runTask(collectopaedia, () -> {
             int rows = 6;
             int cols = 9;
@@ -83,23 +83,31 @@ public class OpenMenuCommand implements TabExecutor {
         });
     }
 
-    public Inventory updateInventory(Player player, Inventory inventory){
+    public Inventory updateInventory(Player player, Inventory inventory) {
         Bukkit.getScheduler().runTask(collectopaedia, () -> {
             FileConfiguration playerData = getPlayerData(player);
             List<String> unlockedAreas = playerData.getStringList("unlockedAreas");
-            Bukkit.getLogger().log(Level.INFO, "Unlocked Areas: " + unlockedAreas);
+            String selectedArea = playerData.getString("selectedArea");
+            Bukkit.getLogger().log(Level.INFO, "[Collectopaedia] Unlocked Areas: " + unlockedAreas);
+
 
             int rows = 6;
             int cols = 9;
             int invSize = rows * cols;
             int slot = 0;
             for (String area : unlockedAreas) {
-                ItemStack areaMaps = createAreaMapItem(area);
                 if (slot < 9 || slot % 9 == 8 || slot >= 45) {
+                    ItemStack areaMaps;
+                    if (area.equals(selectedArea)) {
+                        areaMaps = createAreaMapItem(area, true);
+                    } else {
+                        areaMaps = createAreaMapItem(area, false);
+                    }
                     inventory.setItem(slot, areaMaps);
                 }
-                slot ++;
+                slot++;
             }
+            inventory.setItem(9, createPercentMeter(playerData, selectedArea));
 
         });
         return inventory;
@@ -109,21 +117,28 @@ public class OpenMenuCommand implements TabExecutor {
         return playerDataCache.computeIfAbsent(p.getUniqueId(), id -> collectopaedia.loadPlayerData(p));
     }
 
-    private ItemStack createAreaMapItem(String area) {
+    private ItemStack createAreaMapItem(String area, boolean selected) {
         String areaDisplayName = collectopaedia.areasData.getString(area);
         Bukkit.getLogger().log(Level.INFO, "[Collectopaedia] " + areaDisplayName);
-        ItemStack item = new ItemStack(Material.MAP);
+        ItemStack item = new ItemStack(Material.PAPER);
+        if (selected) {
+            item.setType(Material.MAP);
+        }
         ItemMeta meta = item.getItemMeta();
         Objects.requireNonNull(meta).setDisplayName(ChatColor.WHITE + areaDisplayName);
         item.setItemMeta(meta);
         return item;
     }
 
-    private ItemStack createPercentMeter(FileConfiguration playerFile, String area){
+    private ItemStack createPercentMeter(FileConfiguration playerFile, String area) {
         ItemStack item = new ItemStack(Material.CLOCK);
         ItemMeta meta = item.getItemMeta();
         int itemCount = collectopaedia.itemsData.getInt(area + ".count");
-        int playerItemCount = playerFile.getInt("depositedItems." + area);
+        int playerItemCount = playerFile.getInt("depositedItems." + area + ".count");
+        int percent = playerItemCount / itemCount;
+        String areaDisplayName = collectopaedia.areasData.getString(area);
+        Objects.requireNonNull(meta).setDisplayName(ChatColor.GOLD + areaDisplayName + " : " + percent + "%");
+        item.setItemMeta(meta);
         return item;
     }
 

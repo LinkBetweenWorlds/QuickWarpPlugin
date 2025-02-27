@@ -3,12 +3,9 @@ out/
 !**/src/main/**/out/
 !**/src/test/**/out/
 *.iml
-.idea/
-.target/
+idea/
+target/
 
-### Minecraft ###
-*.jar
-*.class
 
 ### Eclipse ###
 .apt_generated

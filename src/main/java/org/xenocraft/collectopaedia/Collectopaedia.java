@@ -24,15 +24,17 @@ public final class Collectopaedia extends JavaPlugin implements Listener {
     @Override
     public void onEnable() {
         createDataFiles();
-        getLogger().log(Level.INFO, "Collectopaedia enabled successfully.");
 
         registerEvent();
         registerCommands();
+
+        getLogger().log(Level.INFO, "[Collectopaedia] Enabled successfully.");
+        getLogger().log(Level.INFO, "[Collectopaedia] My code works??? How??");
     }
 
     @Override
     public void onDisable() {
-        getLogger().log(Level.INFO, "Collectopaedia disabled successfully.");
+        getLogger().log(Level.INFO, "[Collectopaedia] Disabled successfully.");
     }
 
     //Register Listener
@@ -53,7 +55,7 @@ public final class Collectopaedia extends JavaPlugin implements Listener {
             File playerDataFolder = new File(getDataFolder(), "playerData");
             // Ensure the playerData folder exists
             if (!playerDataFolder.exists() && !playerDataFolder.mkdirs()) {
-                getLogger().log(Level.WARNING, "Could not create player data folder.");
+                getLogger().log(Level.WARNING, "[Collectopaedia] Could not create player data folder.");
                 return;
             }
             File file = new File(playerDataFolder, uuid + ".yml");
@@ -72,12 +74,13 @@ public final class Collectopaedia extends JavaPlugin implements Listener {
                         playerFile.set("name", player.getName());
                         playerFile.set("selectedArea", "colony9");
                         playerFile.set("selectedPage", 0);
+                        List<String> unlockList = List.of("other", "colony9");
                         List<String> list = List.of("other", "colony9", "tephraCave",
                                 "bionisLeg", "colony6");
-                        playerFile.set("unlockedAreas", list);
+                        playerFile.set("unlockedAreas", unlockList);
                         playerFile.set("depositedItems", list);
                         for (String area : list) {
-                            playerFile.set("depositedArea." + area + ".count", 0);
+                            playerFile.set("depositedItems." + area + ".count", 0);
                         }
                         playerFile.set("rewards", "colony9");
 
@@ -85,19 +88,19 @@ public final class Collectopaedia extends JavaPlugin implements Listener {
                         // Save the data to the fileB
                         savePlayerFile(playerFile, player);
 
-                        getLogger().info("Player file created for " + player.getName());
+                        getLogger().info("[Collectopaedia] Player file created for " + player.getName());
                     }
                 } catch (IOException e) {
-                    getLogger().log(Level.WARNING, "Could not create or save player file: " + e);
+                    getLogger().log(Level.WARNING, "[Collectopaedia] Could not create or save player file: " + e);
                 }
             } else {
-                getLogger().info("Player file already exists for " + player.getName());
+                getLogger().info("[Collectopaedia] Player file already exists for " + player.getName());
             }
         });
     }
 
     public boolean playerFileExists(Player p) {
-        return new File(getDataFolder(), "playerData/" + p.getUniqueId() + ".yml").exists();
+        return new File(getDataFolder() + "/playerData", p.getUniqueId() + ".yml").exists();
     }
 
     // Save the player data file asynchronously
@@ -106,7 +109,7 @@ public final class Collectopaedia extends JavaPlugin implements Listener {
             try {
                 file.save(new File(getDataFolder() + "/playerData", p.getUniqueId() + ".yml"));
             } catch (IOException e) {
-                getLogger().log(Level.WARNING, "Could not save player file for " + p.getName() + ": " + e);
+                getLogger().log(Level.WARNING, "[Collectopaedia] Could not save player file for " + p.getName() + ": " + e);
             }
         });
     }
@@ -121,10 +124,10 @@ public final class Collectopaedia extends JavaPlugin implements Listener {
 
     // Create all required data files
     private void createDataFiles() {
-        Bukkit.getScheduler().runTask(this, () -> {
-            saveResource("items.yml", false);
-            saveResource("rewards.yml", false);
-            saveResource("areas.yml", false);
+        Bukkit.getScheduler().runTaskAsynchronously(this, () -> {
+            saveResource("items.yml", true);
+            saveResource("rewards.yml", true);
+            saveResource("areas.yml", true);
             itemsData = YamlConfiguration.loadConfiguration(new File(getDataFolder(), "items.yml"));
             areasData = YamlConfiguration.loadConfiguration(new File(getDataFolder(), "areas.yml"));
             rewardsData = YamlConfiguration.loadConfiguration(new File(getDataFolder(), "rewards.yml"));

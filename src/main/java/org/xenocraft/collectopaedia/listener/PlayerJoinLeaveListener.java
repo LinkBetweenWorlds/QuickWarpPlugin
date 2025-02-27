@@ -6,9 +6,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.xenocraft.collectopaedia.Collectopaedia;
-import java.util.logging.Level;
 
-import org.bukkit.plugin.java.JavaPlugin;
+import java.util.logging.Level;
 
 public class PlayerJoinLeaveListener implements Listener {
     private final Collectopaedia collectopaedia;
