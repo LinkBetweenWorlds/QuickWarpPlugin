@@ -7,6 +7,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.xenocraft.collectopaedia.commands.OpenMenuCommand;
+import org.xenocraft.collectopaedia.events.PlayerInvClickEvent;
 import org.xenocraft.collectopaedia.listener.PlayerJoinLeaveListener;
 
 import java.io.File;
@@ -28,8 +29,8 @@ public final class Collectopaedia extends JavaPlugin implements Listener {
         registerEvent();
         registerCommands();
 
-        getLogger().log(Level.INFO, "[Collectopaedia] Enabled successfully.");
         getLogger().log(Level.INFO, "[Collectopaedia] My code works??? How??");
+        getLogger().log(Level.INFO, "[Collectopaedia] Enabled successfully.");
     }
 
     @Override
@@ -41,6 +42,7 @@ public final class Collectopaedia extends JavaPlugin implements Listener {
     public void registerEvent() {
         getServer().getPluginManager().registerEvents(this, this);
         getServer().getPluginManager().registerEvents(new PlayerJoinLeaveListener(this), this);
+        getServer().getPluginManager().registerEvents(new PlayerInvClickEvent(this), this);
     }
 
     //Register Commands

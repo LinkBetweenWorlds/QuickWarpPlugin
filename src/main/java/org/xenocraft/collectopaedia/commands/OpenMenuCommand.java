@@ -9,31 +9,29 @@ import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.xenocraft.collectopaedia.Collectopaedia;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
+import java.util.stream.Collectors;
 
 public class OpenMenuCommand implements TabExecutor {
-
-    private final Collectopaedia collectopaedia;
-
-    public OpenMenuCommand(Collectopaedia collectopaedia) {
-        this.collectopaedia = collectopaedia;
-    }
 
     private static final ItemStack INFILL = createStaticItemStack(Material.LIGHT_GRAY_STAINED_GLASS_PANE, " ", true);
     private static final ItemStack BACK_BUTTON = createStaticItemStack(Material.BARRIER, ChatColor.RED + "Back", false);
     private static final ItemStack LOCKED_AREA = createStaticItemStack(Material.RED_STAINED_GLASS_PANE, ChatColor.DARK_RED + "Locked Area", false);
-    private static final ItemStack NEXT_PAGE = createStaticItemStack(Material.PAPER, ChatColor.GREEN + "Next", false);
-
+    private static final ItemStack NEXT_PAGE = createStaticItemStack(Material.PAPER, ChatColor.GREEN + "Next Page", false);
+    private final Collectopaedia collectopaedia;
     private final ConcurrentHashMap<UUID, FileConfiguration> playerDataCache = new ConcurrentHashMap<>();
+
+    public OpenMenuCommand(Collectopaedia collectopaedia) {
+        this.collectopaedia = collectopaedia;
+    }
 
     // Helper method to create a static ItemStack with a specific material and display name
     private static ItemStack createStaticItemStack(Material material, String displayName, boolean hideToolTip) {
@@ -43,6 +41,20 @@ public class OpenMenuCommand implements TabExecutor {
         Objects.requireNonNull(meta).setDisplayName(displayName);
         item.setItemMeta(meta);
         return item;
+    }
+
+    public static String lowercaseFirstLetter(String str) {
+        if (str == null || str.isEmpty()) {
+            return str;
+        }
+        return Character.toLowerCase(str.charAt(0)) + str.substring(1);
+    }
+
+    public static String uppercaseFirstLetter(String str) {
+        if (str == null || str.isEmpty()) {
+            return str;
+        }
+        return Character.toUpperCase(str.charAt(0)) + str.substring(1);
     }
 
     @Override
@@ -57,6 +69,39 @@ public class OpenMenuCommand implements TabExecutor {
         return false;
     }
 
+    public void menuClick(InventoryClickEvent event) {
+        Player player = (Player) event.getWhoClicked();
+        FileConfiguration playerData = getPlayerData(player);
+        ItemStack item = event.getCurrentItem();
+        ItemMeta meta = Objects.requireNonNull(item).getItemMeta();
+        Material material = item.getType();
+        String itemName = Objects.requireNonNull(meta).getDisplayName().trim();
+        itemName = ChatColor.stripColor(itemName);
+        Inventory inv = player.getOpenInventory().getTopInventory();
+
+        if (itemName.contains("Back")) {
+            player.closeInventory();
+        } else if (itemName.contains("Next")) {
+            if (playerData != null) {
+                int page = playerData.getInt("selectedPage");
+                page = (page == 1) ? 0 : 1;
+                playerData.set("selectedPage", page);
+                Bukkit.getLogger().log(Level.INFO, "Page selected: " + page);
+                collectopaedia.savePlayerFile(playerData, player);
+            }
+            player.openInventory(updateInventory(player, inv, "page"));
+        } else if (material == Material.PAPER) {
+            itemName = itemName.replace(" ", "");
+            itemName = lowercaseFirstLetter(itemName);
+            playerData.set("selectedArea", itemName);
+            player.openInventory(updateInventory(player, inv, "area"));
+        } else if (material == Material.BLUE_STAINED_GLASS_PANE) {
+            //TODO Take item for player inv
+            player.openInventory(updateInventory(player, inv, "submit"));
+        }
+
+    }
+
     public void createInventory(Player player) {
         Bukkit.getScheduler().runTask(collectopaedia, () -> {
             int rows = 6;
@@ -64,7 +109,6 @@ public class OpenMenuCommand implements TabExecutor {
             int invSize = rows * cols;
 
             Inventory inventory = Bukkit.createInventory(null, invSize, ChatColor.DARK_GREEN + "Collectopaedia");
-
             for (int slot = 0; slot < invSize; slot++) {
                 // Fill lockedArea for border slots
                 if (slot < 9 || slot % 9 == 8 || slot >= 45) {
@@ -74,55 +118,90 @@ public class OpenMenuCommand implements TabExecutor {
                     inventory.setItem(slot, INFILL);
                 }
             }
-            inventory.setItem(36, NEXT_PAGE);
             inventory.setItem(45, BACK_BUTTON);
 
-            Inventory playerInv = updateInventory(player, inventory);
-
-            player.openInventory(playerInv);
+            player.openInventory(updateInventory(player, inventory, ""));
         });
     }
 
-    public Inventory updateInventory(Player player, Inventory inventory) {
+    private List<List<String>> getItemsList(String area) {
+        List<String> types = List.of("veg", "fruit", "flower", "animal", "bug", "nature", "parts", "strange");
+        return types.stream().map(type -> collectopaedia.itemsData.getStringList(area + "." + type)).collect(Collectors.toList());
+    }
+
+    public Inventory updateInventory(Player player, Inventory inventory, String event) {
+        //TODO change so that menu click event only updates the changed parts of the inv.
         Bukkit.getScheduler().runTask(collectopaedia, () -> {
             FileConfiguration playerData = getPlayerData(player);
             List<String> unlockedAreas = playerData.getStringList("unlockedAreas");
             String selectedArea = playerData.getString("selectedArea");
-            Bukkit.getLogger().log(Level.INFO, "[Collectopaedia] Unlocked Areas: " + unlockedAreas);
+            int selectedPage = playerData.getInt("selectedPage");
 
-
-            int rows = 6;
-            int cols = 9;
-            int invSize = rows * cols;
-            int slot = 0;
-            for (String area : unlockedAreas) {
-                if (slot < 9 || slot % 9 == 8 || slot >= 45) {
-                    ItemStack areaMaps;
-                    if (area.equals(selectedArea)) {
-                        areaMaps = createAreaMapItem(area, true);
-                    } else {
-                        areaMaps = createAreaMapItem(area, false);
+            if (event.equals("area")) {
+                int slot = 0;
+                for (String area : unlockedAreas) {
+                    if (slot < 9 || slot % 9 == 8 || slot >= 45) {
+                        ItemStack areaMaps;
+                        if (area.equals(selectedArea)) {
+                            areaMaps = createAreaMapItem(area, true);
+                        } else {
+                            areaMaps = createAreaMapItem(area, false);
+                        }
+                        inventory.setItem(slot, areaMaps);
                     }
-                    inventory.setItem(slot, areaMaps);
+                    slot++;
                 }
-                slot++;
+                inventory.setItem(9, createPercentMeter(playerData, selectedArea));
             }
-            inventory.setItem(9, createPercentMeter(playerData, selectedArea));
 
+            if (event.equals("page")) {
+                List<String> types = List.of("veg", "fruit", "flower", "animal", "bug", "nature", "parts", "strange");
+                List<List<String>> items = getItemsList(selectedArea);
+                ItemStack temp = new ItemStack(Material.EMERALD);
+                ItemMeta meta = temp.getItemMeta();
+                int noneCount = 0;
+                for (int i = 0; i < types.size(); i++) {
+                    if (items.get(i).getFirst().equals("None")) {
+                        noneCount++;
+                    } else {
+                        Bukkit.getLogger().log(Level.INFO, "Page: " + selectedPage + " I: " + i);
+                        if (selectedPage == 0 && i <= 4) {
+                            Objects.requireNonNull(meta).setDisplayName(uppercaseFirstLetter(types.get(i)));
+                            temp.setItemMeta(meta);
+                            inventory.setItem((9 * i) + 2, temp);
+                        } else if (selectedPage == 1 && i > 4) {
+                            Bukkit.getLogger().log(Level.INFO, "I: " + i);
+                            Objects.requireNonNull(meta).setDisplayName(uppercaseFirstLetter(types.get(i)));
+                            temp.setItemMeta(meta);
+                            inventory.setItem((9 * (i - 4)) + 2, temp);
+                        }
+                    }
+                }
+                if (noneCount < 4) {
+                    inventory.setItem(36, NEXT_PAGE);
+                }
+            }
         });
         return inventory;
     }
 
     private FileConfiguration getPlayerData(Player p) {
-        return playerDataCache.computeIfAbsent(p.getUniqueId(), id -> collectopaedia.loadPlayerData(p));
+        return playerDataCache.compute(p.getUniqueId(), (id, cachedData) -> {
+            FileConfiguration fileData = collectopaedia.loadPlayerData(p);
+            // If there's no cached data, or it differs from the file data, update the cache.
+            if (cachedData == null || !cachedData.equals(fileData)) {
+                return fileData;
+            }
+            // Otherwise, keep the current cached data.
+            return cachedData;
+        });
     }
 
     private ItemStack createAreaMapItem(String area, boolean selected) {
         String areaDisplayName = collectopaedia.areasData.getString(area);
-        Bukkit.getLogger().log(Level.INFO, "[Collectopaedia] " + areaDisplayName);
         ItemStack item = new ItemStack(Material.PAPER);
         if (selected) {
-            item.setType(Material.MAP);
+            item.setType(Material.FILLED_MAP);
         }
         ItemMeta meta = item.getItemMeta();
         Objects.requireNonNull(meta).setDisplayName(ChatColor.WHITE + areaDisplayName);
@@ -139,6 +218,27 @@ public class OpenMenuCommand implements TabExecutor {
         String areaDisplayName = collectopaedia.areasData.getString(area);
         Objects.requireNonNull(meta).setDisplayName(ChatColor.GOLD + areaDisplayName + " : " + percent + "%");
         item.setItemMeta(meta);
+        return item;
+    }
+
+    private ItemStack createItem(String name, String type) {
+        ItemStack item = new ItemStack(Material.EMERALD);
+        ItemMeta meta = item.getItemMeta();
+        assert meta != null;
+        switch (type) {
+            case "deposited":
+                meta.setDisplayName(ChatColor.GREEN + name);
+                item.setType(Material.EMERALD);
+                break;
+            case "has":
+                meta.setDisplayName(ChatColor.BLUE + name);
+                item.setType(Material.BLUE_STAINED_GLASS_PANE);
+                break;
+            case "needed":
+                meta.setDisplayName("");
+                item.setType(Material.BLACK_STAINED_GLASS_PANE);
+                break;
+        }
         return item;
     }
 
