@@ -15,7 +15,10 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.xenocraft.collectopaedia.Collectopaedia;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
@@ -89,15 +92,15 @@ public class OpenMenuCommand implements TabExecutor {
                 Bukkit.getLogger().log(Level.INFO, "Page selected: " + page);
                 collectopaedia.savePlayerFile(playerData, player);
             }
-            player.openInventory(updateInventory(player, inv, "page"));
+            player.openInventory(updateInventory(player, inv, "page", ""));
         } else if (material == Material.PAPER) {
             itemName = itemName.replace(" ", "");
             itemName = lowercaseFirstLetter(itemName);
             playerData.set("selectedArea", itemName);
-            player.openInventory(updateInventory(player, inv, "area"));
+            player.openInventory(updateInventory(player, inv, "area", ""));
         } else if (material == Material.BLUE_STAINED_GLASS_PANE) {
             //TODO Take item for player inv
-            player.openInventory(updateInventory(player, inv, "submit"));
+            player.openInventory(updateInventory(player, inv, "submit", itemName));
         }
 
     }
@@ -120,7 +123,7 @@ public class OpenMenuCommand implements TabExecutor {
             }
             inventory.setItem(45, BACK_BUTTON);
 
-            player.openInventory(updateInventory(player, inventory, ""));
+            player.openInventory(updateInventory(player, inventory, "all", ""));
         });
     }
 
@@ -129,57 +132,108 @@ public class OpenMenuCommand implements TabExecutor {
         return types.stream().map(type -> collectopaedia.itemsData.getStringList(area + "." + type)).collect(Collectors.toList());
     }
 
-    public Inventory updateInventory(Player player, Inventory inventory, String event) {
-        //TODO change so that menu click event only updates the changed parts of the inv.
+    public Inventory updateInventory(Player player, Inventory inventory, String event, String itemName) {
         Bukkit.getScheduler().runTask(collectopaedia, () -> {
             FileConfiguration playerData = getPlayerData(player);
             List<String> unlockedAreas = playerData.getStringList("unlockedAreas");
             String selectedArea = playerData.getString("selectedArea");
-            int selectedPage = playerData.getInt("selectedPage");
 
-            if (event.equals("area")) {
-                int slot = 0;
-                for (String area : unlockedAreas) {
-                    if (slot < 9 || slot % 9 == 8 || slot >= 45) {
-                        ItemStack areaMaps;
-                        if (area.equals(selectedArea)) {
-                            areaMaps = createAreaMapItem(area, true);
-                        } else {
-                            areaMaps = createAreaMapItem(area, false);
+            //Sets up the list of areas and their percent meter.
+            if (event.equals("area") || event.equals("all")) {
+                Bukkit.getScheduler().runTaskAsynchronously(collectopaedia, () -> {
+                    HashMap<Integer, ItemStack> itemStackHashMap = new HashMap<>();
+                    int slot = 0;
+                    for (String area : unlockedAreas) {
+                        if (slot < 9 || slot % 9 == 8 || slot >= 45) {
+                            ItemStack areaMaps;
+                            if (area.equals(selectedArea)) {
+                                areaMaps = createAreaMapItem(area, true);
+                            } else {
+                                areaMaps = createAreaMapItem(area, false);
+                            }
+                            itemStackHashMap.put(slot, areaMaps);
                         }
-                        inventory.setItem(slot, areaMaps);
+                        slot++;
                     }
-                    slot++;
-                }
-                inventory.setItem(9, createPercentMeter(playerData, selectedArea));
+                    itemStackHashMap.put(9, createPercentMeter(playerData, selectedArea));
+                    Bukkit.getScheduler().runTask(collectopaedia, () -> {
+                        for (int i = 0; i < inventory.getSize(); i++) {
+                            if (itemStackHashMap.containsKey(i)) {
+                                inventory.setItem(i, itemStackHashMap.get(i));
+                            }
+                        }
+                    });
+                });
             }
 
-            if (event.equals("page")) {
-                List<String> types = List.of("veg", "fruit", "flower", "animal", "bug", "nature", "parts", "strange");
-                List<List<String>> items = getItemsList(selectedArea);
-                ItemStack temp = new ItemStack(Material.EMERALD);
-                ItemMeta meta = temp.getItemMeta();
-                int noneCount = 0;
-                for (int i = 0; i < types.size(); i++) {
-                    if (items.get(i).getFirst().equals("None")) {
-                        noneCount++;
-                    } else {
-                        Bukkit.getLogger().log(Level.INFO, "Page: " + selectedPage + " I: " + i);
-                        if (selectedPage == 0 && i <= 4) {
-                            Objects.requireNonNull(meta).setDisplayName(uppercaseFirstLetter(types.get(i)));
-                            temp.setItemMeta(meta);
-                            inventory.setItem((9 * i) + 2, temp);
-                        } else if (selectedPage == 1 && i > 4) {
-                            Bukkit.getLogger().log(Level.INFO, "I: " + i);
-                            Objects.requireNonNull(meta).setDisplayName(uppercaseFirstLetter(types.get(i)));
-                            temp.setItemMeta(meta);
-                            inventory.setItem((9 * (i - 4)) + 2, temp);
+            //Displays the items for each area
+            if (event.equals("page") || event.equals("all")) {
+                //TODO Displays the items show either item, grey or blue stained glass pane.
+                Bukkit.getScheduler().runTaskAsynchronously(collectopaedia, () -> {
+                    HashMap<Integer, ItemStack> itemStackHashMap = new HashMap<>();
+                    List<String> types = List.of("veg", "fruit", "flower", "animal", "bug", "nature", "parts", "strange");
+                    List<List<String>> items = getItemsList(selectedArea);
+                    ItemStack temp = new ItemStack(Material.EMERALD);
+                    ItemMeta meta = temp.getItemMeta();
+                    int selectedPage = 0;
+                    if (!(event.equals("all"))) {
+                        selectedPage = playerData.getInt("selectedPage");
+                    }
+
+                    int noneCount = 0;
+                    for (String type : types) {
+                        List<String> itemList = collectopaedia.itemsData.getStringList(type);
+                        if (itemList.getFirst().equals("None")) {
+                            noneCount++;
                         }
                     }
-                }
-                if (noneCount < 4) {
-                    inventory.setItem(36, NEXT_PAGE);
-                }
+                    for (String type : types) {
+                        List<String> itemList = collectopaedia.itemsData.getStringList(type);
+                        if (!(itemList.getFirst().equals("None"))) {
+                            if (selectedPage == 0) {
+
+                            }
+                        }
+                    }
+
+
+                    for (int i = 0; i < types.size(); i++) {
+                        if (items.get(i).getFirst().equals("None")) {
+                            noneCount++;
+                        } else {
+                            Bukkit.getLogger().log(Level.INFO, "Page: " + selectedPage + " I: " + i);
+                            if (selectedPage == 0 && i <= 4) {
+                                Objects.requireNonNull(meta).setDisplayName(uppercaseFirstLetter(types.get(i)));
+                                temp.setItemMeta(meta);
+                                itemStackHashMap.put((9 * i) + 2, temp);
+                            } else if (selectedPage == 1 && i > 4) {
+                                Bukkit.getLogger().log(Level.INFO, "I: " + i);
+                                Objects.requireNonNull(meta).setDisplayName(uppercaseFirstLetter(types.get(i)));
+                                temp.setItemMeta(meta);
+                                itemStackHashMap.put(9 * (i - 4), temp);
+                            }
+                        }
+                    }
+                    if (noneCount < 4) {
+                        itemStackHashMap.put(36, NEXT_PAGE);
+                    }
+                    Bukkit.getScheduler().runTask(collectopaedia, () -> {
+                        for (int i = 0; i < inventory.getSize(); i++) {
+                            if (itemStackHashMap.containsKey(i)) {
+                                inventory.setItem(i, itemStackHashMap.get(i));
+                            }
+                        }
+                    });
+                });
+            }
+
+            //Change the inventory after the player submits an idea.
+            if (event.equals("submit") && !itemName.isEmpty()) {
+                Bukkit.getScheduler().runTaskAsynchronously(collectopaedia, () -> {
+                    HashMap<Integer, ItemStack> itemStackHashMap = new HashMap<>();
+                });
+                inventory.setItem(9, createPercentMeter(playerData, selectedArea));
+
             }
         });
         return inventory;
